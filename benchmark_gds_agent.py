@@ -12,18 +12,11 @@ import json
 import logging
 import subprocess
 import sys
-import time
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any
-import re
 import tempfile
 import os
-try:
-    import pexpect
-    PEXPECT_AVAILABLE = True
-except ImportError:
-    PEXPECT_AVAILABLE = False
 
 # Set up logging
 logging.basicConfig(
@@ -111,279 +104,157 @@ class GDSBenchmark:
             logger.debug(f"Created MCP config: {config}")
             return Path(f.name)
 
-    def start_claude(self, config_file: Path) -> subprocess.Popen:
-        """Start Claude CLI with MCP configuration."""
-        logger.info("Starting Claude with MCP server connection...")
-        
-        cmd = [
-            "claude", 
-            "--mcp-config", str(config_file)
-        ]
-        
-        logger.debug(f"Command: {' '.join(cmd)}")
-        logger.debug(f"Config file: {config_file}")
-        
-        try:
-            process = subprocess.Popen(
-                cmd,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                bufsize=0  # Unbuffered
-            )
-            
-            logger.debug("Process started, waiting for initialization...")
-            
-            # Give Claude time to initialize and check for early errors
-            time.sleep(3)
-            
-            if process.poll() is not None:
-                stderr = process.stderr.read()
-                stdout = process.stdout.read()
-                logger.debug(f"Process terminated early. Stdout: {stdout}")
-                logger.debug(f"Process terminated early. Stderr: {stderr}")
-                raise Exception(f"Claude failed to start: {stderr}")
-            
-            # Check for any stderr output that might indicate problems
-            import select
-            ready, _, error_ready = select.select([process.stdout], [], [process.stderr], 1.0)
-            if error_ready:
-                stderr_output = process.stderr.read()
-                logger.debug(f"Initial stderr: {stderr_output}")
-            
-            logger.info("Claude started successfully")
-            return process
-            
-        except FileNotFoundError:
-            raise Exception("Claude CLI not found. Please install claude-cli first.")
-        except Exception as e:
-            raise Exception(f"Failed to start Claude: {e}")
 
-    def extract_tool_calls(self, response: str) -> List[Dict[str, Any]]:
-        """Extract tool calls from Claude's response."""
-        tool_calls = []
-        
-        # Look for function call patterns
-        patterns = [
-            r'<function_calls>\s*<invoke name="([^"]+)"[^>]*>(.*?)</invoke>\s*</function_calls>',
-            r'<invoke name="([^"]+)"[^>]*>(.*?)</invoke>'
-        ]
-        
-        for pattern in patterns:
-            matches = re.findall(pattern, response, re.DOTALL)
-            for match in matches:
-                tool_name = match[0]
-                parameters_text = match[1]
-                
-                # Parse parameters
-                parameters = {}
-                param_pattern = r'<parameter name="([^"]+)">([^<]*)</parameter>'
-                param_matches = re.findall(param_pattern, parameters_text)
-                for param_name, param_value in param_matches:
-                    parameters[param_name] = param_value.strip()
-                
-                tool_calls.append({
-                    "name": tool_name,
-                    "parameters": parameters
-                })
-        
-        return tool_calls
-
-    def determine_expected_tool(self, question: str) -> List[str]:
-        """Determine which tools should be called for a given question."""
-        question_lower = question.lower()
-        
-        for keyword, tools in self.expected_tools.items():
-            if keyword in question_lower:
-                return tools
-        
-        # Default for unknown questions
-        return ["find_shortest_path", "breadth_first_search"]
-
-    def send_question_to_claude_interactive(self, config_file: Path, question: str) -> Optional[str]:
-        """Send question using pexpect to handle interactive prompts."""
-        if not PEXPECT_AVAILABLE:
-            logger.warning("pexpect not available, falling back to subprocess")
-            return self.send_question_to_claude_subprocess(config_file, question)
-            
-        try:
-            logger.debug(f"Sending question interactively: {question}")
-            
-            enhanced_question = f"You MUST use the available MCP tools to query the actual Neo4j database to answer this question. Do not provide a hypothetical answer. Question: {question}"
-            
-            # Start claude with pexpect
-            child = pexpect.spawn(f'claude --mcp-config {config_file} --dangerously-skip-permissions --allowedTools "mcp__*"', timeout=60)
-            
-            # Send the question
-            child.sendline(enhanced_question)
-            
-            output = ""
-            while True:
-                try:
-                    # Look for tool approval prompts or final output
-                    index = child.expect([
-                        'Do you want to proceed?',  # Tool approval prompt
-                        'Yes',                      # Option selection
-                        pexpect.EOF,               # End of output
-                        pexpect.TIMEOUT            # Timeout
-                    ], timeout=30)
-                    
-                    output += child.before.decode('utf-8', errors='ignore')
-                    
-                    if index == 0:  # Tool approval prompt
-                        logger.debug("Found tool approval prompt, sending 'Yes'")
-                        child.sendline('1')  # Select "Yes"
-                        continue
-                    elif index == 1:  # Yes option
-                        child.sendline('1')
-                        continue
-                    elif index == 2:  # EOF - done
-                        output += child.after.decode('utf-8', errors='ignore') if child.after else ""
-                        break
-                    else:  # Timeout
-                        logger.warning("Timeout waiting for Claude response")
-                        break
-                        
-                except pexpect.TIMEOUT:
-                    logger.warning("Claude interaction timed out")
-                    break
-                except pexpect.EOF:
-                    break
-            
-            child.close()
-            
-            # Clean and return output
-            clean_output = output.strip()
-            if clean_output:
-                logger.debug(f"Interactive response length: {len(clean_output)} chars")
-                logger.debug(f"Response preview: {clean_output[:200]}...")
-                return clean_output
-            else:
-                logger.warning("No output received from interactive Claude")
-                return None
-                
-        except Exception as e:
-            logger.error(f"Error with interactive Claude: {e}")
-            return None
-
-    def send_question_to_claude_subprocess(self, config_file: Path, question: str) -> Optional[str]:
-        """Fallback method using subprocess."""
+    def send_question_to_claude_subprocess(self, config_file: Path, question: str) -> Optional[dict]:
+        """Send question using stream-json mode to capture detailed tool calls."""
         try:
             logger.debug(f"Sending question via subprocess: {question}")
             
             # Frame question to strongly encourage tool usage
             enhanced_question = f"You MUST use the available MCP tools to query the actual Neo4j database to answer this question. Do not provide a hypothetical answer. Question: {question}"
             
-            # Use subprocess.run in non-interactive mode with explicit tool allowlist
-            result = subprocess.run([
-                "claude", "-p",  # Non-interactive print mode
+            # Use stream-json mode to capture all tool calls and intermediate steps
+            cmd = [
+                "claude", "-p", "--verbose", "--output-format", "stream-json",
                 "--mcp-config", str(config_file), 
                 "--dangerously-skip-permissions",
                 "--allowedTools", "mcp__*"  # Allow all MCP tools
-            ], input=f"{enhanced_question}\n", 
-               capture_output=True, text=True, timeout=45)
+            ]
+            
+            logger.debug(f"Running command: {' '.join(cmd)}")
+            logger.debug(f"Input: {enhanced_question}")
+            logger.debug(f"Config file exists: {config_file.exists()}")
+            logger.debug(f"Config file path: {config_file}")
+            
+            # Read and log config file contents
+            try:
+                with open(config_file, 'r') as f:
+                    config_contents = f.read()
+                    logger.debug(f"Config file contents: {config_contents}")
+            except Exception as e:
+                logger.error(f"Could not read config file: {e}")
+            
+            logger.info("Starting subprocess call...")
+            result = subprocess.run(cmd, input=f"{enhanced_question}\n", 
+                                  capture_output=True, text=True, timeout=120)
+            logger.info("Subprocess call completed")
             
             # Log stderr to see any MCP connection issues
             if result.stderr:
                 logger.debug(f"Claude stderr: {result.stderr}")
             
+            logger.debug(f"Return code: {result.returncode}")
+            logger.debug(f"Stdout length: {len(result.stdout)}")
+            
             if result.returncode == 0:
-                logger.debug(f"Claude response length: {len(result.stdout)} chars")
-                logger.debug(f"Response preview: {result.stdout[:200]}...")
-                return result.stdout
+                logger.debug(f"Claude stream JSON response length: {len(result.stdout)} chars")
+                
+                # Parse the stream JSON to extract tool calls and final result
+                return self.parse_stream_json_response(result.stdout)
             else:
                 logger.debug(f"Claude error: {result.stderr}")
                 return None
             
         except subprocess.TimeoutExpired:
-            logger.warning(f"Question timed out after 45s: {question[:50]}")
+            logger.warning(f"Question timed out after 120s: {question[:50]}")
+            logger.debug("This might indicate MCP server connection issues or very complex queries")
             return None
         except Exception as e:
             logger.error(f"Error communicating with Claude: {e}")
             return None
 
-    def send_question_to_claude(self, config_file: Path, question: str) -> Optional[str]:
-        """Send a question to Claude - tries interactive first, falls back to subprocess."""
-        # Try interactive first if pexpect is available
-        if PEXPECT_AVAILABLE:
-            return self.send_question_to_claude_interactive(config_file, question)
-        else:
-            return self.send_question_to_claude_subprocess(config_file, question)
-
-    def evaluate_response(self, question: str, response: str) -> Dict[str, Any]:
-        """Evaluate Claude's response to a question."""
-        result = {
-            "question": question,
-            "response": response,
-            "timestamp": datetime.now().isoformat(),
+    def parse_stream_json_response(self, stream_output: str) -> dict:
+        """Parse stream JSON output to extract tool calls, results, and final answer."""
+        parsed_data = {
             "tool_calls": [],
-            "expected_tools": self.determine_expected_tool(question),
-            "correct_tool_used": False,
-            "evaluation": {}
+            "tool_results": [],
+            "final_result": "",
+            "num_turns": 0,
+            "duration_ms": 0,
+            "raw_stream": stream_output,
+            "available_tools": []
         }
         
-        # Extract tool calls
-        tool_calls = self.extract_tool_calls(response)
-        result["tool_calls"] = tool_calls
-        
-        # Check if correct tool was used
-        called_tools = [call["name"] for call in tool_calls]
-        expected_tools = result["expected_tools"]
-        
-        # Check if response mentions any GDS tools by name or indicates tool usage
-        response_lower = response.lower()
-        mentioned_tools = []
-        all_gds_tools = [
-            "find_shortest_path", "dijkstra_single_source_shortest_path", 
-            "breadth_first_search", "depth_first_search", "minimum_weight_spanning_tree",
-            "pagerank", "betweenness_centrality", "closeness_centrality", 
-            "louvain", "label_propagation"
-        ]
-        
-        for tool in all_gds_tools:
-            if tool.replace("_", " ") in response_lower or tool in response_lower:
-                mentioned_tools.append(tool)
-        
-        # Also check for phrases that indicate tool usage
-        tool_usage_indicators = [
-            "using the", "queried the", "called the", "ran the", "executed",
-            "mcp tool", "graph algorithm", "neo4j", "database query"
-        ]
-        
-        has_tool_usage_indication = any(indicator in response_lower for indicator in tool_usage_indicators)
-        
-        # For now, just record that we got a response that looks like it has real data
-        # Since MCP tool detection isn't working, we'll manually validate these later
-        has_specific_data = any(phrase in response_lower for phrase in [
-            "total cost", "stops", "stations", "route", "path"
-        ])
-        
-        # Consider it a success if we found actual tool calls, tool mentions, or usage indicators
-        # OR if the response has specific route data (indicating possible tool use)
-        result["correct_tool_used"] = (
-            any(tool in called_tools for tool in expected_tools) or
-            any(tool in mentioned_tools for tool in expected_tools) or
-            has_tool_usage_indication or
-            has_specific_data  # Temporary: assume responses with route data used tools
-        )
-        
-        # Detailed evaluation
-        result["evaluation"] = {
-            "tools_called": called_tools,
-            "tools_mentioned": mentioned_tools,
-            "expected_any_of": expected_tools,
-            "match_found": result["correct_tool_used"],
-            "response_length": len(response),
-            "has_tool_calls": len(tool_calls) > 0,
-            "has_tool_mentions": len(mentioned_tools) > 0,
-            "has_usage_indicators": has_tool_usage_indication,
-            "has_specific_data": has_specific_data,
-            "full_response_recorded": True,  # Always record full response for manual inspection
-            "note": "MCP tool detection may not work properly - manually validate responses"
+        try:
+            lines = stream_output.strip().split('\n')
+            logger.debug(f"Parsing {len(lines)} lines from stream JSON")
+            
+            for line_num, line in enumerate(lines, 1):
+                if not line.strip():
+                    continue
+                    
+                try:
+                    data = json.loads(line)
+                    
+                    # Extract available tools from init message
+                    if data.get('type') == 'system' and data.get('subtype') == 'init':
+                        parsed_data["available_tools"] = data.get('tools', [])
+                    
+                    # Extract tool calls from assistant messages
+                    elif data.get('type') == 'assistant' and 'message' in data:
+                        content = data['message'].get('content', [])
+                        for item in content:
+                            if item.get('type') == 'tool_use':
+                                tool_call = {
+                                    "name": item['name'],
+                                    "parameters": item.get('input', {}),
+                                    "id": item['id']
+                                }
+                                # Only add if not already present (avoid duplicates)
+                                if tool_call not in parsed_data["tool_calls"]:
+                                    parsed_data["tool_calls"].append(tool_call)
+                                    logger.debug(f"Found tool call: {item['name']} (line {line_num})")
+                    
+                    # Extract tool results from user messages (these are tool responses)
+                    elif data.get('type') == 'user' and 'message' in data:
+                        content = data['message'].get('content', [])
+                        for item in content:
+                            if item.get('type') == 'tool_result':
+                                # Handle both string and object content
+                                content_data = item.get('content', [])
+                                if content_data and isinstance(content_data, list) and len(content_data) > 0:
+                                    result_text = content_data[0].get('text', '') if isinstance(content_data[0], dict) else str(content_data[0])
+                                else:
+                                    result_text = str(item.get('content', ''))
+                                
+                                tool_result = {
+                                    "tool_use_id": item.get('tool_use_id', ''),
+                                    "result": result_text
+                                }
+                                # Only add if not already present (avoid duplicates)
+                                if tool_result not in parsed_data["tool_results"]:
+                                    parsed_data["tool_results"].append(tool_result)
+                                    logger.debug(f"Found tool result for: {item.get('tool_use_id', 'unknown')} (line {line_num})")
+                    
+                    # Extract final result and metadata
+                    elif data.get('type') == 'result':
+                        parsed_data["final_result"] = data.get('result', '')
+                        parsed_data["num_turns"] = data.get('num_turns', 0)
+                        parsed_data["duration_ms"] = data.get('duration_ms', 0)
+                        
+                except json.JSONDecodeError:
+                    # Skip non-JSON lines
+                    continue
+                    
+        except Exception as e:
+            logger.error(f"Error parsing stream JSON: {e}")
+            logger.debug(f"Failed parsing line: {line[:100] if line else 'None'}...")
+            
+        return parsed_data
+
+    def send_question_to_claude(self, config_file: Path, question: str) -> Optional[dict]:
+        """Send a question to Claude - uses stream-json mode to capture detailed tool calls."""
+        # Always use subprocess with stream-json mode for detailed tool capture
+        return self.send_question_to_claude_subprocess(config_file, question)
+
+    def create_result_record(self, question: str, response: dict) -> Dict[str, Any]:
+        """Create a simple result record with raw response data."""
+        return {
+            "question": question,
+            "timestamp": datetime.now().isoformat(),
+            "response_data": response,  # Store the complete parsed response
+            "success": response is not None
         }
-        
-        return result
 
     def run_benchmark(self) -> List[Dict[str, Any]]:
         """Run the complete benchmark."""
@@ -407,28 +278,19 @@ class GDSBenchmark:
                 logger.info(f"Processing question {i}/{len(questions)}: {question[:50]}...")
                 
                 response = self.send_question_to_claude(config_file, question)
+                result = self.create_result_record(question, response)
+                results.append(result)
                 
+                # Log basic status
                 if response:
-                    result = self.evaluate_response(question, response)
-                    results.append(result)
-                    
-                    status = "✓" if result['correct_tool_used'] else "✗"
-                    tools = [call['name'] for call in result['tool_calls']]
-                    mentioned = result['evaluation'].get('tools_mentioned', [])
-                    logger.info(f"Question {i}: {status} (Called: {tools}, Mentioned: {mentioned})")
+                    num_tools = len(response.get('tool_calls', []))
+                    num_turns = response.get('num_turns', 0)
+                    logger.info(f"Question {i}: ✓ ({num_tools} tools, {num_turns} turns)")
                 else:
-                    logger.warning(f"No response for question {i}")
-                    results.append({
-                        "question": question,
-                        "response": "",
-                        "timestamp": datetime.now().isoformat(),
-                        "tool_calls": [],
-                        "expected_tools": self.determine_expected_tool(question),
-                        "correct_tool_used": False,
-                        "evaluation": {"error": "No response received"}
-                    })
+                    logger.info(f"Question {i}: ✗ (no response)")
                 
                 # Small delay between questions
+                import time
                 time.sleep(1)
             
             self.results = results
@@ -455,24 +317,24 @@ class GDSBenchmark:
         logger.info(f"Saving results to {self.results_file}")
         
         total_questions = len(self.results)
-        correct_tools = sum(1 for r in self.results if r["correct_tool_used"])
+        successful_responses = sum(1 for r in self.results if r["success"])
         
         summary = {
             "benchmark_info": {
                 "timestamp": datetime.now().isoformat(),
                 "questions_file": str(self.questions_file),
                 "total_questions": total_questions,
-                "correct_tool_selections": correct_tools,
-                "accuracy": correct_tools / total_questions if total_questions > 0 else 0,
+                "successful_responses": successful_responses,
+                "response_rate": successful_responses / total_questions if total_questions > 0 else 0,
             },
-            "detailed_results": self.results
+            "raw_results": self.results
         }
         
         with open(self.results_file, 'w') as f:
             json.dump(summary, f, indent=2)
         
-        logger.info(f"Results saved. Accuracy: {correct_tools}/{total_questions} "
-                   f"({summary['benchmark_info']['accuracy']:.2%})")
+        logger.info(f"Results saved. Response rate: {successful_responses}/{total_questions} "
+                   f"({summary['benchmark_info']['response_rate']:.2%})")
 
     def print_summary(self) -> None:
         """Print a summary of the benchmark results."""
@@ -481,28 +343,34 @@ class GDSBenchmark:
             return
         
         total = len(self.results)
-        correct = sum(1 for r in self.results if r["correct_tool_used"])
+        successful = sum(1 for r in self.results if r["success"])
         
         print("\n" + "="*60)
         print("GDS AGENT BENCHMARK SUMMARY")
         print("="*60)
         print(f"Total Questions: {total}")
-        print(f"Correct Tool Usage: {correct}")
-        print(f"Accuracy: {correct/total:.1%}")
+        print(f"Successful Responses: {successful}")
+        print(f"Response Rate: {successful/total:.1%}")
         print("\nDetailed Results:")
         
         for i, result in enumerate(self.results, 1):
-            status = "✓" if result["correct_tool_used"] else "✗"
-            tools_called = [call["name"] for call in result["tool_calls"]]
-            tools_mentioned = result["evaluation"].get("tools_mentioned", [])
-            print(f"{i:2d}. {status} {result['question']}")
-            if tools_called:
-                print(f"    → Called: {', '.join(tools_called)}")
-            elif tools_mentioned:
-                print(f"    → Mentioned: {', '.join(tools_mentioned)}")
+            status = "✓" if result["success"] else "✗"
+            question = result['question']
+            print(f"{i:2d}. {status} {question}")
+            
+            if result["success"] and result["response_data"]:
+                data = result["response_data"]
+                num_tools = len(data.get('tool_calls', []))
+                num_turns = data.get('num_turns', 0)
+                duration = data.get('duration_ms', 0)
+                print(f"    → Tools: {num_tools}, Turns: {num_turns}, Duration: {duration}ms")
+                
+                # Show tool names if any
+                if data.get('tool_calls'):
+                    tool_names = [call['name'] for call in data['tool_calls']]
+                    print(f"    → Called: {', '.join(tool_names)}")
             else:
-                print(f"    → No tools called or mentioned")
-            print(f"    → Expected: {', '.join(result['expected_tools'])}")
+                print(f"    → No response received")
         
         print("="*60)
 
