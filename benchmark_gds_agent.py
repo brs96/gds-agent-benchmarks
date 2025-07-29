@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any
 import tempfile
 import os
+import csv
 
 # Set up logging
 logging.basicConfig(
@@ -32,7 +33,7 @@ logger = logging.getLogger(__name__)
 
 class GDSBenchmark:
     def __init__(self, 
-                 questions_file: str = "gds-algo-questions.csv",
+                 questions_file: str = "gds-algo-questions-basic.csv",
                  results_file: str = "benchmark_results.json"):
         self.questions_file = Path(questions_file)
         self.results_file = Path(results_file)
@@ -62,18 +63,27 @@ class GDSBenchmark:
         
         try:
             with open(self.questions_file, 'r', encoding='utf-8') as file:
-                content = file.read().strip()
-                if not content:
-                    logger.error("Questions file is empty")
-                    return []
-                
-                # Handle different formats
-                lines = [line.strip() for line in content.split('\n') if line.strip()]
-                
-                # Skip header-like lines
-                for line in lines:
-                    if not line.lower().startswith(('question', 'query', '#')):
-                        questions.append(line)
+                # Try to parse as CSV first
+                try:
+                    reader = csv.DictReader(file)
+                    for row in reader:
+                        if 'question' in row and row['question'].strip():
+                            questions.append(row['question'].strip())
+                except csv.Error:
+                    # Fallback to old plain text format
+                    file.seek(0)
+                    content = file.read().strip()
+                    if not content:
+                        logger.error("Questions file is empty")
+                        return []
+                    
+                    # Handle different formats
+                    lines = [line.strip() for line in content.split('\n') if line.strip()]
+                    
+                    # Skip header-like lines
+                    for line in lines:
+                        if not line.lower().startswith(('question', 'query', '#')):
+                            questions.append(line)
                         
         except Exception as e:
             logger.error(f"Error loading questions: {e}")
@@ -343,14 +353,11 @@ class GDSBenchmark:
             return
         
         total = len(self.results)
-        successful = sum(1 for r in self.results if r["success"])
         
         print("\n" + "="*60)
         print("GDS AGENT BENCHMARK SUMMARY")
         print("="*60)
         print(f"Total Questions: {total}")
-        print(f"Successful Responses: {successful}")
-        print(f"Response Rate: {successful/total:.1%}")
         print("\nDetailed Results:")
         
         for i, result in enumerate(self.results, 1):
@@ -381,8 +388,8 @@ def main():
     print("="*40)
     
     # Check if questions file exists
-    if not Path("gds-algo-questions.csv").exists():
-        print("❌ Questions file 'gds-algo-questions.csv' not found")
+    if not Path("gds-algo-questions-basic.csv").exists():
+        print("❌ Questions file 'gds-algo-questions-basic.csv' not found")
         print("Please create a file with your test questions.")
         sys.exit(1)
     
