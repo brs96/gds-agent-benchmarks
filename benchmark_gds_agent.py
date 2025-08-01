@@ -98,7 +98,7 @@ class GDSBenchmark:
             "mcpServers": {
                 "gds-agent": {
                     "command": "uvx",
-                    "args": ["--from", "./gds_agent-0.1.0-py3-none-any.whl", "gds-agent"],
+                    "args": ["--from", "./gds_agent-0.2.0-py3-none-any.whl", "gds-agent"],
                     "env": {
                         "NEO4J_URI": "bolt://localhost:7687",
                         "NEO4J_USERNAME": "neo4j", 
@@ -394,9 +394,9 @@ def main():
         sys.exit(1)
     
     # Check if wheel file exists
-    if not Path("gds_agent-0.1.0-py3-none-any.whl").exists():
+    if not Path("gds_agent-0.2.0-py3-none-any.whl").exists():
         print("❌ GDS agent wheel file not found")
-        print("Please ensure 'gds_agent-0.1.0-py3-none-any.whl' is in the current directory")
+        print("Please ensure 'gds_agent-0.2.0-py3-none-any.whl' is in the current directory")
         sys.exit(1)
     
     print("✅ Setup looks good!")
