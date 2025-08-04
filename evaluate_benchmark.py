@@ -192,8 +192,8 @@ class BenchmarkEvaluator:
             
             for param_key, expected_value in expected_tool_params.items():
                 actual_value = actual_params.get(param_key)
-                
-                if actual_value == expected_value:
+
+                if actual_value == expected_value or str(actual_value) == str(expected_value):
                     matches.append(param_key)
                 else:
                     mismatches.append({
@@ -272,7 +272,8 @@ class BenchmarkEvaluator:
             
         expected_scores = extract_result_scores(expected_answer)
         actual_scores = extract_result_scores(actual_answer)
-        
+        print("answers:",expected_answer,", ", actual_answer)
+        print("scores:",expected_scores,", ", actual_scores)
         # Fallback to just score numbers if name matching fails
         expected_numbers = extract_score_numbers(expected_answer)
         actual_numbers = extract_score_numbers(actual_answer)
@@ -287,7 +288,9 @@ class BenchmarkEvaluator:
                 for actual_name, actual_score in actual_scores.items():
                     # Fuzzy name matching for stations like "Paddington" vs "paddington"
                     if expected_name in actual_name or actual_name in expected_name:
-                        if expected_score == actual_score:
+                        score_float = float(expected_score)
+                        actual_float = float(actual_score)
+                        if abs(actual_float-score_float) <=1e-5:
                             exact_score_matches += 1
                         break
         else:
