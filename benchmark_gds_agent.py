@@ -1,13 +1,3 @@
-#!/usr/bin/env python3
-"""
-GDS Agent Benchmarking Tool
-
-This script benchmarks Claude's performance with the GDS (Graph Data Science) MCP server.
-Usage:
-1. Start the GDS server: ./start_server.sh
-2. Run this benchmark: python benchmark_gds_agent.py
-"""
-
 import json
 import logging
 import subprocess
@@ -38,19 +28,7 @@ class GDSBenchmark:
         self.questions_file = Path(questions_file)
         self.results_file = Path(results_file)
         self.results = []
-        
-        # Expected tool mappings for different question types
-        self.expected_tools = {
-            "shortest path": ["find_shortest_path", "dijkstra_single_source_shortest_path"],
-            "path": ["find_shortest_path", "dijkstra_single_source_shortest_path", "breadth_first_search"],
-            "route": ["find_shortest_path", "dijkstra_single_source_shortest_path"],
-            "distance": ["find_shortest_path", "dijkstra_single_source_shortest_path"],
-            "connection": ["breadth_first_search", "depth_first_search", "find_shortest_path"],
-            "reachable": ["breadth_first_search", "depth_first_search"],
-            "spanning": ["minimum_weight_spanning_tree"],
-            "centrality": ["pagerank", "betweenness_centrality", "closeness_centrality"],
-            "community": ["louvain", "label_propagation"],
-        }
+
 
     def load_questions(self) -> List[str]:
         """Load questions from CSV file."""
@@ -181,8 +159,7 @@ class GDSBenchmark:
             "final_result": "",
             "num_turns": 0,
             "duration_ms": 0,
-            "raw_stream": stream_output,
-            "available_tools": []
+            "raw_stream": stream_output
         }
         
         try:
@@ -195,13 +172,8 @@ class GDSBenchmark:
                     
                 try:
                     data = json.loads(line)
-                    
-                    # Extract available tools from init message
-                    if data.get('type') == 'system' and data.get('subtype') == 'init':
-                        parsed_data["available_tools"] = data.get('tools', [])
-                    
                     # Extract tool calls from assistant messages
-                    elif data.get('type') == 'assistant' and 'message' in data:
+                    if data.get('type') == 'assistant' and 'message' in data:
                         content = data['message'].get('content', [])
                         for item in content:
                             if item.get('type') == 'tool_use':
