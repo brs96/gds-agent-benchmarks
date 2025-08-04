@@ -1,0 +1,9 @@
+question,expected_tools,expected_parameters,expected_answer
+Execute the Delta-Stepping shortest path algorithm from Covent Garden using travel time as the relationship weight, with delta = 50. Response with all the paths and costs and nothing else in the example format. For example, the answer might be: ["Covent Garden", "X"]: [0.0, 2.0], ["Covent Garden", "A", "C"]: [0.0, 1.0, 2.0].
+["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__get_relationship_properties_keys", "mcp__gds-agent__delta_stepping_shortest_path"]
+{"delta_stepping_shortest_path": {"sourceNode": "Covent Garden", "relationshipWeightProperty": "time", "delta": 50.0, "nodeIdentifierProperty": "name"}}
+["Covent Garden"]: [0.0], ["Covent Garden", "Holborn"]: [0.0, 1.0], ["Covent Garden", "Leicester Square"]: [0.0, 1.0], ["Covent Garden", "Leicester Square", "Tottenham Court Road"]: [0.0, 1.0, 2.0], ["Covent Garden", "Leicester Square", "Picadilly Circus"]: [0.0, 1.0, 3.0], ["Covent Garden", "Holborn", "Russell Square"]: [0.0, 1.0, 3.0]
+Please run the Dijkstra shortest path algorithm from Barons Court to South Kensington. I want the answer to be in the format of the path and the costs. For example, ["Barons Court", "X", "Y", "South Kensington"]: [0.0, 3.0, 4.5, 9.9].
+["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__find_shortest_path"]
+{"find_shortest_path": {"sourceNode": "Barons Court", "targetNode": "South Kensington", "nodeIdentifierProperty": "name"}}
+["Barons Court", "Earl's Court", "Gloucester Road", "South Kensington"]: [0.0, 1.0, 2.0, 3.0]

@@ -211,6 +211,63 @@ class BenchmarkEvaluator:
     def evaluate_answer_similarity(self, expected_answer: str, actual_answer: str) -> Dict[str, Any]:
         """Evaluate similarity between expected and actual answers."""
         
+        # Check if this is a path questions file based on filename
+        if "path_questions" in str(self.questions_file):
+            return self.evaluate_path_answer(expected_answer, actual_answer)
+        else:
+            return self.evaluate_centrality_answer(expected_answer, actual_answer)
+    
+    def evaluate_path_answer(self, expected_answer: str, actual_answer: str) -> Dict[str, Any]:
+        """Evaluate path-based answers with path: cost format."""
+        
+        def extract_path_costs(text):
+            # Pattern to match ["station1", "station2", ...]: [cost1, cost2, ...]
+            pattern = r'\[((?:"[^"]*"(?:,\s*)?)+)\]:\s*\[((?:\d+\.?\d*(?:,\s*)?)+)\]'
+            matches = re.findall(pattern, text)
+            
+            path_costs = {}
+            for path_str, costs_str in matches:
+                # Parse path stations
+                stations = re.findall(r'"([^"]*)"', path_str)
+                path_key = tuple(stations)  # Use tuple as key for immutable comparison
+                
+                # Parse costs
+                costs = [float(x.strip()) for x in costs_str.split(',')]
+                path_costs[path_key] = costs
+            
+            return path_costs
+        
+        expected_paths = extract_path_costs(expected_answer)
+        actual_paths = extract_path_costs(actual_answer)
+        
+        # Compare paths regardless of order
+        exact_matches = 0
+        total_expected = len(expected_paths)
+        
+        for expected_path, expected_costs in expected_paths.items():
+            if expected_path in actual_paths:
+                actual_costs = actual_paths[expected_path]
+                if expected_costs == actual_costs:
+                    exact_matches += 1
+        
+        path_match_score = exact_matches / total_expected if total_expected > 0 else 0.0
+        
+        return {
+            'exact_path_matches': exact_matches,
+            'total_expected_paths': total_expected,
+            'path_match_score': path_match_score,
+            'exact_match': path_match_score == 1.0,
+            'expected_paths': {str(k): v for k, v in expected_paths.items()},
+            'actual_paths': {str(k): v for k, v in actual_paths.items()},
+            'number_match_score': path_match_score,  # For compatibility with existing code
+            'station_coverage': 1.0 if path_match_score > 0 else 0.0,  # For compatibility
+            'exact_number_matches': exact_matches,  # For compatibility with reporting
+            'total_expected_numbers': total_expected  # For compatibility with reporting
+        }
+    
+    def evaluate_centrality_answer(self, expected_answer: str, actual_answer: str) -> Dict[str, Any]:
+        """Evaluate centrality-based answers with station: score format."""
+        
         # Extract result scores more precisely - look for patterns like "Name: score"
         def extract_result_scores(text):
             # Pattern to match "Name: number" or "Name**: number" etc.
@@ -419,10 +476,18 @@ class BenchmarkEvaluator:
                         
             # Answer evaluation
             answer_eval = evaluation['answer_evaluation']
-            print(f"   💬 Answer: {answer_eval['exact_number_matches']}/{answer_eval['total_expected_numbers']} exact matches ({answer_eval['number_match_score']:.2%})")
-            if answer_eval.get('expected_scores') and answer_eval.get('actual_scores'):
-                print(f"      Expected: {answer_eval['expected_scores']}")
-                print(f"      Actual: {answer_eval['actual_scores']}")
+            if "path_questions" in str(self.questions_file):
+                # Path-specific reporting
+                print(f"   💬 Answer: {answer_eval['exact_path_matches']}/{answer_eval['total_expected_paths']} exact path matches ({answer_eval['path_match_score']:.2%})")
+                if answer_eval.get('expected_paths') and answer_eval.get('actual_paths'):
+                    print(f"      Expected paths: {list(answer_eval['expected_paths'].keys())}")
+                    print(f"      Actual paths: {list(answer_eval['actual_paths'].keys())}")
+            else:
+                # Centrality-specific reporting
+                print(f"   💬 Answer: {answer_eval['exact_number_matches']}/{answer_eval['total_expected_numbers']} exact matches ({answer_eval['number_match_score']:.2%})")
+                if answer_eval.get('expected_scores') and answer_eval.get('actual_scores'):
+                    print(f"      Expected: {answer_eval['expected_scores']}")
+                    print(f"      Actual: {answer_eval['actual_scores']}")
             
             # Metadata
             metadata = evaluation['metadata']
