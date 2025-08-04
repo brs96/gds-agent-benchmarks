@@ -2,6 +2,7 @@ import json
 import logging
 import subprocess
 import sys
+import argparse
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any
@@ -24,14 +25,22 @@ logger = logging.getLogger(__name__)
 class GDSBenchmark:
     def __init__(self, 
                  questions_file: str = "gds-algo-questions-basic.csv",
-                 results_file: str = "benchmark_results.json"):
+                 results_file: str = None):
         self.questions_file = Path(questions_file)
-        self.results_file = Path(results_file)
+        
+        # Auto-generate results filename if not provided
+        if results_file is None:
+            # Remove .csv extension and add _results.json
+            base_name = self.questions_file.stem
+            self.results_file = Path(f"{base_name}_results.json")
+        else:
+            self.results_file = Path(results_file)
+            
         self.results = []
 
 
     def load_questions(self) -> List[str]:
-        """Load questions from CSV file."""
+        """Load questions from CSV file with new 4-lines-per-question format."""
         logger.info(f"Loading questions from {self.questions_file}")
         questions = []
         
@@ -41,27 +50,34 @@ class GDSBenchmark:
         
         try:
             with open(self.questions_file, 'r', encoding='utf-8') as file:
-                # Try to parse as CSV first
-                try:
-                    reader = csv.DictReader(file)
-                    for row in reader:
-                        if 'question' in row and row['question'].strip():
-                            questions.append(row['question'].strip())
-                except csv.Error:
-                    # Fallback to old plain text format
-                    file.seek(0)
-                    content = file.read().strip()
-                    if not content:
-                        logger.error("Questions file is empty")
-                        return []
-                    
-                    # Handle different formats
-                    lines = [line.strip() for line in content.split('\n') if line.strip()]
-                    
-                    # Skip header-like lines
-                    for line in lines:
-                        if not line.lower().startswith(('question', 'query', '#')):
-                            questions.append(line)
+                lines = [line.strip() for line in file.readlines() if line.strip()]
+                
+                if not lines:
+                    logger.error("Questions file is empty")
+                    return []
+                
+                # Skip header line if present
+                start_idx = 0
+                if lines[0].lower().startswith(('question', 'expected_tools', 'expected_parameters', 'expected_answer')):
+                    start_idx = 1
+                
+                # Process lines in groups of 4: question, tools, parameters, answer
+                i = start_idx
+                while i < len(lines):
+                    if i + 3 < len(lines):  # Ensure we have all 4 lines
+                        # Line i is the question (clean format - no quotes needed)
+                        question = lines[i].strip()
+                        if question:
+                            questions.append(question)
+                        i += 4  # Move to next question block
+                    else:
+                        # Handle incomplete block at end - check if it's a question line
+                        if not lines[i].startswith('[') and not lines[i].startswith('{'):
+                            # This might be a question (not tools or params)
+                            question = lines[i].strip()
+                            if question:
+                                questions.append(question)
+                        break
                         
         except Exception as e:
             logger.error(f"Error loading questions: {e}")
@@ -356,12 +372,28 @@ class GDSBenchmark:
 
 def main():
     """Main entry point."""
+    parser = argparse.ArgumentParser(
+        description="GDS Agent Benchmarking Tool",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""Examples:
+  python benchmark_gds_agent.py --questions path_questions_basic.csv"""
+    )
+    
+    parser.add_argument(
+        "--questions", "-q",
+        default="path_questions_basic.csv",
+        help="Path to the questions CSV file (default: path_questions_basic.csv)"
+    )
+    
+    args = parser.parse_args()
+    
     print("GDS Agent Benchmarking Tool")
     print("="*40)
+    print(f"Questions file: {args.questions}")
     
     # Check if questions file exists
-    if not Path("gds-algo-questions-basic.csv").exists():
-        print("❌ Questions file 'gds-algo-questions-basic.csv' not found")
+    if not Path(args.questions).exists():
+        print(f"❌ Questions file '{args.questions}' not found")
         print("Please create a file with your test questions.")
         sys.exit(1)
     
@@ -371,10 +403,12 @@ def main():
         print("Please ensure 'gds_agent-0.2.0-py3-none-any.whl' is in the current directory")
         sys.exit(1)
     
+    # Create benchmark instance (results file will be auto-generated)
+    benchmark = GDSBenchmark(questions_file=args.questions)
+    
+    print(f"Results file: {benchmark.results_file}")
     print("✅ Setup looks good!")
     print("\n📋 Starting benchmark...")
-    
-    benchmark = GDSBenchmark()
     
     try:
         benchmark.run_benchmark()

@@ -11,6 +11,7 @@ import json
 import csv
 import logging
 import re
+import argparse
 from pathlib import Path
 from typing import Dict, List, Any
 
@@ -24,13 +25,29 @@ logger = logging.getLogger(__name__)
 
 class BenchmarkEvaluator:
     def __init__(self, 
-                 results_file: str = "benchmark_results.json",
-                 questions_file: str = "gds-algo-questions-basic.csv"):
-        self.results_file = Path(results_file)
+                 questions_file: str = "path_questions_basic.csv",
+                 results_file: str = None,
+                 evaluation_file: str = None):
         self.questions_file = Path(questions_file)
         
+        # Auto-derive results file from questions file if not provided
+        if results_file is None:
+            # Convert x.csv to x_results.json
+            base_name = self.questions_file.stem
+            self.results_file = Path(f"{base_name}_results.json")
+        else:
+            self.results_file = Path(results_file)
+            
+        # Auto-derive evaluation file from questions file if not provided
+        if evaluation_file is None:
+            # Convert x.csv to x_evaluation.json
+            base_name = self.questions_file.stem
+            self.evaluation_file = Path(f"{base_name}_evaluation.json")
+        else:
+            self.evaluation_file = Path(evaluation_file)
+        
     def load_expected_results(self) -> Dict[str, Dict[str, Any]]:
-        """Load expected results from enhanced CSV file."""
+        """Load expected results from CSV file with new 4-lines-per-question format."""
         expected = {}
         
         if not self.questions_file.exists():
@@ -39,14 +56,46 @@ class BenchmarkEvaluator:
             
         try:
             with open(self.questions_file, 'r', encoding='utf-8') as file:
-                reader = csv.DictReader(file)
-                for row in reader:
-                    question = row['question'].strip()
-                    expected[question] = {
-                        'expected_tools': json.loads(row['expected_tools']),
-                        'expected_parameters': json.loads(row['expected_parameters']),
-                        'expected_answer': row['expected_answer'].strip()
-                    }
+                lines = [line.strip() for line in file.readlines() if line.strip()]
+                
+                if not lines:
+                    logger.error("Questions file is empty")
+                    return expected
+                
+                # Skip header line if present
+                start_idx = 0
+                if lines[0].lower().startswith(('question', 'expected_tools', 'expected_parameters', 'expected_answer')):
+                    start_idx = 1
+                
+                # Process lines in groups of 4: question, tools, parameters, answer
+                i = start_idx
+                while i + 3 < len(lines):
+                    # Line i: question (clean format - no quotes needed)
+                    question = lines[i].strip()
+                    
+                    # Line i+1: expected_tools (clean format - no quotes needed)
+                    tools_str = lines[i+1].strip()
+                    
+                    # Line i+2: expected_parameters (clean format - no quotes needed)
+                    params_str = lines[i+2].strip()
+                    
+                    # Line i+3: expected_answer (clean format - no quotes needed)
+                    answer = lines[i+3].strip()
+                    
+                    if question:
+                        try:
+                            expected[question] = {
+                                'expected_tools': json.loads(tools_str),
+                                'expected_parameters': json.loads(params_str),
+                                'expected_answer': answer
+                            }
+                        except json.JSONDecodeError as e:
+                            logger.warning(f"Failed to parse JSON for question: {question[:50]}...")
+                            logger.warning(f"Tools string: '{tools_str}'")
+                            logger.warning(f"Params string: '{params_str}'")
+                            logger.warning(f"JSON Error: {e}")
+                    
+                    i += 4  # Move to next question block
                     
         except Exception as e:
             logger.error(f"Error loading expected results: {e}")
@@ -384,20 +433,55 @@ class BenchmarkEvaluator:
 
 def main():
     """Main entry point."""
+    parser = argparse.ArgumentParser(
+        description="GDS Agent Benchmark Evaluation Tool",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""Examples:
+  python evaluate_benchmark.py
+  python evaluate_benchmark.py
+  python evaluate_benchmark.py --questions my_custom_questions.csv"""
+    )
+    
+    parser.add_argument(
+        "--questions", "-q",
+        default="path_questions_basic.csv",
+        help="Path to the questions CSV file (default: path_questions_basic.csv)"
+    )
+    
+    args = parser.parse_args()
+    
     print("GDS Agent Benchmark Evaluation Tool")
     print("="*50)
     
-    evaluator = BenchmarkEvaluator()
+    # Check if questions file exists
+    if not Path(args.questions).exists():
+        print(f"❌ Questions file '{args.questions}' not found")
+        return 1
+    
+    evaluator = BenchmarkEvaluator(
+        questions_file=args.questions
+    )
+    
+    print(f"Questions file: {evaluator.questions_file}")
+    print(f"Results file: {evaluator.results_file}")
+    print(f"Evaluation output: {evaluator.evaluation_file}")
+    
+    # Check if results file exists
+    if not evaluator.results_file.exists():
+        print(f"❌ Results file '{evaluator.results_file}' not found")
+        return 1
+    
+    print("✅ Setup looks good!")
+    print("")
     
     try:
         results = evaluator.run_evaluation()
         evaluator.print_evaluation_report(results)
         
-        # Save detailed results
-        output_file = "evaluation_results.json"
-        with open(output_file, 'w') as f:
+        # Save detailed results to the auto-generated file
+        with open(evaluator.evaluation_file, 'w') as f:
             json.dump(results, f, indent=2)
-        print(f"\n💾 Detailed results saved to: {output_file}")
+        print(f"\n💾 Detailed results saved to: {evaluator.evaluation_file}")
         
     except Exception as e:
         logger.error(f"Evaluation failed: {e}")
