@@ -165,7 +165,7 @@ class BenchmarkEvaluator:
         # Extract result scores more precisely - look for patterns like "Name: score"
         def extract_result_scores(text):
             # Pattern to match "Name: number" or "Name**: number" etc.
-            score_pattern = r'([A-Za-z\s\(\)]+)[:*\s]+(\d+\.\d+)'
+            score_pattern = r'([A-Za-z\s\(\)]+)[:*\s]+(\d*\.?\d+)'
             matches = re.findall(score_pattern, text)
             
             scores = {}
