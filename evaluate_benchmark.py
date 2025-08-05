@@ -8,12 +8,14 @@ from the enhanced CSV file.
 """
 
 import json
-import csv
 import logging
 import re
 import argparse
 from pathlib import Path
 from typing import Dict, List, Any
+
+# Import the fine-grained path questions evaluator functions
+from path_questions_evaluation import evaluate_path_algorithm_output
 
 # Set up logging
 logging.basicConfig(
@@ -29,6 +31,7 @@ class BenchmarkEvaluator:
                  results_file: str = None,
                  evaluation_file: str = None):
         self.questions_file = Path(questions_file)
+        
         
         # Auto-derive results file from questions file if not provided
         if results_file is None:
@@ -208,62 +211,41 @@ class BenchmarkEvaluator:
             
         return parameter_scores
         
-    def evaluate_answer_similarity(self, expected_answer: str, actual_answer: str) -> Dict[str, Any]:
+    def evaluate_answer_similarity(self, expected_answer: str, actual_answer: str, expected_tools: List[str] = None) -> Dict[str, Any]:
         """Evaluate similarity between expected and actual answers."""
         
         # Check if this is a path questions file based on filename
-        if "path_questions" in str(self.questions_file):
-            return self.evaluate_path_answer(expected_answer, actual_answer)
+        if "path_questions" in str(self.questions_file) and expected_tools:
+            # Use fine-grained evaluation for path questions
+            result = evaluate_path_algorithm_output(str(expected_tools), expected_answer, actual_answer)
+            
+            # Convert to expected format for compatibility
+            if result.get('success'):
+                return {
+                    'exact_path_matches': 1,
+                    'total_expected_paths': 1,
+                    'path_match_score': 1.0,
+                    'exact_match': True,
+                    'number_match_score': 1.0,
+                    'station_coverage': 1.0,
+                    'exact_number_matches': 1,
+                    'total_expected_numbers': 1
+                }
+            else:
+                return {
+                    'exact_path_matches': 0,
+                    'total_expected_paths': 1,
+                    'path_match_score': 0.0,
+                    'exact_match': False,
+                    'number_match_score': 0.0,
+                    'station_coverage': 0.0,
+                    'exact_number_matches': 0,
+                    'total_expected_numbers': 1,
+                    'error': result.get('error', 'Evaluation failed')
+                }
         else:
+            # Use existing centrality evaluation for centrality questions
             return self.evaluate_centrality_answer(expected_answer, actual_answer)
-    
-    def evaluate_path_answer(self, expected_answer: str, actual_answer: str) -> Dict[str, Any]:
-        """Evaluate path-based answers with path: cost format."""
-        
-        def extract_path_costs(text):
-            # Pattern to match ["station1", "station2", ...]: [cost1, cost2, ...]
-            pattern = r'\[((?:"[^"]*"(?:,\s*)?)+)\]:\s*\[((?:\d+\.?\d*(?:,\s*)?)+)\]'
-            matches = re.findall(pattern, text)
-            
-            path_costs = {}
-            for path_str, costs_str in matches:
-                # Parse path stations
-                stations = re.findall(r'"([^"]*)"', path_str)
-                path_key = tuple(stations)  # Use tuple as key for immutable comparison
-                
-                # Parse costs
-                costs = [float(x.strip()) for x in costs_str.split(',')]
-                path_costs[path_key] = costs
-            
-            return path_costs
-        
-        expected_paths = extract_path_costs(expected_answer)
-        actual_paths = extract_path_costs(actual_answer)
-        
-        # Compare paths regardless of order
-        exact_matches = 0
-        total_expected = len(expected_paths)
-        
-        for expected_path, expected_costs in expected_paths.items():
-            if expected_path in actual_paths:
-                actual_costs = actual_paths[expected_path]
-                if expected_costs == actual_costs:
-                    exact_matches += 1
-        
-        path_match_score = exact_matches / total_expected if total_expected > 0 else 0.0
-        
-        return {
-            'exact_path_matches': exact_matches,
-            'total_expected_paths': total_expected,
-            'path_match_score': path_match_score,
-            'exact_match': path_match_score == 1.0,
-            'expected_paths': {str(k): v for k, v in expected_paths.items()},
-            'actual_paths': {str(k): v for k, v in actual_paths.items()},
-            'number_match_score': path_match_score,  # For compatibility with existing code
-            'station_coverage': 1.0 if path_match_score > 0 else 0.0,  # For compatibility
-            'exact_number_matches': exact_matches,  # For compatibility with reporting
-            'total_expected_numbers': total_expected  # For compatibility with reporting
-        }
     
     def evaluate_centrality_answer(self, expected_answer: str, actual_answer: str) -> Dict[str, Any]:
         """Evaluate centrality-based answers with station: score format."""
@@ -356,7 +338,8 @@ class BenchmarkEvaluator:
         # Evaluate answer similarity
         answer_evaluation = self.evaluate_answer_similarity(
             expected['expected_answer'],
-            actual['final_result']
+            actual['final_result'],
+            expected['expected_tools']
         )
         
         # Calculate overall score
@@ -502,9 +485,7 @@ def main():
         description="GDS Agent Benchmark Evaluation Tool",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""Examples:
-  python evaluate_benchmark.py
-  python evaluate_benchmark.py
-  python evaluate_benchmark.py --questions my_custom_questions.csv"""
+  python evaluate_benchmark.py --questions path_questions_basic.csv"""
     )
     
     parser.add_argument(
