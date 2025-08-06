@@ -1,17 +1,90 @@
 question,expected_tools,expected_parameters,expected_answer
-"I want to run personalised article rank with damping factor 0.8 on Paddington and I want to know the scores for Paddington & Edgware Road.","[""mcp__gds-agent__get_node_properties_keys"", ""mcp__gds-agent__article_rank""]","{""article_rank"": {""dampingFactor"": 0.8, ""sourceNodes"": ""Paddington"", ""nodeIdentifierProperty"": ""name"", ""nodes"": [""Paddington"", ""Edgware Road""]}}","Paddington: 0.235157, Edgware Road (C): 0.054476, Edgware Road (B): 0.018275"
-"I want to know what are the articulation points in my graph?","[""mcp__gds-agent__get_node_properties_keys"", ""mcp__gds-agent__articulation_points""]","{""articulation_points"": {""nodeIdentifierProperty"": ""name""}}","[List of articulation point station names are: Westminster, Tower Hill]"
-"I want to know how many links exist towards Paddington station. Give the answer in the form Paddington:x.","[""mcp__gds-agent__get_node_properties_keys"", ""mcp__gds-agent__degree_centrality""]","{""degree_centrality"": {""nodeIdentifierProperty"": ""name"", ""orientation"": ""REVERSE""}}","Paddington: 6.0"
-"I want to run harmonic centrality and get the centrality scores for stations Paddington and Canada water. Answer should be given as  Station: score.","[""mcp__gds-agent__get_node_properties_keys"", ""mcp__gds-agent__harmonic_centrality""]","{""harmonic_centrality"": {""nodeIdentifierProperty"": ""name"", ""nodes"": [""Paddington"", ""Canada Water""]}}","Paddington: 0.011628, Canada Water: 0.003322"
-"I want to run betweenness centrality and get the centrality scores for Paddington and Canada water stations.  Answer should be given as Station: score.","[""mcp__gds-agent__get_node_properties_keys"", ""mcp__gds-agent__betweenness_centrality""]","{""betweenness_centrality"": {""nodeIdentifierProperty"": ""name"", ""nodes"": [""Paddington"", ""Canada Water""]}}","Paddington: 12.0, Canada Water: 8.0"
-"I want to count how many stations are part of a triangle. Give final answer in the format nodes: x. Do not emit anything else.","[""mcp__gds-agent__get_node_properties_keys"", ""mcp__gds-agent__triangle_count""]","{""triangle_count"": {""nodeIdentifierProperty"": ""name""}}","nodes: 29"
-"I want to run an algorithm that uses the Wasserman-Faust formula and get scores for stations Paddington and Canada water. Answer format should be as Station: score.","[""mcp__gds-agent__get_node_properties_keys"", ""mcp__gds-agent__closeness_centrality""]","{""closeness_centrality"": {""nodeIdentifierProperty"": ""name"", ""useWassermanFaust"": ""True"", ""nodes"": [""Paddington"", ""Canada Water""]}}","Paddington: 0.010631, Canada Water: 0.003322"
-"I want to run pagerank with source bias 1.0 for Paddington station and get score for Canada water. Answer format  should be Canada Water:answer.","[""mcp__gds-agent__get_node_properties_keys"", ""mcp__gds-agent__pagerank""]","{""pagerank"": {""nodeIdentifierProperty"": ""name"",  ""sourceNodes"": [[""Paddington"", 1.0]], ""nodes"": [""Canada Water""]}}","Canada Water: 0.21375"
-"i want to count the number of relationships that disconnect a graph. Give the answer as relationships:x. Do not emit anything else.","[""mcp__gds-agent__bridges""]","{""bridges"": {}}","relationships:136"
-"I want to run eigenvector and get score for Canada water. Answer format should be Canada Water:answer.","[""mcp__gds-agent__get_node_properties_keys"", ""mcp__gds-agent__eigenvector_centrality""]","{""eigenvector_centrality"": {""nodeIdentifierProperty"": ""name"", ""nodes"": [""Canada Water""]}}","Canada Water: 1.401512"
-"I want to know the weakly connected component of Paddington station.Reply strictly with Paddington:answer","[""mcp__gds-agent__get_node_properties_keys"",""mcp__gds-agent__weakly_connected_components""]","{""weakly_connected_components"":{""nodeIdentifierProperty"": ""name"", ""nodes"": [""Paddington""]}}","Paddington:0"
-"I want to know how many strongly connected components exist in my graph. Reply strictly with scc:answer.","[""mcp__gds-agent__strongly_connected_components""]","{""strongly_connected_components"":{}}","scc:301"
-"I want to know the core value of Paddington station. Reply strictly with Paddington:answer","[""mcp__gds-agent__k_core_decomposition""]","{""k_core_decomposition"":{""nodeIdentifierProperty"": ""name"", ""nodes"": [""Paddington""]}}","Paddington:3"
-"Ι want to know the community modularity scores using community property rail. Reply with community:score","[""mcp__gds-agent__get_node_properties_keys"", ""mcp__gds-agent__modularity_metric""]","{""modularity_metric"": { ""communityProperty"": ""rail""}}","0: -0.06268654905481816, 1: 0.023520347496906017"
-"Ι want to know the community conductance scores using community property rail. Reply with community:score","[""mcp__gds-agent__get_node_properties_keys"", ""mcp__gds-agent__conductance""]","{""conductance"": { ""communityProperty"": ""rail""}}","0:0.20797720797720798, 1: 0.6909090909090909"
+I want to run personalised article rank with damping factor 0.8 on Paddington and I want to know the scores for Paddington & Chorleywood.Give answer in the format station:answer.
+["mcp__gds-agent__article_rank"]
+{"article_rank": {"dampingFactor": 0.8, "sourceNodes": "Paddington", "nodeIdentifierProperty": "name", "nodes": ["Paddington", "Chorleywood"]}}
+Paddington: 0.2, Chorleywood: 0.0
+I want to know the number of articulation points. Reply strictly with 'points:answer'
+["mcp__gds-agent__articulation_points"]
+{"articulation_points":{}}
+points:142
+I want to know how many links exist towards Paddington station. Give the answer in the form Paddington:x.
+["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__degree_centrality"]
+{"degree_centrality": {"nodeIdentifierProperty": "name", "orientation": "REVERSE"}}
+Paddington: 6
+I want to run harmonic centrality and get the centrality scores for stations Paddington and Canada water. Answer should be given as  Station: score.
+["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__harmonic_centrality"]
+{"harmonic_centrality": {"nodeIdentifierProperty": "name", "nodes": ["Paddington", "Canada Water"]}}
+Paddington: 0.011628, Canada Water: 0.003322"
+I want to run betweenness centrality and get the centrality scores for Paddington and Canada water stations.  Answer should be given as Station: score.
+["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__betweenness_centrality"]
+{"betweenness_centrality": {"nodeIdentifierProperty": "name", "nodes": ["Paddington", "Canada Water"]}}
+Paddington: 12.0, Canada Water: 8.0
+I want to count how many stations are part of a triangle. Give final answer in the format nodes: x.
+["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__triangle_count"]
+{"triangle_count": {"nodeIdentifierProperty": "name"}}
+nodes: 29
+I want to run an algorithm that uses the Wasserman-Faust formula and get scores for stations Paddington and Canada water. Answer format should be as Station: score.
+["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__closeness_centrality"]
+{"closeness_centrality": {"nodeIdentifierProperty": "name", "useWassermanFaust": "True", "nodes": ["Paddington", "Canada Water"]}}
+Paddington: 0.010631, Canada Water: 0.003322
+I want to run pagerank with Paddington station  as source node and get score for Royal Oak. Answer format should be Royal Oak:answer and nothing else.
+["mcp__gds-agent__pagerank"]
+{"pagerank": {"nodeIdentifierProperty": "name",  "sourceNodes": "Paddington", "nodes": ["Royal Oak"]}}
+Royal Oak: 0.06375
+I want to count the number of relationships that disconnect a graph. Give the answer as relationships:x. Do not emit anything else.
+["mcp__gds-agent__bridges"]
+{"bridges": {}}
+relationships:136
+I want to run eigenvector and get score for Canada water. Answer format should be Canada Water:answer and nothing else.
+["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__eigenvector_centrality"]
+{"eigenvector_centrality": {"nodeIdentifierProperty": "name", "nodes": ["Canada Water"]}}
+Canada Water: 1.401512
+I want to know the weakly connected component of Paddington station.Reply only with Paddington:answer and nothing else.
+["mcp__gds-agent__weakly_connected_components"]
+{"weakly_connected_components":{"nodeIdentifierProperty": "name", "nodes": ["Paddington"]}}
+Paddington:0
+I want to know how many strongly connected components exist in my graph. Reply only with scc:answer and nothing else.
+["mcp__gds-agent__strongly_connected_components"]
+{"strongly_connected_components":{}}
+scc:301
+I want to know the core value for the Paddington station. Reply strictly with Paddington:answer and do not output anything else.
+["mcp__gds-agent__k_core_decomposition"]
+{"k_core_decomposition":{"nodeIdentifierProperty": "name", "nodes": ["Paddington"]}}
+Paddington:3
+I want to know the community modularity scores using community property rail. Reply only with community:score and nothing else. If the community is a number, write it as text e.g., 0 --> zero.
+["mcp__gds-agent__modularity_metric"]
+{"modularity_metric": { "communityProperty": "rail"}}
+zero: -0.06268654905481816, one: 0.023520347496906017
+I want to know the community conductance scores using community property rail. Reply only with community:score and nothing else. If the community is a number, write it as text e.g., 0 --> zero.
+["mcp__gds-agent__conductance"]
+{"conductance": { "communityProperty": "rail"}}
+zero:0.20797720797720798, one: 0.6909090909090909
+I want to run louvain for one iteration (and one level) using seed property rail and get the community of Paddington. Reply only with Paddington:answer and nothing else.
+["mcp__gds-agent__louvain"]
+{"louvain": { "maxIterations": 1, "maxLevels": 1, "seedProperty": "rail"}}
+Paddington: 0
+I want to run leiden for one iteration using seed property rail and get the community of Paddington. Reply only with Paddington:answer and nothing else.
+["mcp__gds-agent__leiden"]
+{"leiden": { "maxIterations": 1, "seedProperty": "rail"}}
+Paddington: 1
+I want to run modularity optimization for one iteration using seed property rail and get the community of Paddington. Reply only with Paddington:answer and nothing else.
+[ "mcp__gds-agent__modularity_optimization"]
+{"modularity_optimization": { "maxIterations": 1, "seedProperty": "rail"}}
+Paddington: 0
+I want to know how many colours do I need to color my graph. Run 20 iterations. Reply strictly with colours:answer"
+[ "mcp__gds-agent__k_1_coloring"]
+{"k_1_coloring" : { "maxIterations": 20}}
+colours: 4
+I want to cut the graph in two  disjoint  communities and get the community of Paddington. Run 1 iteration. Reply only with Paddington:answer and nothing else.
+[ "mcp__gds-agent__approximate_maximum_k_cut"]
+{"approximate_maximum_k_cut" : { "iterations": 1}}
+Paddington: 0
+I want to run label propagation for one iteration using seed property rail and get the community of Paddington. Reply only with Paddington:answer and nothing else.
+["mcp__gds-agent__label_propagation"]
+{"label_propagation": { "maxIterations": 1, "seedProperty": "rail"}}
+Paddington: 0
+I want to run SLLPA for one iteration and get the community of Paddington. Reply only with Paddington:answer and nothing else.
+["mcp__gds-agent__speaker_listener_label_propagation"]
+{"speaker_listener_label_propagation": { "maxIterations": 1}}
+Paddington: 58
 

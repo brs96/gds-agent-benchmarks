@@ -8,11 +8,14 @@ from the enhanced CSV file.
 """
 
 import json
-import csv
 import logging
 import re
+import argparse
 from pathlib import Path
 from typing import Dict, List, Any
+
+# Import the fine-grained path questions evaluator functions
+from path_questions_evaluation import evaluate_path_algorithm_output
 
 # Set up logging
 logging.basicConfig(
@@ -24,13 +27,30 @@ logger = logging.getLogger(__name__)
 
 class BenchmarkEvaluator:
     def __init__(self, 
-                 results_file: str = "benchmark_results.json",
-                 questions_file: str = "gds-algo-questions-basic.csv"):
-        self.results_file = Path(results_file)
+                 questions_file: str = "path_questions_basic.csv",
+                 results_file: str = None,
+                 evaluation_file: str = None):
         self.questions_file = Path(questions_file)
         
+        
+        # Auto-derive results file from questions file if not provided
+        if results_file is None:
+            # Convert x.csv to x_results.json
+            base_name = self.questions_file.stem
+            self.results_file = Path(f"{base_name}_results.json")
+        else:
+            self.results_file = Path(results_file)
+            
+        # Auto-derive evaluation file from questions file if not provided
+        if evaluation_file is None:
+            # Convert x.csv to x_evaluation.json
+            base_name = self.questions_file.stem
+            self.evaluation_file = Path(f"{base_name}_evaluation.json")
+        else:
+            self.evaluation_file = Path(evaluation_file)
+        
     def load_expected_results(self) -> Dict[str, Dict[str, Any]]:
-        """Load expected results from enhanced CSV file."""
+        """Load expected results from CSV file with new 4-lines-per-question format."""
         expected = {}
         
         if not self.questions_file.exists():
@@ -39,14 +59,46 @@ class BenchmarkEvaluator:
             
         try:
             with open(self.questions_file, 'r', encoding='utf-8') as file:
-                reader = csv.DictReader(file)
-                for row in reader:
-                    question = row['question'].strip()
-                    expected[question] = {
-                        'expected_tools': json.loads(row['expected_tools']),
-                        'expected_parameters': json.loads(row['expected_parameters']),
-                        'expected_answer': row['expected_answer'].strip()
-                    }
+                lines = [line.strip() for line in file.readlines() if line.strip()]
+                
+                if not lines:
+                    logger.error("Questions file is empty")
+                    return expected
+                
+                # Skip header line if present
+                start_idx = 0
+                if lines[0].lower().startswith(('question', 'expected_tools', 'expected_parameters', 'expected_answer')):
+                    start_idx = 1
+                
+                # Process lines in groups of 4: question, tools, parameters, answer
+                i = start_idx
+                while i + 3 < len(lines):
+                    # Line i: question (clean format - no quotes needed)
+                    question = lines[i].strip()
+                    
+                    # Line i+1: expected_tools (clean format - no quotes needed)
+                    tools_str = lines[i+1].strip()
+                    
+                    # Line i+2: expected_parameters (clean format - no quotes needed)
+                    params_str = lines[i+2].strip()
+                    
+                    # Line i+3: expected_answer (clean format - no quotes needed)
+                    answer = lines[i+3].strip()
+                    
+                    if question:
+                        try:
+                            expected[question] = {
+                                'expected_tools': json.loads(tools_str),
+                                'expected_parameters': json.loads(params_str),
+                                'expected_answer': answer
+                            }
+                        except json.JSONDecodeError as e:
+                            logger.warning(f"Failed to parse JSON for question: {question[:50]}...")
+                            logger.warning(f"Tools string: '{tools_str}'")
+                            logger.warning(f"Params string: '{params_str}'")
+                            logger.warning(f"JSON Error: {e}")
+                    
+                    i += 4  # Move to next question block
                     
         except Exception as e:
             logger.error(f"Error loading expected results: {e}")
@@ -140,8 +192,8 @@ class BenchmarkEvaluator:
             
             for param_key, expected_value in expected_tool_params.items():
                 actual_value = actual_params.get(param_key)
-                
-                if actual_value == expected_value:
+
+                if actual_value == expected_value or str(actual_value) == str(expected_value):
                     matches.append(param_key)
                 else:
                     mismatches.append({
@@ -159,8 +211,44 @@ class BenchmarkEvaluator:
             
         return parameter_scores
         
-    def evaluate_answer_similarity(self, expected_answer: str, actual_answer: str) -> Dict[str, Any]:
+    def evaluate_answer_similarity(self, expected_answer: str, actual_answer: str, expected_tools: List[str] = None) -> Dict[str, Any]:
         """Evaluate similarity between expected and actual answers."""
+        
+        # Check if this is a path questions file based on filename
+        if "path_questions" in str(self.questions_file) and expected_tools:
+            # Use fine-grained evaluation for path questions
+            result = evaluate_path_algorithm_output(str(expected_tools), expected_answer, actual_answer)
+            
+            # Convert to expected format for compatibility
+            if result.get('success'):
+                return {
+                    'exact_path_matches': 1,
+                    'total_expected_paths': 1,
+                    'path_match_score': 1.0,
+                    'exact_match': True,
+                    'number_match_score': 1.0,
+                    'station_coverage': 1.0,
+                    'exact_number_matches': 1,
+                    'total_expected_numbers': 1
+                }
+            else:
+                return {
+                    'exact_path_matches': 0,
+                    'total_expected_paths': 1,
+                    'path_match_score': 0.0,
+                    'exact_match': False,
+                    'number_match_score': 0.0,
+                    'station_coverage': 0.0,
+                    'exact_number_matches': 0,
+                    'total_expected_numbers': 1,
+                    'error': result.get('error', 'Evaluation failed')
+                }
+        else:
+            # Use existing centrality evaluation for centrality questions
+            return self.evaluate_centrality_answer(expected_answer, actual_answer)
+    
+    def evaluate_centrality_answer(self, expected_answer: str, actual_answer: str) -> Dict[str, Any]:
+        """Evaluate centrality-based answers with station: score format."""
         
         # Extract result scores more precisely - look for patterns like "Name: score"
         def extract_result_scores(text):
@@ -184,7 +272,8 @@ class BenchmarkEvaluator:
             
         expected_scores = extract_result_scores(expected_answer)
         actual_scores = extract_result_scores(actual_answer)
-        
+        print("answers:",expected_answer,", ", actual_answer)
+        print("scores:",expected_scores,", ", actual_scores)
         # Fallback to just score numbers if name matching fails
         expected_numbers = extract_score_numbers(expected_answer)
         actual_numbers = extract_score_numbers(actual_answer)
@@ -199,7 +288,9 @@ class BenchmarkEvaluator:
                 for actual_name, actual_score in actual_scores.items():
                     # Fuzzy name matching for stations like "Paddington" vs "paddington"
                     if expected_name in actual_name or actual_name in expected_name:
-                        if expected_score == actual_score:
+                        score_float = float(expected_score)
+                        actual_float = float(actual_score)
+                        if abs(actual_float-score_float) <=1e-5:
                             exact_score_matches += 1
                         break
         else:
@@ -250,7 +341,8 @@ class BenchmarkEvaluator:
         # Evaluate answer similarity
         answer_evaluation = self.evaluate_answer_similarity(
             expected['expected_answer'],
-            actual['final_result']
+            actual['final_result'],
+            expected['expected_tools']
         )
         
         # Calculate overall score
@@ -370,10 +462,18 @@ class BenchmarkEvaluator:
                         
             # Answer evaluation
             answer_eval = evaluation['answer_evaluation']
-            print(f"   💬 Answer: {answer_eval['exact_number_matches']}/{answer_eval['total_expected_numbers']} exact matches ({answer_eval['number_match_score']:.2%})")
-            if answer_eval.get('expected_scores') and answer_eval.get('actual_scores'):
-                print(f"      Expected: {answer_eval['expected_scores']}")
-                print(f"      Actual: {answer_eval['actual_scores']}")
+            if "path_questions" in str(self.questions_file):
+                # Path-specific reporting
+                print(f"   💬 Answer: {answer_eval['exact_path_matches']}/{answer_eval['total_expected_paths']} exact path matches ({answer_eval['path_match_score']:.2%})")
+                if answer_eval.get('expected_paths') and answer_eval.get('actual_paths'):
+                    print(f"      Expected paths: {list(answer_eval['expected_paths'].keys())}")
+                    print(f"      Actual paths: {list(answer_eval['actual_paths'].keys())}")
+            else:
+                # Centrality-specific reporting
+                print(f"   💬 Answer: {answer_eval['exact_number_matches']}/{answer_eval['total_expected_numbers']} exact matches ({answer_eval['number_match_score']:.2%})")
+                if answer_eval.get('expected_scores') and answer_eval.get('actual_scores'):
+                    print(f"      Expected: {answer_eval['expected_scores']}")
+                    print(f"      Actual: {answer_eval['actual_scores']}")
             
             # Metadata
             metadata = evaluation['metadata']
@@ -384,20 +484,53 @@ class BenchmarkEvaluator:
 
 def main():
     """Main entry point."""
+    parser = argparse.ArgumentParser(
+        description="GDS Agent Benchmark Evaluation Tool",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""Examples:
+  python evaluate_benchmark.py --questions path_questions_basic.csv"""
+    )
+    
+    parser.add_argument(
+        "--questions", "-q",
+        default="path_questions_basic.csv",
+        help="Path to the questions CSV file (default: path_questions_basic.csv)"
+    )
+    
+    args = parser.parse_args()
+    
     print("GDS Agent Benchmark Evaluation Tool")
     print("="*50)
     
-    evaluator = BenchmarkEvaluator()
+    # Check if questions file exists
+    if not Path(args.questions).exists():
+        print(f"❌ Questions file '{args.questions}' not found")
+        return 1
+    
+    evaluator = BenchmarkEvaluator(
+        questions_file=args.questions
+    )
+    
+    print(f"Questions file: {evaluator.questions_file}")
+    print(f"Results file: {evaluator.results_file}")
+    print(f"Evaluation output: {evaluator.evaluation_file}")
+    
+    # Check if results file exists
+    if not evaluator.results_file.exists():
+        print(f"❌ Results file '{evaluator.results_file}' not found")
+        return 1
+    
+    print("✅ Setup looks good!")
+    print("")
     
     try:
         results = evaluator.run_evaluation()
         evaluator.print_evaluation_report(results)
         
-        # Save detailed results
-        output_file = "evaluation_results.json"
-        with open(output_file, 'w') as f:
+        # Save detailed results to the auto-generated file
+        with open(evaluator.evaluation_file, 'w') as f:
             json.dump(results, f, indent=2)
-        print(f"\n💾 Detailed results saved to: {output_file}")
+        print(f"\n💾 Detailed results saved to: {evaluator.evaluation_file}")
         
     except Exception as e:
         logger.error(f"Evaluation failed: {e}")
