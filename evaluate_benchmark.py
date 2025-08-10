@@ -145,21 +145,35 @@ class BenchmarkEvaluator:
         missing_tools = [tool for tool in expected_tools if tool not in actual_tool_names]
         unexpected_tools = [tool for tool in actual_tool_names if tool not in expected_tools]
         
-        # Calculate precision and recall
+        # Calculate precision (only unexpected tools), recall, and call efficiency
         if len(expected_tools) == 0:
             precision = 1.0 if len(actual_tool_names) == 0 else 0.0
             recall = 1.0
+            call_efficiency = 1.0 if len(actual_tool_names) == 0 else 0.0
         else:
-            correct_tools = len([tool for tool in actual_tool_names if tool in expected_tools])
-            precision = correct_tools / len(actual_tool_names) if len(actual_tool_names) > 0 else 0.0
-            recall = correct_tools / len(expected_tools)
+            # Count unique expected tools that were actually called (for recall)
+            unique_correct_tools = len(set(expected_tools).intersection(set(actual_tool_names)))
+            
+            # New precision: only measures unexpected tools (not redundant calls)
+            unique_actual_tools = len(set(actual_tool_names))
+            unique_unexpected_tools = len(set(actual_tool_names) - set(expected_tools))
+            precision = 1.0 - (unique_unexpected_tools / unique_actual_tools) if unique_actual_tools > 0 else 1.0
+            
+            # Recall: what fraction of expected tools were called
+            recall = unique_correct_tools / len(set(expected_tools))
+            
+            # Call efficiency: penalizes redundant calls (how efficiently were the correct tools called)
+            total_actual_calls = len(actual_tool_names)
+            call_efficiency = unique_correct_tools / total_actual_calls if total_actual_calls > 0 else 1.0
         
+        # Standard F1 score for precision/recall
         f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
         
         return {
-            'precision': precision,
-            'recall': recall,
-            'f1_score': f1_score,
+            'precision': precision,  # Now only measures unexpected tools
+            'recall': recall,        # Measures missing expected tools  
+            'f1_score': f1_score,    # Standard F1 for precision/recall
+            'call_efficiency': call_efficiency,  # Measures redundant repeated calls
             'missing_tools': missing_tools,
             'unexpected_tools': unexpected_tools,
             'exact_match': len(missing_tools) == 0 and len(unexpected_tools) == 0
