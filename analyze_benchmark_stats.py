@@ -117,21 +117,24 @@ def create_visualizations(results, question_results, stats, evaluations):
     
     # Set up the plotting style
     plt.style.use('default')
-    fig = plt.figure(figsize=(20, 24))
     
-    # 1. Overall Performance Distribution
-    ax1 = plt.subplot(4, 3, 1)
-    plt.hist(results['overall_scores'], bins=20, alpha=0.7, edgecolor='black')
-    plt.axvline(stats['overall_scores']['mean'], color='red', linestyle='--', 
-                label=f'Mean: {stats["overall_scores"]["mean"]:.3f}')
-    plt.xlabel('Overall Score')
+    # Chart 1: F1 Score Distribution
+    plt.figure(figsize=(10, 6))
+    plt.hist(results['tool_f1'], bins=20, alpha=0.7, edgecolor='black', color='orange')
+    plt.axvline(stats['tool_f1']['mean'], color='red', linestyle='--', 
+                label=f'Mean: {stats["tool_f1"]["mean"]:.3f}')
+    plt.xlabel('F1 Score')
     plt.ylabel('Frequency')
-    plt.title('Distribution of Overall Scores')
+    plt.title('Distribution of F1 Scores')
     plt.legend()
     plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig('f1_score_distribution.png', dpi=300, bbox_inches='tight')
+    plt.close()
+    print("Chart 1 saved as 'f1_score_distribution.png'")
     
-    # 2. Tool Evaluation Metrics - Custom Mean/Min/Max Plot
-    ax2 = plt.subplot(4, 3, 2)
+    # Chart 2: Tool Evaluation Metrics - Custom Mean/Min/Max Plot
+    plt.figure(figsize=(12, 6))
     tool_metrics = ['tool_precision', 'tool_recall', 'tool_f1', 'call_efficiency']
     colors = ['skyblue', 'lightgreen', 'orange', 'lightcoral']
     
@@ -142,93 +145,46 @@ def create_visualizations(results, question_results, stats, evaluations):
     mins = [stats[metric]['min'] for metric in tool_metrics]
     maxs = [stats[metric]['max'] for metric in tool_metrics]
     
-    # Create custom error bars from min to max
-    lower_errors = [mean - min_val for mean, min_val in zip(means, mins)]
-    upper_errors = [max_val - mean for mean, max_val in zip(means, maxs)]
-    
-    # Plot mean with custom error bars showing full range
-    bars = plt.errorbar(x_pos, means, 
-                       yerr=[lower_errors, upper_errors],
-                       fmt='o', capsize=8, capthick=2, markersize=8,
-                       elinewidth=2, alpha=0.8)
-    
-    # Color each point and error bar differently
+    # Draw clean lines for min, mean, max for each metric
     for i, (color, x, mean_val, min_val, max_val) in enumerate(zip(colors, x_pos, means, mins, maxs)):
-        plt.plot(x, mean_val, 'o', color=color, markersize=10, alpha=0.8, markeredgecolor='black', markeredgewidth=1)
-        plt.plot([x, x], [min_val, max_val], '-', color=color, linewidth=3, alpha=0.6)
-        plt.plot(x, min_val, '_', color=color, markersize=12, markeredgewidth=2)
-        plt.plot(x, max_val, '_', color=color, markersize=12, markeredgewidth=2)
+        # Vertical line from min to max
+        plt.plot([x, x], [min_val, max_val], '-', color=color, linewidth=2, alpha=0.7)
         
-        # Add value labels
-        plt.text(x, mean_val + 0.03, f'{mean_val:.3f}', ha='center', va='bottom', fontsize=8, fontweight='bold')
-        plt.text(x - 0.15, min_val, f'{min_val:.2f}', ha='center', va='center', fontsize=7, color='darkred')
-        plt.text(x + 0.15, max_val, f'{max_val:.2f}', ha='center', va='center', fontsize=7, color='darkgreen')
+        # Smaller, cleaner horizontal lines for min, mean, max - matching vertical line color
+        line_width = 0.15  # Smaller width for horizontal lines
+        plt.plot([x - line_width, x + line_width], [min_val, min_val], '-', color=color, linewidth=2, alpha=1.0)
+        plt.plot([x - line_width, x + line_width], [mean_val, mean_val], '-', color=color, linewidth=2, alpha=1.0)
+        plt.plot([x - line_width, x + line_width], [max_val, max_val], '-', color=color, linewidth=2, alpha=1.0)
+        
+        # Add consistent value labels with same font size - all on the right, closer to lines
+        label_fontsize = 9
+        label_offset = 0.18  # Closer to the lines
+        
+        # Special handling for Recall (index 1) to avoid overlap between mean and max
+        if i == 1 and abs(mean_val - max_val) < 0.05:  # If mean and max are too close in Recall
+            mean_offset = -0.02  # Move mean label up slightly, but not too much
+        else:
+            mean_offset = 0
+        
+        plt.text(x + label_offset, mean_val + mean_offset, f'{mean_val:.3f}', ha='left', va='center', fontsize=label_fontsize, color='black')
+        plt.text(x + label_offset, min_val, f'{min_val:.2f}', ha='left', va='center', fontsize=label_fontsize, color='black')
+        plt.text(x + label_offset, max_val, f'{max_val:.2f}', ha='left', va='center', fontsize=label_fontsize, color='black')
     
-    plt.xlabel('Tool Metrics')
+    plt.xlabel('Metrics')
     plt.ylabel('Score')
-    plt.title('Tool Evaluation Metrics (Mean, Min, Max)')
+    plt.title('Benchmark Evaluation Metrics (Mean, Min, Max)')
     plt.xticks(x_pos, ['Precision', 'Recall', 'F1-Score', 'Call Eff'])
     plt.ylim(0, 1.05)
     plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig('tool_metrics.png', dpi=300, bbox_inches='tight')
+    plt.close()
+    print("Chart 2 saved as 'tool_metrics.png'")
     
-    # 3. Performance by Dataset
-    ax3 = plt.subplot(4, 3, 3)
-    df = pd.DataFrame(question_results)
-    dataset_stats = df.groupby('dataset')['overall_score'].agg(['mean', 'std', 'count']).reset_index()
-    
-    bars = plt.bar(dataset_stats['dataset'], dataset_stats['mean'], 
-                   yerr=dataset_stats['std'], capsize=5, alpha=0.7, edgecolor='black')
-    plt.xlabel('Dataset')
-    plt.ylabel('Mean Overall Score')
-    plt.title('Performance by Dataset')
-    plt.xticks(rotation=45)
-    plt.grid(True, alpha=0.3)
-    
-    # Add count labels on bars
-    for bar, count in zip(bars, dataset_stats['count']):
-        plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.02,
-                f'n={count}', ha='center', va='bottom')
-    
-    # 4. Precision vs Recall Scatter
-    ax4 = plt.subplot(4, 3, 4)
-    datasets = list(set(results['datasets']))
-    colors = plt.cm.Set3(np.linspace(0, 1, len(datasets)))
-    
-    for i, dataset in enumerate(datasets):
-        mask = np.array(results['datasets']) == dataset
-        plt.scatter(np.array(results['tool_precision'])[mask], 
-                   np.array(results['tool_recall'])[mask],
-                   c=[colors[i]], label=dataset, alpha=0.7, s=50)
-    
-    plt.xlabel('Tool Precision')
-    plt.ylabel('Tool Recall')
-    plt.title('Precision vs Recall by Dataset')
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.xlim(-0.1, 1.1)
-    plt.ylim(-0.1, 1.1)
-    
-    # Add diagonal line for reference
-    plt.plot([0, 1], [0, 1], 'k--', alpha=0.3)
-    
-    # 5. Performance vs Complexity (num_turns)
-    ax5 = plt.subplot(4, 3, 5)
-    plt.scatter(results['num_turns'], results['overall_scores'], alpha=0.6)
-    
-    # Add trend line
-    z = np.polyfit(results['num_turns'], results['overall_scores'], 1)
-    p = np.poly1d(z)
-    plt.plot(sorted(results['num_turns']), p(sorted(results['num_turns'])), "r--", alpha=0.8)
-    
-    plt.xlabel('Number of Turns')
-    plt.ylabel('Overall Score')
-    plt.title('Performance vs Complexity')
-    plt.grid(True, alpha=0.3)
-    
-    # 6. Duration Analysis
-    ax6 = plt.subplot(4, 3, 6)
+    # Chart 3: Duration Analysis
+    plt.figure(figsize=(10, 6))
     duration_seconds = [d/1000 for d in results['duration_ms']]
-    plt.hist(duration_seconds, bins=20, alpha=0.7, edgecolor='black')
+    plt.hist(duration_seconds, bins=20, alpha=0.7, edgecolor='black', color='lightblue')
     plt.axvline(np.mean(duration_seconds), color='red', linestyle='--', 
                 label=f'Mean: {np.mean(duration_seconds):.1f}s')
     plt.xlabel('Duration (seconds)')
@@ -236,101 +192,37 @@ def create_visualizations(results, question_results, stats, evaluations):
     plt.title('Task Duration Distribution')
     plt.legend()
     plt.grid(True, alpha=0.3)
-    
-    # 7. Success Rate by Score Threshold
-    ax7 = plt.subplot(4, 3, 7)
-    thresholds = np.arange(0, 1.1, 0.1)
-    success_rates = []
-    
-    for threshold in thresholds:
-        success_rate = np.mean([score >= threshold for score in results['overall_scores']])
-        success_rates.append(success_rate * 100)
-    
-    plt.plot(thresholds, success_rates, 'b-o', linewidth=2, markersize=6)
-    plt.xlabel('Score Threshold')
-    plt.ylabel('Success Rate (%)')
-    plt.title('Success Rate by Score Threshold')
-    plt.grid(True, alpha=0.3)
-    plt.xlim(0, 1)
-    plt.ylim(0, 105)
-    
-    # 8. Box plot of key metrics
-    ax8 = plt.subplot(4, 3, 8)
-    key_metrics = [results['overall_scores'], results['tool_precision'], 
-                   results['tool_recall'], results['tool_f1'], results['call_efficiency']]
-    labels = ['Overall', 'Precision', 'Recall', 'F1', 'Call Eff']
-    
-    plt.boxplot(key_metrics, tick_labels=labels)
-    plt.ylabel('Score')
-    plt.title('Distribution of Key Metrics')
-    plt.grid(True, alpha=0.3)
-    
-    # 9. Parameter vs Answer Performance
-    ax9 = plt.subplot(4, 3, 9)
-    plt.scatter(results['parameter_scores'], results['answer_scores'], alpha=0.6)
-    
-    # Add trend line
-    valid_indices = [(i, j) for i, j in zip(results['parameter_scores'], results['answer_scores']) 
-                     if not (np.isnan(i) or np.isnan(j))]
-    if valid_indices:
-        param_vals, answer_vals = zip(*valid_indices)
-        z = np.polyfit(param_vals, answer_vals, 1)
-        p = np.poly1d(z)
-        plt.plot(sorted(param_vals), p(sorted(param_vals)), "r--", alpha=0.8)
-    
-    plt.xlabel('Parameter Score')
-    plt.ylabel('Answer Score')
-    plt.title('Parameter vs Answer Performance')
-    plt.grid(True, alpha=0.3)
-    
-    # 10. Top Performing Questions
-    ax10 = plt.subplot(4, 3, 10)
-    df_sorted = df.sort_values('overall_score', ascending=False)
-    top_10 = df_sorted.head(10)
-    
-    bars = plt.barh(range(len(top_10)), top_10['overall_score'])
-    plt.yticks(range(len(top_10)), [q[:30] + "..." for q in top_10['question']])
-    plt.xlabel('Overall Score')
-    plt.title('Top 10 Performing Questions')
-    plt.grid(True, alpha=0.3)
-    
-    # Add score labels
-    for i, (bar, score) in enumerate(zip(bars, top_10['overall_score'])):
-        plt.text(bar.get_width() + 0.01, bar.get_y() + bar.get_height()/2,
-                f'{score:.3f}', va='center')
-    
-    # 11. Summary Statistics Table
-    ax11 = plt.subplot(4, 3, 11)
-    ax11.axis('tight')
-    ax11.axis('off')
-    
-    summary_data = []
-    for metric, stat in stats.items():
-        if metric in ['overall_scores', 'tool_precision', 'tool_recall', 'tool_f1', 'call_efficiency']:
-            summary_data.append([
-                metric.replace('_', ' ').title(),
-                f"{stat['mean']:.3f}",
-                f"{stat['std']:.3f}",
-                f"{stat['median']:.3f}",
-                f"{stat['min']:.3f}",
-                f"{stat['max']:.3f}",
-                f"{stat['count']}"
-            ])
-    
-    table = plt.table(cellText=summary_data,
-                     colLabels=['Metric', 'Mean', 'Std', 'Median', 'Min', 'Max', 'Count'],
-                     cellLoc='center',
-                     loc='center')
-    table.auto_set_font_size(False)
-    table.set_fontsize(9)
-    table.scale(1.2, 1.5)
-    plt.title('Summary Statistics', pad=20)
-    
     plt.tight_layout()
-    plt.savefig('benchmark_statistics.png', dpi=300, bbox_inches='tight')
-    print("Visualization saved as 'benchmark_statistics.png'")
+    plt.savefig('duration_distribution.png', dpi=300, bbox_inches='tight')
+    plt.close()
+    print("Chart 3 saved as 'duration_distribution.png'")
     
-    return fig
+    # Chart 4: Number of Turns Distribution
+    plt.figure(figsize=(10, 6))
+    
+    # Create bins aligned with integer values
+    min_turns = min(results['num_turns'])
+    max_turns = max(results['num_turns'])
+    bins = np.arange(min_turns - 0.5, max_turns + 1.5, 1)  # Bins centered on integers
+    
+    plt.hist(results['num_turns'], bins=bins, alpha=0.7, edgecolor='black', color='lightgreen')
+    plt.axvline(stats['num_turns']['mean'], color='red', linestyle='--', 
+                label=f'Mean: {stats["num_turns"]["mean"]:.1f} turns')
+    plt.xlabel('Number of Turns')
+    plt.ylabel('Frequency')
+    plt.title('Distribution of Number of Turns')
+    
+    # Set x-axis ticks to integer values
+    plt.xticks(range(min_turns, max_turns + 1))
+    
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig('turns_distribution.png', dpi=300, bbox_inches='tight')
+    plt.close()
+    print("Chart 4 saved as 'turns_distribution.png'")
+    
+    print("All charts saved successfully!")
 
 
 def print_detailed_stats(stats, evaluations):
@@ -386,7 +278,7 @@ def main():
     stats = calculate_summary_stats(results)
     
     print("Creating visualizations...")
-    fig = create_visualizations(results, question_results, stats, evaluations)
+    create_visualizations(results, question_results, stats, evaluations)
     
     print_detailed_stats(stats, evaluations)
     
@@ -396,7 +288,6 @@ def main():
     print(f"\nDetailed results saved to 'detailed_question_results.csv'")
     
     print("\nAnalysis complete!")
-    plt.show()
 
 
 if __name__ == "__main__":
