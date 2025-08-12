@@ -1,5 +1,5 @@
 question,expected_tools,expected_parameters,expected_answer
-I want to run personalised article rank with damping factor 0.8 on Paddington and I want to know the scores for Paddington & Chorleywood.Give answer in the format station:answer.
+I want to run personalised article rank with damping factor 0.8 on Paddington and I want to know the scores for Paddington & Chorleywood.Give answer in the format station:answer. Separate the stations' result with a comma.
 ["mcp__gds-agent__article_rank"]
 {"article_rank": {"dampingFactor": 0.8, "sourceNodes": "Paddington", "nodeIdentifierProperty": "name", "nodes": ["Paddington", "Chorleywood"]}}
 Paddington: 0.2, Chorleywood: 0.0
@@ -7,31 +7,31 @@ I want to know the number of articulation points. Reply strictly with 'points:an
 ["mcp__gds-agent__articulation_points"]
 {"articulation_points":{}}
 points:142
-I want to know how many links exist towards Paddington station. Give the answer in the form Paddington:x.
+I want to run Degree Centrality with reverse orientation and get the centrality of Farringdon station. Give the answer in the form Farringdon:x.
 ["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__degree_centrality"]
 {"degree_centrality": {"nodeIdentifierProperty": "name", "orientation": "REVERSE"}}
-Paddington: 6
-I want to run harmonic centrality and get the centrality scores for stations Paddington and Canada water. Answer should be given as  Station: score.
+Farringdon: 3
+I want to run harmonic centrality and get the centrality scores for stations Westminster and Waterloo. Answer should be given as  Station: score.Separate the stations' result with a comma.
 ["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__harmonic_centrality"]
-{"harmonic_centrality": {"nodeIdentifierProperty": "name", "nodes": ["Paddington", "Canada Water"]}}
-Paddington: 0.011628, Canada Water: 0.003322"
-I want to run betweenness centrality and get the centrality scores for Paddington and Canada water stations.  Answer should be given as Station: score.
+{"harmonic_centrality": {"nodeIdentifierProperty": "name", "nodes": ["Westminster", "Waterloo"]}}
+Westminster: 0.028239, Waterloo: 0.023809
+I want to run closeness centrality with the Wasserman-Faust formula and get scores for stations Westminster and Waterloo. Answer format should be as Station: score.Separate the stations' result with a comma.
+["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__closeness_centrality"]
+{"closeness_centrality": {"nodeIdentifierProperty": "name", "useWassermanFaust": "True", "nodes": ["Westminster", "Waterloo"]}}
+Westminster: 0.022651, Waterloo: 0.019542
+I want to run betweenness centrality and get the centrality scores for Westminster and Waterloo.  Answer should be given as Station: score.Separate the stations' result with a comma.
 ["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__betweenness_centrality"]
-{"betweenness_centrality": {"nodeIdentifierProperty": "name", "nodes": ["Paddington", "Canada Water"]}}
-Paddington: 12.0, Canada Water: 8.0
+{"betweenness_centrality": {"nodeIdentifierProperty": "name", "nodes": ["Westminster", "Waterloo"]}}
+Westminster: 0.0, Waterloo: 8.0
 I want to count how many stations are part of a triangle. Give final answer in the format nodes: x.
 ["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__triangle_count"]
 {"triangle_count": {"nodeIdentifierProperty": "name"}}
 nodes: 29
-I want to run an algorithm that uses the Wasserman-Faust formula and get scores for stations Paddington and Canada water. Answer format should be as Station: score.
-["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__closeness_centrality"]
-{"closeness_centrality": {"nodeIdentifierProperty": "name", "useWassermanFaust": "True", "nodes": ["Paddington", "Canada Water"]}}
-Paddington: 0.010631, Canada Water: 0.003322
 I want to run pagerank with Paddington station  as source node and get score for Royal Oak. Answer format should be Royal Oak:answer and nothing else.
 ["mcp__gds-agent__pagerank"]
 {"pagerank": {"nodeIdentifierProperty": "name",  "sourceNodes": "Paddington", "nodes": ["Royal Oak"]}}
 Royal Oak: 0.06375
-I want to count the number of relationships that disconnect a graph. Give the answer as relationships:x. Do not emit anything else.
+I want to run bridges to find out the number of relationships that disconnect the graph. Give the answer as relationships:x. Do not emit anything else.
 ["mcp__gds-agent__bridges"]
 {"bridges": {}}
 relationships:136
@@ -39,18 +39,18 @@ I want to run eigenvector and get score for Canada water. Answer format should b
 ["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__eigenvector_centrality"]
 {"eigenvector_centrality": {"nodeIdentifierProperty": "name", "nodes": ["Canada Water"]}}
 Canada Water: 1.401512
-I want to know the weakly connected component of Paddington station.Reply only with Paddington:answer and nothing else.
+I want to know to run the weakly connected components algorithm and get the component of Bond Street. Reply only with Bond Street:answer and nothing else.
 ["mcp__gds-agent__weakly_connected_components"]
-{"weakly_connected_components":{"nodeIdentifierProperty": "name", "nodes": ["Paddington"]}}
-Paddington:0
+{"weakly_connected_components":{"nodeIdentifierProperty": "name", "nodes": ["Bond Street"]}}
+Bond Street:0
 I want to know how many strongly connected components exist in my graph. Reply only with scc:answer and nothing else.
 ["mcp__gds-agent__strongly_connected_components"]
 {"strongly_connected_components":{}}
 scc:301
-I want to know the core value for the Paddington station. Reply strictly with Paddington:answer and do not output anything else.
+I want to run k-core decomposition and get the core value for the Stockwell station. Reply strictly with Stockwell:answer and do not output anything else.
 ["mcp__gds-agent__k_core_decomposition"]
-{"k_core_decomposition":{"nodeIdentifierProperty": "name", "nodes": ["Paddington"]}}
-Paddington:3
+{"k_core_decomposition":{"nodeIdentifierProperty": "name", "nodes": ["Stockwell"]}}
+Stockwell:2
 I want to know the community modularity scores using community property rail. Reply only with community:score and nothing else. If the community is a number, write it as text e.g., 0 --> zero.
 ["mcp__gds-agent__modularity_metric"]
 {"modularity_metric": { "communityProperty": "rail"}}
@@ -67,24 +67,24 @@ I want to run leiden for one iteration using seed property rail and get the comm
 ["mcp__gds-agent__leiden"]
 {"leiden": { "maxIterations": 1, "seedProperty": "rail"}}
 Paddington: 1
-I want to run modularity optimization for one iteration using seed property rail and get the community of Paddington. Reply only with Paddington:answer and nothing else.
+I want to run modularity optimization for one iteration using seed property rail and get the community of Redbridge. Reply only with Redbridge:answer and nothing else.
 [ "mcp__gds-agent__modularity_optimization"]
 {"modularity_optimization": { "maxIterations": 1, "seedProperty": "rail"}}
-Paddington: 0
-I want to know how many colours do I need to color my graph. Run 20 iterations. Reply strictly with colours:answer"
+Redbridge: 0
+I want to run (k-1) coloring algorithm and find out how many colours do I need to color my graph. Run 20 iterations. Reply strictly with colours:answer"
 [ "mcp__gds-agent__k_1_coloring"]
 {"k_1_coloring" : { "maxIterations": 20}}
 colours: 4
-I want to cut the graph in two  disjoint  communities and get the community of Paddington. Run 1 iteration. Reply only with Paddington:answer and nothing else.
-[ "mcp__gds-agent__approximate_maximum_k_cut"]
-{"approximate_maximum_k_cut" : { "iterations": 1}}
-Paddington: 0
-I want to run label propagation for one iteration using seed property rail and get the community of Paddington. Reply only with Paddington:answer and nothing else.
+I want to run label propagation for one iteration using seed property rail and get the community of Kennington. Reply only with Kennington:answer and nothing else.
 ["mcp__gds-agent__label_propagation"]
 {"label_propagation": { "maxIterations": 1, "seedProperty": "rail"}}
-Paddington: 0
-I want to run SLLPA for one iteration and get the community of Paddington. Reply only with Paddington:answer and nothing else.
+Kennington: 0
+I want to run SLLPA for one iteration and get the community of Kennington. Reply only with Kennington:answer and nothing else.
 ["mcp__gds-agent__speaker_listener_label_propagation"]
 {"speaker_listener_label_propagation": { "maxIterations": 1}}
-Paddington: 58
-
+Kennington: 161
+I want to run the approximate maximum k cut algorithm and separate the graph in ten disjoint communities. Run 1 iteration. Ι want to know if Kew Gardens
+and Kingsbury are in the same component. Reply with answer:1 if so and answer:0 otherwise. Do not reply with anything else.
+[ "mcp__gds-agent__approximate_maximum_k_cut"]
+{"approximate_maximum_k_cut" : { "iterations": 1, "k": 10}}
+answer: 0
