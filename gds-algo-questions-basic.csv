@@ -79,7 +79,7 @@ I want to run label propagation for one iteration using seed property rail and g
 ["mcp__gds-agent__label_propagation"]
 {"label_propagation": { "maxIterations": 1, "seedProperty": "rail"}}
 Kennington: 0
-I want to run SLLPA for one iteration and get the community of Kennington. Reply only with Kennington:answer and nothing else.
+I want to run SLLPA for one iteration and get the community of Kennington. Reply only with Kennington:answer and nothing else. If the answer contains "[" or "]" remove them.
 ["mcp__gds-agent__speaker_listener_label_propagation"]
 {"speaker_listener_label_propagation": { "maxIterations": 1}}
 Kennington: 161
