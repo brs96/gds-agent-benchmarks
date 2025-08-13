@@ -83,8 +83,3 @@ I want to run SLLPA for one iteration and get the community of Kennington. Reply
 ["mcp__gds-agent__speaker_listener_label_propagation"]
 {"speaker_listener_label_propagation": { "maxIterations": 1}}
 Kennington: 161
-I want to run the approximate maximum k cut algorithm and separate the graph in ten disjoint communities. Run 1 iteration. Ι want to know if Kew Gardens
-and Kingsbury are in the same component. Reply with answer:1 if so and answer:0 otherwise. Do not reply with anything else.
-[ "mcp__gds-agent__approximate_maximum_k_cut"]
-{"approximate_maximum_k_cut" : { "iterations": 1, "k": 10}}
-answer: 0
