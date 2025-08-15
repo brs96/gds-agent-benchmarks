@@ -87,7 +87,11 @@ I want to run node similarity and find the 35th most similar station pair. Retur
 ["mcp__gds-agent__node_similarity", "mcp__gds-agent__get_node_properties_keys"]
 {"node_similarity" : {"topN": 35, "nodeIdentifierProperty": "name"} }
 Aldgate Aldgate East: 0.666667
-I want to run filtered node similarity and find the two most similar stations to Sloane Square from available stations Knightsbridge, Acton Town, Green Park, and Pimlico. Return results as station: similarity. Separate answers with a common. Do not write anything else.
+I want to run node similarity and find the two most similar stations to Sloane Square from available stations Knightsbridge, Acton Town, Green Park, and Pimlico. Return results as station: similarity. Separate answers with a common. Do not write anything else.
 ["mcp__gds-agent__filtered_node_similarity", "mcp__gds-agent__get_node_properties_keys"]
-{"filtered_node_similarity" : {"topK": 2, "nodeIdentifierProperty": "name", "sourceNodeFilter": ["Sloane Square"], "targetNodeFilter": ["Knightsbridge","Acton Town", "Green Park", "Pimlico"]} }
+{"node_similarity" : {"topK": 2, "nodeIdentifierProperty": "name", "sourceNodeFilter": ["Sloane Square"], "targetNodeFilter": ["Knightsbridge","Acton Town", "Green Park", "Pimlico"]} }
 Knightsbridge: 0.5, Pimlico: 0.333333
+I want to run filtered knn and find the two most similar stations to Amersham from available stations Northwood, North Harrow, Chesham, and Pinner based on properties latitude, and longitude. Return results as station: similarity. Separate answers with a common. Do not write anything else.
+["mcp__gds-agent__filtered_k_nearest_neighbors", "mcp__gds-agent__get_node_properties_keys"]
+{"k_nearest_neighbors" : {"topK": 2, "nodeIdentifierProperty": "name", "sourceNodeFilter": ["Amersham"], "targetNodeFilter": ["Northwood", "North Harrow", "Chesham", "Pinner"], "nodeProperties": ["latitude", "longitude"]} }
+Chesham: 0.982691, Northwood: 0.893242
