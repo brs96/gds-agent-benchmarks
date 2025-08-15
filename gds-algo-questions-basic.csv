@@ -83,3 +83,11 @@ I want to run SLLPA for one iteration and get the community of Kennington. Reply
 ["mcp__gds-agent__speaker_listener_label_propagation"]
 {"speaker_listener_label_propagation": { "maxIterations": 1}}
 Kennington: 161
+I want to run node similarity and find the 35th most similar station pair. Return each pair in the following format "station1 station2: similarity". Sort the two stations lexicographically by their name. Do not return anything else.
+["mcp__gds-agent__node_similarity", "mcp__gds-agent__get_node_properties_keys"]
+{"node_similarity" : {"topN": 35, "nodeIdentifierProperty": "name"} }
+Aldgate Aldgate East: 0.666667
+I want to run filtered node similarity and find the two most similar stations to Sloane Square from available stations Knightsbridge, Acton Town, Green Park, and Pimlico. Return results as station: similarity. Separate answers with a common. Do not write anything else.
+["mcp__gds-agent__filtered_node_similarity", "mcp__gds-agent__get_node_properties_keys"]
+{"filtered_node_similarity" : {"topK": 2, "nodeIdentifierProperty": "name", "sourceNodeFilter": ["Sloane Square"], "targetNodeFilter": ["Knightsbridge","Acton Town", "Green Park", "Pimlico"]} }
+Knightsbridge: 0.5, Pimlico: 0.333333
