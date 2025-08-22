@@ -1,8 +1,8 @@
 question,expected_tools,expected_parameters,expected_answer
-I want to run personalised article rank with damping factor 0.8 on Paddington and I want to know the scores for Paddington & Chorleywood.Give answer in the format station:answer. Separate the stations' result with a comma.
+I want to run personalised article rank with damping factor 0.8 on Paddington and I want to know the scores for Paddington & Bayswater.Give answer in the format station:answer. Separate the stations' result with a comma.
 ["mcp__gds-agent__article_rank","mcp__gds-agent__get_node_properties_keys"]
-{"article_rank": {"dampingFactor": 0.8, "sourceNodes": "Paddington", "nodeIdentifierProperty": "name", "nodes": ["Paddington", "Chorleywood"]}}
-Paddington: 0.2, Chorleywood: 0.0
+{"article_rank": {"dampingFactor": 0.8, "sourceNodes": "Paddington", "nodeIdentifierProperty": "name", "nodes": ["Paddington", "Bayswater"]}}
+Paddington: 0.235156, Bayswater: 0.036966
 I want to know the number of articulation points. Reply strictly with 'points:answer'
 ["mcp__gds-agent__articulation_points"]
 {"articulation_points":{}}
@@ -10,19 +10,19 @@ points:142
 I want to run Degree Centrality with reverse orientation and get the centrality of Farringdon station. Give the answer in the form Farringdon:x.
 ["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__degree_centrality"]
 {"degree_centrality": {"nodeIdentifierProperty": "name", "orientation": "REVERSE"}}
-Farringdon: 3
+Farringdon: 6
 I want to run harmonic centrality and get the centrality scores for stations Westminster and Waterloo. Answer should be given as  Station: score.Separate the stations' result with a comma.
 ["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__harmonic_centrality"]
 {"harmonic_centrality": {"nodeIdentifierProperty": "name", "nodes": ["Westminster", "Waterloo"]}}
-Westminster: 0.028239, Waterloo: 0.023809
+Westminster: 0.162430, Waterloo: 0.166866
 I want to run closeness centrality with the Wasserman-Faust formula and get scores for stations Westminster and Waterloo. Answer format should be as Station: score.Separate the stations' result with a comma.
 ["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__closeness_centrality"]
 {"closeness_centrality": {"nodeIdentifierProperty": "name", "useWassermanFaust": "True", "nodes": ["Westminster", "Waterloo"]}}
-Westminster: 0.022651, Waterloo: 0.019542
+Westminster: 0.112734, Waterloo: 0.110784
 I want to run betweenness centrality and get the centrality scores for Westminster and Waterloo.  Answer should be given as Station: score.Separate the stations' result with a comma.
 ["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__betweenness_centrality"]
 {"betweenness_centrality": {"nodeIdentifierProperty": "name", "nodes": ["Westminster", "Waterloo"]}}
-Westminster: 0.0, Waterloo: 8.0
+westminster': '27013.589157, waterloo: 29947.939609
 I want to count how in how many triangles do the stations Hatton Cross, and Picadilly Circus participate. Give final answer in the format station: answer. Separate answers with comma. Do not output anything else.
 ["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__triangle_count"]
 {"triangle_count": {"nodeIdentifierProperty": "name", "nodes": ["Hatton Cross", "Picadilly Circus"]}}
@@ -30,39 +30,39 @@ Hatton Cross: 1, Picadilly Circus: 2
 I want to run pagerank with Paddington station  as source node and get score for Royal Oak. Answer format should be Royal Oak:answer and nothing else.
 ["mcp__gds-agent__pagerank", "mcp__gds-agent__get_node_properties_keys"]
 {"pagerank": {"nodeIdentifierProperty": "name",  "sourceNodes": "Paddington", "nodes": ["Royal Oak"]}}
-Royal Oak: 0.06375
+Royal Oak: 0.038735
 I want to run bridges to find out the number of relationships that disconnect the graph. Give the answer as relationships:x. Do not emit anything else.
 ["mcp__gds-agent__bridges"]
 {"bridges": {}}
-relationships:136
+relationships:0
 I want to run eigenvector and get score for Canada water. Answer format should be Canada Water:answer and nothing else.
 ["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__eigenvector_centrality"]
 {"eigenvector_centrality": {"nodeIdentifierProperty": "name", "nodes": ["Canada Water"]}}
-Canada Water: 1.401512
-I want to know to run the weakly connected components algorithm and get the component for the Bond Street station. Reply only with Bond Street:answer and nothing else.
-["mcp__gds-agent__weakly_connected_components", "mcp__gds-agent__get_node_properties_keys"]
-{"weakly_connected_components":{"nodeIdentifierProperty": "name"}}
-Bond Street: 0
+Canada Water: 0.000615
+I want to know how many weakly connected components algorithm exist in my graph. Reply only with wcc:answer and nothing else.
+["mcp__gds-agent__weakly_connected_components"]
+{"weakly_connected_components":{}}
+wcc: 1
 I want to know how many strongly connected components exist in my graph. Reply only with scc:answer and nothing else.
 ["mcp__gds-agent__strongly_connected_components"]
 {"strongly_connected_components":{}}
-scc:301
+scc:1
 I want to run k-core decomposition and get the core value for the Stockwell station. Reply strictly with Stockwell:answer and do not output anything else.
 ["mcp__gds-agent__k_core_decomposition"]
 {"k_core_decomposition":{"nodeIdentifierProperty": "name"}}
-Stockwell:2
+Stockwell:4
 I want to know the community modularity scores using community property rail. Reply only with community:score and nothing else. If the community is a number, write it as text e.g., 0 --> zero.
 ["mcp__gds-agent__modularity_metric"]
 {"modularity_metric": { "communityProperty": "rail"}}
-zero: -0.06268654905481816, one: 0.023520347496906017
+zero: 0.009984, one: 0.009984
 I want to know the community conductance scores using community property rail. Reply only with community:score and nothing else. If the community is a number, write it as text e.g., 0 --> zero.
 ["mcp__gds-agent__conductance"]
 {"conductance": { "communityProperty": "rail"}}
-zero:0.20797720797720798, one: 0.6909090909090909
+zero: 0.166417, one: 0.765517
 I want to run louvain for one iteration (and one level) using seed property rail and get the community of Paddington. Reply only with Paddington:answer and nothing else.
 ["mcp__gds-agent__louvain"]
 {"louvain": { "maxIterations": 1, "maxLevels": 1, "seedProperty": "rail"}}
-Paddington: 0
+Paddington: 1
 I want to run leiden for one level using seed property rail and get the community of Paddington. Reply only with Paddington:answer and nothing else.
 ["mcp__gds-agent__leiden"]
 {"leiden": { "maxLevels": 1, "seedProperty": "rail"}}
@@ -82,16 +82,16 @@ Kennington: 0
 I want to run SLLPA for one iteration and get the community of Kennington. Reply only with Kennington:answer and nothing else. If the answer contains "[" or "]" remove them.
 ["mcp__gds-agent__speaker_listener_label_propagation","mcp__gds-agent__get_node_properties_keys"]
 {"speaker_listener_label_propagation": { "maxIterations": 1}}
-Kennington: 161
-I want to run node similarity and find the 35th most similar station pair. Return each pair in the following format "station1 station2: similarity". Sort the two stations lexicographically by their name. Do not return anything else.
+Kennington: 163
+I want to run node similarity and find the eight most similar station pairs using cosine similarity. Return each pair in the following format "station1 station2: similarity". Do not return anything else.
 ["mcp__gds-agent__node_similarity", "mcp__gds-agent__get_node_properties_keys"]
-{"node_similarity" : {"topN": 35, "nodeIdentifierProperty": "name"} }
-Aldgate Aldgate East: 0.666667
+{"node_similarity" : {"topN": 8, "nodeIdentifierProperty": "name", "similarityMetric": "COSINE"} }
+New Cross New Cross Gate: 1.0, New Cross Gate New Cross: 1.0, Chesham Amersham: 1.0, Amersham  Chesham: 1.0, Kennington Lambeth North: 0.816497, Lambeth North Kennington: 0.816497, Aldgate Aldgate East: 0.816497, Aldgate East Aldgate: 0.816497
 I want to run node similarity and find the two most similar stations to Sloane Square from available stations Knightsbridge, Acton Town, Green Park, and Pimlico. Return results as station: similarity. Separate answers with a common. Do not write anything else.
 ["mcp__gds-agent__node_similarity", "mcp__gds-agent__get_node_properties_keys"]
 {"node_similarity" : {"topK": 2, "nodeIdentifierProperty": "name", "sourceNodeFilter": ["Sloane Square"], "targetNodeFilter": ["Knightsbridge","Acton Town", "Green Park", "Pimlico"]} }
-Knightsbridge: 0.5, Pimlico: 0.333333
+Knightsbridge: 0.333333, Pimlico: 0.333333
 I want to run filtered knn and find the two most similar stations to Amersham from available stations Northwood, North Harrow, Chesham, and Pinner based on properties latitude, and longitude. Return results as station: similarity. I want to seed target nodes. Separate answers with a common. Do not write anything else.
 ["mcp__gds-agent__k_nearest_neighbors", "mcp__gds-agent__get_node_properties_keys"]
 {"k_nearest_neighbors" : {"topK": 2, "nodeIdentifierProperty": "name",  "seedTargetNodes": "True", "sourceNodeFilter": ["Amersham"], "targetNodeFilter": ["Northwood", "North Harrow", "Chesham", "Pinner"], "nodeProperties": ["latitude", "longitude"]} }
-Chesham: 0.982691, Northwood: 0.893242
+Chesham: 0.982692, Northwood: 0.893243
