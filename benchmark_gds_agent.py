@@ -115,7 +115,7 @@ class GDSBenchmark:
             logger.debug(f"Sending question via subprocess: {question}")
             
             # Frame question to strongly encourage tool usage
-            enhanced_question = f"You MUST use the available MCP tools to query the actual Neo4j database to answer this question. Do not provide a hypothetical answer. Question: {question}"
+            enhanced_question = f"You MUST use the available MCP tools to query the actual Neo4j database to answer this question. Do not rely on output from previous questions. Do not provide a hypothetical answer. Question: {question}"
             
             # Use stream-json mode to capture all tool calls and intermediate steps
             cmd = [
