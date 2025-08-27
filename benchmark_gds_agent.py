@@ -140,7 +140,7 @@ class GDSBenchmark:
             
             logger.info("Starting subprocess call...")
             result = subprocess.run(cmd, input=f"{enhanced_question}\n", 
-                                  capture_output=True, text=True, timeout=120)
+                                  capture_output=True, text=True, timeout=300)
             logger.info("Subprocess call completed")
             
             # Log stderr to see any MCP connection issues
