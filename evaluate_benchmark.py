@@ -106,6 +106,66 @@ class BenchmarkEvaluator:
         logger.info(f"Loaded {len(expected)} expected results")
         return expected
         
+    def extract_token_usage_from_raw_stream(self, raw_stream: str) -> Dict[str, Any]:
+        """Extract token usage information from raw_stream."""
+        import json as json_module
+        
+        total_input_tokens = 0
+        total_output_tokens = 0
+        total_cache_creation_tokens = 0
+        total_cache_read_tokens = 0
+        total_cost_usd = 0.0
+        message_count = 0
+        
+        if not raw_stream:
+            return {}
+            
+        try:
+            # Split by lines and parse each JSON object
+            lines = raw_stream.strip().split('\n')
+            for line in lines:
+                if line.strip():
+                    try:
+                        message = json_module.loads(line)
+                        
+                        # Check for usage information in assistant messages
+                        if message.get('type') == 'assistant' and 'message' in message:
+                            usage = message['message'].get('usage', {})
+                            if usage:
+                                total_input_tokens += usage.get('input_tokens', 0)
+                                total_output_tokens += usage.get('output_tokens', 0)
+                                total_cache_creation_tokens += usage.get('cache_creation_input_tokens', 0)
+                                total_cache_read_tokens += usage.get('cache_read_input_tokens', 0)
+                                message_count += 1
+                        
+                        # Check for final result with cost information
+                        elif message.get('type') == 'result' and 'total_cost_usd' in message:
+                            total_cost_usd = message.get('total_cost_usd', 0.0)
+                            # Also get final usage summary if available
+                            final_usage = message.get('usage', {})
+                            if final_usage:
+                                # Use final counts if they exist (more accurate)
+                                total_input_tokens = final_usage.get('input_tokens', total_input_tokens)
+                                total_output_tokens = final_usage.get('output_tokens', total_output_tokens)
+                                total_cache_creation_tokens = final_usage.get('cache_creation_input_tokens', total_cache_creation_tokens)
+                                total_cache_read_tokens = final_usage.get('cache_read_input_tokens', total_cache_read_tokens)
+                            
+                    except json_module.JSONDecodeError:
+                        continue  # Skip malformed JSON lines
+                        
+        except Exception as e:
+            logger.warning(f"Error parsing raw_stream for token usage: {e}")
+            
+        return {
+            'total_input_tokens': total_input_tokens,
+            'total_output_tokens': total_output_tokens,
+            'total_cache_creation_tokens': total_cache_creation_tokens,
+            'total_cache_read_tokens': total_cache_read_tokens,
+            'total_cost_usd': total_cost_usd,
+            'message_count': message_count,
+            'total_tokens': total_input_tokens + total_output_tokens + total_cache_creation_tokens
+        }
+
     def load_actual_results(self) -> Dict[str, Dict[str, Any]]:
         """Load actual results from benchmark results JSON."""
         actual = {}
@@ -123,12 +183,18 @@ class BenchmarkEvaluator:
                     question = result['question'].strip()
                     response_data = result['response_data']
                     
+                    # Extract token usage from raw_stream
+                    token_usage = self.extract_token_usage_from_raw_stream(
+                        response_data.get('raw_stream', '')
+                    )
+                    
                     actual[question] = {
                         'tool_calls': response_data.get('tool_calls', []),
                         'tool_results': response_data.get('tool_results', []),
                         'final_result': response_data.get('final_result', ''),
                         'num_turns': response_data.get('num_turns', 0),
-                        'duration_ms': response_data.get('duration_ms', 0)
+                        'duration_ms': response_data.get('duration_ms', 0),
+                        'token_usage': token_usage
                     }
                     
         except Exception as e:
@@ -374,7 +440,8 @@ class BenchmarkEvaluator:
             'metadata': {
                 'num_turns': actual.get('num_turns', 0),
                 'duration_ms': actual.get('duration_ms', 0)
-            }
+            },
+            'token_usage': actual.get('token_usage', {})
         }
         
     def run_evaluation(self) -> Dict[str, Any]:

@@ -38,7 +38,14 @@ def extract_metrics(evaluations):
         'parameter_scores': [],
         'answer_scores': [],
         'num_turns': [],
-        'duration_ms': []
+        'duration_ms': [],
+        'total_input_tokens': [],
+        'total_output_tokens': [],
+        'total_cache_creation_tokens': [],
+        'total_cache_read_tokens': [],
+        'total_tokens': [],
+        'total_cost_usd': [],
+        'message_count': []
     }
     
     question_results = []
@@ -74,6 +81,16 @@ def extract_metrics(evaluations):
             results['num_turns'].append(metadata.get('num_turns', 0))
             results['duration_ms'].append(metadata.get('duration_ms', 0))
             
+            # Token usage
+            token_usage = evaluation.get('token_usage', {})
+            results['total_input_tokens'].append(token_usage.get('total_input_tokens', 0))
+            results['total_output_tokens'].append(token_usage.get('total_output_tokens', 0))
+            results['total_cache_creation_tokens'].append(token_usage.get('total_cache_creation_tokens', 0))
+            results['total_cache_read_tokens'].append(token_usage.get('total_cache_read_tokens', 0))
+            results['total_tokens'].append(token_usage.get('total_tokens', 0))
+            results['total_cost_usd'].append(token_usage.get('total_cost_usd', 0.0))
+            results['message_count'].append(token_usage.get('message_count', 0))
+            
             # Store individual question results
             question_results.append({
                 'dataset': dataset_name,
@@ -86,7 +103,12 @@ def extract_metrics(evaluations):
                 'param_score': avg_param_score,
                 'answer_score': answer_score,
                 'num_turns': metadata.get('num_turns', 0),
-                'duration_ms': metadata.get('duration_ms', 0)
+                'duration_ms': metadata.get('duration_ms', 0),
+                'total_input_tokens': token_usage.get('total_input_tokens', 0),
+                'total_output_tokens': token_usage.get('total_output_tokens', 0),
+                'total_tokens': token_usage.get('total_tokens', 0),
+                'total_cost_usd': token_usage.get('total_cost_usd', 0.0),
+                'cost_per_question': token_usage.get('total_cost_usd', 0.0)
             })
     
     return results, question_results
@@ -97,7 +119,8 @@ def calculate_summary_stats(results):
     stats = {}
     
     for metric in ['overall_scores', 'tool_precision', 'tool_recall', 'tool_f1', 
-                   'call_efficiency', 'parameter_scores', 'answer_scores', 'num_turns', 'duration_ms']:
+                   'call_efficiency', 'parameter_scores', 'answer_scores', 'num_turns', 'duration_ms',
+                   'total_input_tokens', 'total_output_tokens', 'total_tokens', 'total_cost_usd']:
         values = results[metric]
         if values:
             stats[metric] = {
@@ -222,6 +245,21 @@ def create_visualizations(results, question_results, stats, evaluations):
     plt.close()
     print("Chart 4 saved as 'turns_distribution.png'")
     
+    # Chart 5: Token Usage Distribution
+    plt.figure(figsize=(10, 6))
+    plt.hist(results['total_tokens'], bins=20, alpha=0.7, edgecolor='black', color='lightblue')
+    plt.axvline(stats['total_tokens']['mean'], color='red', linestyle='--', 
+                label=f'Mean: {stats["total_tokens"]["mean"]:.0f}')
+    plt.xlabel('Total Tokens')
+    plt.ylabel('Frequency')
+    plt.title('Total Token Usage Distribution')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig('token_usage_analysis.png', dpi=300, bbox_inches='tight')
+    plt.close()
+    print("Chart 5 saved as 'token_usage_analysis.png'")
+    
     print("All charts saved successfully!")
 
 
@@ -249,6 +287,21 @@ def print_detailed_stats(stats, evaluations):
             print(f"{metric.replace('_', ' ').title():<20} {stat['mean']:<8.3f} "
                   f"{stat['std']:<8.3f} {stat['median']:<8.3f} {stat['min']:<8.3f} {stat['max']:<8.3f}")
     
+    print(f"\n{'Token & Cost Metrics':<20} {'Mean':<12} {'Std':<12} {'Median':<12} {'Min':<12} {'Max':<12}")
+    print("-" * 88)
+    
+    # Token metrics
+    for metric in ['total_tokens', 'total_input_tokens', 'total_output_tokens', 'total_cost_usd']:
+        if metric in stats:
+            stat = stats[metric]
+            if metric == 'total_cost_usd':
+                # Format cost with more precision
+                print(f"{metric.replace('_', ' ').title():<20} ${stat['mean']:<11.4f} "
+                      f"${stat['std']:<11.4f} ${stat['median']:<11.4f} ${stat['min']:<11.4f} ${stat['max']:<11.4f}")
+            else:
+                print(f"{metric.replace('_', ' ').title():<20} {stat['mean']:<12.0f} "
+                      f"{stat['std']:<12.0f} {stat['median']:<12.0f} {stat['min']:<12.0f} {stat['max']:<12.0f}")
+    
     print(f"\nPerformance Thresholds:")
     overall_scores = [score for data in evaluations.values() 
                      for score in data['summary']['scores']]
@@ -256,6 +309,29 @@ def print_detailed_stats(stats, evaluations):
     for threshold in thresholds:
         success_rate = np.mean([score >= threshold for score in overall_scores]) * 100
         print(f"  Score ≥ {threshold:.1f}: {success_rate:.1f}% ({int(success_rate * len(overall_scores) / 100)}/{len(overall_scores)} questions)")
+    
+    # Cost analysis summary
+    if 'total_cost_usd' in stats:
+        total_benchmark_cost = sum(cost for data in evaluations.values() 
+                                 for eval_data in data['detailed_evaluations'].values() 
+                                 for cost in [eval_data.get('token_usage', {}).get('total_cost_usd', 0.0)])
+        
+        print(f"\n{'Cost Analysis Summary'}")
+        print("-" * 30)
+        print(f"Total Benchmark Cost: ${total_benchmark_cost:.4f}")
+        print(f"Average Cost per Question: ${stats['total_cost_usd']['mean']:.4f}")
+        print(f"Most Expensive Question: ${stats['total_cost_usd']['max']:.4f}")
+        print(f"Least Expensive Question: ${stats['total_cost_usd']['min']:.4f}")
+        
+        # Estimated monthly costs if run daily
+        daily_cost = total_benchmark_cost
+        monthly_cost = daily_cost * 30
+        print(f"Estimated Monthly Cost (if run daily): ${monthly_cost:.2f}")
+        
+        # Token efficiency
+        if 'total_tokens' in stats:
+            avg_cost_per_1k_tokens = (stats['total_cost_usd']['mean'] / stats['total_tokens']['mean']) * 1000 if stats['total_tokens']['mean'] > 0 else 0
+            print(f"Average Cost per 1K Tokens: ${avg_cost_per_1k_tokens:.4f}")
 
 
 def main():
