@@ -119,7 +119,7 @@ class GDSBenchmark:
             
             # Use stream-json mode to capture all tool calls and intermediate steps
             cmd = [
-                "claude", "-p", "--verbose", "--output-format", "stream-json",
+                "claude", " --model claude-sonnet-4-20250514 ","-p", "--verbose", "--output-format", "stream-json",
                 "--mcp-config", str(config_file), 
                 "--dangerously-skip-permissions",
                 "--allowedTools", "mcp__*"  # Allow all MCP tools
