@@ -37,6 +37,7 @@ def extract_metrics(evaluations):
         'call_efficiency': [],
         'parameter_scores': [],
         'answer_scores': [],
+        'answer_match_score': [],
         'num_turns': [],
         'duration_ms': [],
         'total_input_tokens': [],
@@ -71,10 +72,11 @@ def extract_metrics(evaluations):
             
             # Answer evaluation
             answer_eval = evaluation.get('answer_evaluation', {})
-            answer_score = answer_eval.get('path_match_score', answer_eval.get('exact_match', 0))
-            if isinstance(answer_score, bool):
-                answer_score = float(answer_score)
-            results['answer_scores'].append(answer_score)
+            answer_match_score = answer_eval.get('answer_match_score', 0.0)
+            if isinstance(answer_match_score, bool):
+                answer_match_score = float(answer_match_score)
+            results['answer_scores'].append(answer_match_score)
+            results['answer_match_score'].append(answer_match_score)
             
             # Metadata
             metadata = evaluation.get('metadata', {})
@@ -101,7 +103,8 @@ def extract_metrics(evaluations):
                 'tool_f1': tool_eval.get('f1_score', 0),
                 'call_efficiency': tool_eval.get('call_efficiency', 1.0),
                 'param_score': avg_param_score,
-                'answer_score': answer_score,
+                'answer_score': answer_match_score,
+                'answer_match_score': answer_match_score,
                 'num_turns': metadata.get('num_turns', 0),
                 'duration_ms': metadata.get('duration_ms', 0),
                 'total_input_tokens': token_usage.get('total_input_tokens', 0),
@@ -119,8 +122,8 @@ def calculate_summary_stats(results):
     stats = {}
     
     for metric in ['overall_scores', 'tool_precision', 'tool_recall', 'tool_f1', 
-                   'call_efficiency', 'parameter_scores', 'answer_scores', 'num_turns', 'duration_ms',
-                   'total_input_tokens', 'total_output_tokens', 'total_tokens', 'total_cost_usd']:
+                   'call_efficiency', 'parameter_scores', 'answer_scores', 'answer_match_score',
+                   'num_turns', 'duration_ms', 'total_input_tokens', 'total_output_tokens', 'total_tokens', 'total_cost_usd']:
         values = results[metric]
         if values:
             stats[metric] = {
@@ -286,6 +289,15 @@ def print_detailed_stats(stats, evaluations):
                       'call_efficiency', 'parameter_scores', 'answer_scores']:
             print(f"{metric.replace('_', ' ').title():<20} {stat['mean']:<8.3f} "
                   f"{stat['std']:<8.3f} {stat['median']:<8.3f} {stat['min']:<8.3f} {stat['max']:<8.3f}")
+    
+    print(f"\n{'Answer Evaluation Metric':<20} {'Mean':<8} {'Std':<8} {'Median':<8} {'Min':<8} {'Max':<8}")
+    print("-" * 68)
+    
+    # Single answer evaluation metric
+    if 'answer_match_score' in stats:
+        stat = stats['answer_match_score']
+        print(f"{'Answer Match Score':<20} {stat['mean']:<8.3f} "
+              f"{stat['std']:<8.3f} {stat['median']:<8.3f} {stat['min']:<8.3f} {stat['max']:<8.3f}")
     
     print(f"\n{'Token & Cost Metrics':<20} {'Mean':<12} {'Std':<12} {'Median':<12} {'Min':<12} {'Max':<12}")
     print("-" * 88)

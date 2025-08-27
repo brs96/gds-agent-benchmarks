@@ -302,30 +302,91 @@ class BenchmarkEvaluator:
             # Convert to expected format for compatibility
             if result.get('success'):
                 return {
-                    'exact_path_matches': 1,
-                    'total_expected_paths': 1,
-                    'path_match_score': 1.0,
-                    'exact_match': True,
-                    'number_match_score': 1.0,
-                    'station_coverage': 1.0,
-                    'exact_number_matches': 1,
-                    'total_expected_numbers': 1
+                    'answer_match_score': 1.0,
+                    'answer_matched_count': 1,
+                    'answer_total_count': 1
                 }
             else:
                 return {
-                    'exact_path_matches': 0,
-                    'total_expected_paths': 1,
-                    'path_match_score': 0.0,
-                    'exact_match': False,
-                    'number_match_score': 0.0,
-                    'station_coverage': 0.0,
-                    'exact_number_matches': 0,
-                    'total_expected_numbers': 1,
-                    'error': result.get('error', 'Evaluation failed')
+                    'answer_match_score': 0.0,
+                    'answer_matched_count': 0,
+                    'answer_total_count': 1
                 }
         else:
-            # Use existing centrality evaluation for centrality questions
-            return self.evaluate_centrality_answer(expected_answer, actual_answer)
+            # Use unified answer evaluation for all other questions
+            return self.evaluate_unified_answer(expected_answer, actual_answer)
+    
+    def evaluate_unified_answer(self, expected_answer: str, actual_answer: str) -> Dict[str, Any]:
+        """Unified answer evaluation that handles all answer formats with order-independent matching."""
+        import re
+        
+        def normalize_text(text):
+            """Normalize text for comparison."""
+            return text.lower().strip()
+        
+        def extract_structured_items(text):
+            """Extract structured items from different answer formats."""
+            items = set()
+            
+            # Pattern 1: "path: cost" format (e.g., "path1: 5.0, path2: 3.2")
+            path_cost_pattern = r'([^:,]+):\s*([0-9.]+)'
+            path_cost_matches = re.findall(path_cost_pattern, text)
+            for path, cost in path_cost_matches:
+                # Normalize path (remove extra spaces, convert to lowercase)
+                normalized_path = re.sub(r'\s+', ' ', path.strip().lower())
+                items.add((normalized_path, float(cost)))
+            
+            # Pattern 2: "(node, parent, weight)" format
+            tuple_pattern = r'\(\s*([^,]+)\s*,\s*([^,]+)\s*,\s*([0-9.]+)\s*\)'
+            tuple_matches = re.findall(tuple_pattern, text)
+            for node, parent, weight in tuple_matches:
+                items.add((normalize_text(node), normalize_text(parent), float(weight)))
+            
+            # Pattern 3: "station:score" format (centrality results)
+            station_score_pattern = r'([A-Za-z\s\(\)]+):\s*([0-9.]+)'
+            station_score_matches = re.findall(station_score_pattern, text)
+            for station, score in station_score_matches:
+                normalized_station = normalize_text(station)
+                items.add((normalized_station, float(score)))
+            
+            # Pattern 4: Simple comma-separated paths/items (if no other patterns found)
+            if not items:
+                # Split by common separators and clean up
+                simple_items = re.split(r'[,;|]', text)
+                for item in simple_items:
+                    cleaned_item = normalize_text(item)
+                    if cleaned_item:  # Only add non-empty items
+                        items.add(cleaned_item)
+            
+            # Pattern 5: Numbers only (counts, etc.)
+            if not items:
+                number_pattern = r'\b(\d+(?:\.\d+)?)\b'
+                numbers = re.findall(number_pattern, text)
+                for num in numbers:
+                    items.add(float(num))
+            
+            return items
+        
+        expected_items = extract_structured_items(expected_answer)
+        actual_items = extract_structured_items(actual_answer)
+        
+        # Calculate exact match score (order-independent)
+        if len(expected_items) == 0:
+            # If no expected items, only match if actual is also empty
+            answer_match_score = 1.0 if len(actual_items) == 0 else 0.0
+            matched_count = 1 if len(actual_items) == 0 else 0
+            total_expected_count = 1
+        else:
+            # Calculate how many expected items are found in actual
+            matched_count = len(expected_items.intersection(actual_items))
+            total_expected_count = len(expected_items)
+            answer_match_score = matched_count / total_expected_count
+        
+        return {
+            'answer_match_score': answer_match_score,
+            'answer_matched_count': matched_count,
+            'answer_total_count': total_expected_count
+        }
     
     def evaluate_centrality_answer(self, expected_answer: str, actual_answer: str) -> Dict[str, Any]:
         """Evaluate centrality-based answers with station: score format."""
@@ -428,7 +489,7 @@ class BenchmarkEvaluator:
         # Calculate overall score
         tool_score = tool_evaluation['f1_score']
         param_score = sum(p['score'] for p in parameter_evaluation.values()) / len(parameter_evaluation) if parameter_evaluation else 0.0
-        answer_score = answer_evaluation['number_match_score']  # Focus on exact number matches
+        answer_score = answer_evaluation['answer_match_score']  # Use unified answer matching
         
         overall_score = (tool_score + param_score + answer_score) / 3
         
@@ -543,18 +604,10 @@ class BenchmarkEvaluator:
                         
             # Answer evaluation
             answer_eval = evaluation['answer_evaluation']
-            if "path_questions" in str(self.questions_file):
-                # Path-specific reporting
-                print(f"   💬 Answer: {answer_eval['exact_path_matches']}/{answer_eval['total_expected_paths']} exact path matches ({answer_eval['path_match_score']:.2%})")
-                if answer_eval.get('expected_paths') and answer_eval.get('actual_paths'):
-                    print(f"      Expected paths: {list(answer_eval['expected_paths'].keys())}")
-                    print(f"      Actual paths: {list(answer_eval['actual_paths'].keys())}")
-            else:
-                # Centrality-specific reporting
-                print(f"   💬 Answer: {answer_eval['exact_number_matches']}/{answer_eval['total_expected_numbers']} exact matches ({answer_eval['number_match_score']:.2%})")
-                if answer_eval.get('expected_scores') and answer_eval.get('actual_scores'):
-                    print(f"      Expected: {answer_eval['expected_scores']}")
-                    print(f"      Actual: {answer_eval['actual_scores']}")
+            answer_match_score = answer_eval.get('answer_match_score', 0.0)
+            matched_count = answer_eval.get('answer_matched_count', 0)
+            total_count = answer_eval.get('answer_total_count', 1)
+            print(f"   💬 Answer: {matched_count}/{total_count} matches ({answer_match_score:.2%})")
             
             # Metadata
             metadata = evaluation['metadata']
