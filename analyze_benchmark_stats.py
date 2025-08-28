@@ -141,18 +141,28 @@ def calculate_summary_stats(results):
 def create_visualizations(results, question_results, stats, evaluations):
     """Create comprehensive visualizations"""
     
-    # Set up the plotting style
+    # Set up the plotting style and fonts
     plt.style.use('default')
+    plt.rcParams.update({
+        'font.size': 12,           # Default font size
+        'axes.titlesize': 16,      # Title font size (larger)
+        'axes.labelsize': 14,      # Axis labels font size (larger)
+        'xtick.labelsize': 11,     # X-axis tick labels
+        'ytick.labelsize': 11,     # Y-axis tick labels
+        'legend.fontsize': 13,     # Legend font size (larger)
+        'figure.titlesize': 18,    # Figure title font size (larger)
+        'font.family': 'DejaVu Sans'  # Better font family
+    })
     
     # Chart 1: F1 Score Distribution
     plt.figure(figsize=(10, 6))
-    plt.hist(results['tool_f1'], bins=20, alpha=0.7, edgecolor='black', color='orange')
-    plt.axvline(stats['tool_f1']['mean'], color='red', linestyle='--', 
+    plt.hist(results['tool_f1'], bins=20, alpha=0.7, edgecolor='black', color='orange', linewidth=1.2)
+    plt.axvline(stats['tool_f1']['mean'], color='red', linestyle='--', linewidth=2,
                 label=f'Mean: {stats["tool_f1"]["mean"]:.3f}')
     plt.xlabel('F1 Score')
     plt.ylabel('Frequency')
     plt.title('Distribution of F1 Scores')
-    plt.legend()
+    plt.legend(frameon=True, fancybox=True, shadow=True, loc='upper right')
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
     plt.savefig('f1_score_distribution.png', dpi=300, bbox_inches='tight')
@@ -183,7 +193,7 @@ def create_visualizations(results, question_results, stats, evaluations):
         plt.plot([x - line_width, x + line_width], [max_val, max_val], '-', color=color, linewidth=2, alpha=1.0)
         
         # Add consistent value labels with same font size - all on the right, closer to lines
-        label_fontsize = 9
+        label_fontsize = 10
         label_offset = 0.18  # Closer to the lines
         
         # Special handling for Recall (index 1) to avoid overlap between mean and max
@@ -210,13 +220,13 @@ def create_visualizations(results, question_results, stats, evaluations):
     # Chart 3: Duration Analysis
     plt.figure(figsize=(10, 6))
     duration_seconds = [d/1000 for d in results['duration_ms']]
-    plt.hist(duration_seconds, bins=20, alpha=0.7, edgecolor='black', color='lightblue')
-    plt.axvline(np.mean(duration_seconds), color='red', linestyle='--', 
+    plt.hist(duration_seconds, bins=20, alpha=0.7, edgecolor='black', color='lightblue', linewidth=1.2)
+    plt.axvline(np.mean(duration_seconds), color='red', linestyle='--', linewidth=2,
                 label=f'Mean: {np.mean(duration_seconds):.1f}s')
     plt.xlabel('Duration (seconds)')
     plt.ylabel('Frequency')
     plt.title('Task Duration Distribution')
-    plt.legend()
+    plt.legend(frameon=True, fancybox=True, shadow=True, loc='upper right')
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
     plt.savefig('duration_distribution.png', dpi=300, bbox_inches='tight')
@@ -231,8 +241,8 @@ def create_visualizations(results, question_results, stats, evaluations):
     max_turns = max(results['num_turns'])
     bins = np.arange(min_turns - 0.5, max_turns + 1.5, 1)  # Bins centered on integers
     
-    plt.hist(results['num_turns'], bins=bins, alpha=0.7, edgecolor='black', color='lightgreen')
-    plt.axvline(stats['num_turns']['mean'], color='red', linestyle='--', 
+    plt.hist(results['num_turns'], bins=bins, alpha=0.7, edgecolor='black', color='lightgreen', linewidth=1.2)
+    plt.axvline(stats['num_turns']['mean'], color='red', linestyle='--', linewidth=2,
                 label=f'Mean: {stats["num_turns"]["mean"]:.1f} turns')
     plt.xlabel('Number of Turns')
     plt.ylabel('Frequency')
@@ -241,7 +251,7 @@ def create_visualizations(results, question_results, stats, evaluations):
     # Set x-axis ticks to integer values
     plt.xticks(range(min_turns, max_turns + 1))
     
-    plt.legend()
+    plt.legend(frameon=True, fancybox=True, shadow=True, loc='upper right')
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
     plt.savefig('turns_distribution.png', dpi=300, bbox_inches='tight')
@@ -250,13 +260,20 @@ def create_visualizations(results, question_results, stats, evaluations):
     
     # Chart 5: Token Usage Distribution
     plt.figure(figsize=(10, 6))
-    plt.hist(results['total_tokens'], bins=20, alpha=0.7, edgecolor='black', color='lightblue')
-    plt.axvline(stats['total_tokens']['mean'], color='red', linestyle='--', 
+    
+    # Create properly aligned bins for token distribution
+    min_tokens = min(results['total_tokens'])
+    max_tokens = max(results['total_tokens'])
+    bin_width = (max_tokens - min_tokens) / 20
+    bins = np.arange(min_tokens, max_tokens + bin_width, bin_width)
+    
+    plt.hist(results['total_tokens'], bins=bins, alpha=0.7, edgecolor='black', color='lightblue', linewidth=1.2, align='mid')
+    plt.axvline(stats['total_tokens']['mean'], color='red', linestyle='--', linewidth=2,
                 label=f'Mean: {stats["total_tokens"]["mean"]:.0f}')
     plt.xlabel('Total Tokens')
     plt.ylabel('Frequency')
     plt.title('Total Token Usage Distribution')
-    plt.legend()
+    plt.legend(frameon=True, fancybox=True, shadow=True, loc='upper right')
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
     plt.savefig('token_usage_analysis.png', dpi=300, bbox_inches='tight')

@@ -1,0 +1,1583 @@
+{
+  "summary": {
+    "total_questions": 36,
+    "evaluated_questions": 35,
+    "average_score": 0.8420761074857692,
+    "scores": [
+      0.7222222222222222,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.8888888888888888,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.8888888888888888,
+      0.8888888888888888,
+      0.8888888888888888,
+      1.0,
+      0.8888888888888888,
+      0.8888888888888888,
+      0.7037037037037036,
+      0.9166666666666666,
+      0.8888888888888888,
+      0.36685823754789265,
+      0.7777777777777777,
+      0.5899897593445981,
+      0.9629629629629629,
+      0.5,
+      0.46726618705035966,
+      0.6388888888888888,
+      0.47222222222222215,
+      0.7999999999999999,
+      0.8229166666666666,
+      0.5089662447257384
+    ]
+  },
+  "detailed_evaluations": {
+    "I want to run personalised article rank with damping factor 0.8 on Paddington and I want to know the scores for Paddington & Bayswater.Give answer in the format station:answer. Separate the stations' result with a comma.": {
+      "overall_score": 0.7222222222222222,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1_score": 0.6666666666666666,
+        "call_efficiency": 1.0,
+        "missing_tools": [
+          "mcp__gds-agent__get_node_properties_keys"
+        ],
+        "unexpected_tools": [],
+        "exact_match": false
+      },
+      "parameter_evaluation": {
+        "article_rank": {
+          "match": true,
+          "matches": [
+            "dampingFactor",
+            "sourceNodes",
+            "nodeIdentifierProperty",
+            "nodes"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 0.5,
+        "answer_matched_count": 1,
+        "answer_total_count": 2
+      },
+      "metadata": {
+        "num_turns": 4,
+        "duration_ms": 9696
+      },
+      "token_usage": {
+        "total_input_tokens": 18,
+        "total_output_tokens": 211,
+        "total_cache_creation_tokens": 65272,
+        "total_cache_read_tokens": 64406,
+        "total_cost_usd": 0.2673108,
+        "message_count": 3,
+        "total_tokens": 65501
+      }
+    },
+    "I want to know the number of articulation points. Reply strictly with 'points:answer'": {
+      "overall_score": 1.0,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "call_efficiency": 1.0,
+        "missing_tools": [],
+        "unexpected_tools": [],
+        "exact_match": true
+      },
+      "parameter_evaluation": {
+        "articulation_points": {
+          "match": true,
+          "matches": [],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 1,
+        "answer_total_count": 1
+      },
+      "metadata": {
+        "num_turns": 3,
+        "duration_ms": 6527
+      },
+      "token_usage": {
+        "total_input_tokens": 18,
+        "total_output_tokens": 53,
+        "total_cache_creation_tokens": 3222,
+        "total_cache_read_tokens": 127950,
+        "total_cost_usd": 0.0517565,
+        "message_count": 2,
+        "total_tokens": 3293
+      }
+    },
+    "I want to run Degree Centrality with reverse orientation and get the centrality of Farringdon station. Give the answer in the form Farringdon:x.": {
+      "overall_score": 1.0,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "call_efficiency": 1.0,
+        "missing_tools": [],
+        "unexpected_tools": [],
+        "exact_match": true
+      },
+      "parameter_evaluation": {
+        "degree_centrality": {
+          "match": true,
+          "matches": [
+            "nodeIdentifierProperty",
+            "orientation"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 1,
+        "answer_total_count": 1
+      },
+      "metadata": {
+        "num_turns": 6,
+        "duration_ms": 10558
+      },
+      "token_usage": {
+        "total_input_tokens": 30,
+        "total_output_tokens": 235,
+        "total_cache_creation_tokens": 1538,
+        "total_cache_read_tokens": 192864,
+        "total_cost_usd": 0.0672417,
+        "message_count": 4,
+        "total_tokens": 1803
+      }
+    },
+    "I want to run harmonic centrality and get the centrality scores for stations Westminster and Waterloo. Answer should be given as  Station: score.Separate the stations' result with a comma.": {
+      "overall_score": 1.0,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "call_efficiency": 1.0,
+        "missing_tools": [],
+        "unexpected_tools": [],
+        "exact_match": true
+      },
+      "parameter_evaluation": {
+        "harmonic_centrality": {
+          "match": true,
+          "matches": [
+            "nodeIdentifierProperty",
+            "nodes"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 2,
+        "answer_total_count": 2
+      },
+      "metadata": {
+        "num_turns": 6,
+        "duration_ms": 9862
+      },
+      "token_usage": {
+        "total_input_tokens": 30,
+        "total_output_tokens": 221,
+        "total_cache_creation_tokens": 1548,
+        "total_cache_read_tokens": 192892,
+        "total_cost_usd": 0.06745759999999999,
+        "message_count": 4,
+        "total_tokens": 1799
+      }
+    },
+    "I want to run closeness centrality with the Wasserman-Faust formula and get scores for stations Westminster and Waterloo. Answer format should be as Station: score.Separate the stations' result with a comma.": {
+      "overall_score": 1.0,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "call_efficiency": 1.0,
+        "missing_tools": [],
+        "unexpected_tools": [],
+        "exact_match": true
+      },
+      "parameter_evaluation": {
+        "closeness_centrality": {
+          "match": true,
+          "matches": [
+            "nodeIdentifierProperty",
+            "useWassermanFaust",
+            "nodes"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 2,
+        "answer_total_count": 2
+      },
+      "metadata": {
+        "num_turns": 6,
+        "duration_ms": 10498
+      },
+      "token_usage": {
+        "total_input_tokens": 30,
+        "total_output_tokens": 247,
+        "total_cache_creation_tokens": 1620,
+        "total_cache_read_tokens": 192932,
+        "total_cost_usd": 0.06774960000000001,
+        "message_count": 4,
+        "total_tokens": 1897
+      }
+    },
+    "I want to run betweenness centrality and get the centrality scores for Westminster and Waterloo.  Answer should be given as Station: score.Separate the stations' result with a comma.": {
+      "overall_score": 1.0,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "call_efficiency": 1.0,
+        "missing_tools": [],
+        "unexpected_tools": [],
+        "exact_match": true
+      },
+      "parameter_evaluation": {
+        "betweenness_centrality": {
+          "match": true,
+          "matches": [
+            "nodeIdentifierProperty",
+            "nodes"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 1,
+        "answer_total_count": 1
+      },
+      "metadata": {
+        "num_turns": 7,
+        "duration_ms": 11852
+      },
+      "token_usage": {
+        "total_input_tokens": 30,
+        "total_output_tokens": 218,
+        "total_cache_creation_tokens": 1600,
+        "total_cache_read_tokens": 192880,
+        "total_cost_usd": 0.0679448,
+        "message_count": 5,
+        "total_tokens": 1848
+      }
+    },
+    "I want to count how in how many triangles do stations named Hatton Cross, and Green Park participate in. Give final answer in the format station: answer. Separate answers with comma. Do not output anything else.": {
+      "overall_score": 1.0,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "call_efficiency": 1.0,
+        "missing_tools": [],
+        "unexpected_tools": [],
+        "exact_match": true
+      },
+      "parameter_evaluation": {
+        "triangle_count": {
+          "match": true,
+          "matches": [
+            "nodeIdentifierProperty",
+            "nodes"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 2,
+        "answer_total_count": 2
+      },
+      "metadata": {
+        "num_turns": 6,
+        "duration_ms": 11194
+      },
+      "token_usage": {
+        "total_input_tokens": 30,
+        "total_output_tokens": 224,
+        "total_cache_creation_tokens": 1552,
+        "total_cache_read_tokens": 192908,
+        "total_cost_usd": 0.0671424,
+        "message_count": 4,
+        "total_tokens": 1806
+      }
+    },
+    "I want to run pagerank with Paddington station  as source node and get score for Royal Oak. Answer format should be Royal Oak:answer and nothing else.": {
+      "overall_score": 0.8888888888888888,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1_score": 0.6666666666666666,
+        "call_efficiency": 1.0,
+        "missing_tools": [
+          "mcp__gds-agent__get_node_properties_keys"
+        ],
+        "unexpected_tools": [],
+        "exact_match": false
+      },
+      "parameter_evaluation": {
+        "pagerank": {
+          "match": true,
+          "matches": [
+            "nodeIdentifierProperty",
+            "sourceNodes",
+            "nodes"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 1,
+        "answer_total_count": 1
+      },
+      "metadata": {
+        "num_turns": 3,
+        "duration_ms": 6877
+      },
+      "token_usage": {
+        "total_input_tokens": 18,
+        "total_output_tokens": 115,
+        "total_cache_creation_tokens": 1278,
+        "total_cache_read_tokens": 127978,
+        "total_cost_usd": 0.0453545,
+        "message_count": 2,
+        "total_tokens": 1411
+      }
+    },
+    "I want to run bridges to find out the number of relationships that disconnect the graph. Give the answer as relationships:x. Do not emit anything else.": {
+      "overall_score": 1.0,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "call_efficiency": 1.0,
+        "missing_tools": [],
+        "unexpected_tools": [],
+        "exact_match": true
+      },
+      "parameter_evaluation": {
+        "bridges": {
+          "match": true,
+          "matches": [],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 1,
+        "answer_total_count": 1
+      },
+      "metadata": {
+        "num_turns": 3,
+        "duration_ms": 5380
+      },
+      "token_usage": {
+        "total_input_tokens": 18,
+        "total_output_tokens": 70,
+        "total_cache_creation_tokens": 1112,
+        "total_cache_read_tokens": 127972,
+        "total_cost_usd": 0.0436656,
+        "message_count": 2,
+        "total_tokens": 1200
+      }
+    },
+    "I want to run eigenvector and get score for Canada water. Answer format should be Canada Water:answer and nothing else.": {
+      "overall_score": 1.0,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "call_efficiency": 1.0,
+        "missing_tools": [],
+        "unexpected_tools": [],
+        "exact_match": true
+      },
+      "parameter_evaluation": {
+        "eigenvector_centrality": {
+          "match": true,
+          "matches": [
+            "nodeIdentifierProperty",
+            "nodes"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 1,
+        "answer_total_count": 1
+      },
+      "metadata": {
+        "num_turns": 5,
+        "duration_ms": 9551
+      },
+      "token_usage": {
+        "total_input_tokens": 30,
+        "total_output_tokens": 180,
+        "total_cache_creation_tokens": 1384,
+        "total_cache_read_tokens": 192726,
+        "total_cost_usd": 0.0660922,
+        "message_count": 3,
+        "total_tokens": 1594
+      }
+    },
+    "I want to know how many weakly connected components algorithm exist in my graph. Reply only with wcc:answer and nothing else.": {
+      "overall_score": 1.0,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "call_efficiency": 1.0,
+        "missing_tools": [],
+        "unexpected_tools": [],
+        "exact_match": true
+      },
+      "parameter_evaluation": {
+        "weakly_connected_components": {
+          "match": true,
+          "matches": [],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 1,
+        "answer_total_count": 1
+      },
+      "metadata": {
+        "num_turns": 3,
+        "duration_ms": 6322
+      },
+      "token_usage": {
+        "total_input_tokens": 18,
+        "total_output_tokens": 56,
+        "total_cache_creation_tokens": 8232,
+        "total_cache_read_tokens": 127964,
+        "total_cost_usd": 0.0701532,
+        "message_count": 2,
+        "total_tokens": 8306
+      }
+    },
+    "I want to know how many strongly connected components exist in my graph. Reply only with scc:answer and nothing else.": {
+      "overall_score": 1.0,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "call_efficiency": 1.0,
+        "missing_tools": [],
+        "unexpected_tools": [],
+        "exact_match": true
+      },
+      "parameter_evaluation": {
+        "strongly_connected_components": {
+          "match": true,
+          "matches": [],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 1,
+        "answer_total_count": 1
+      },
+      "metadata": {
+        "num_turns": 3,
+        "duration_ms": 6315
+      },
+      "token_usage": {
+        "total_input_tokens": 18,
+        "total_output_tokens": 55,
+        "total_cache_creation_tokens": 8224,
+        "total_cache_read_tokens": 127960,
+        "total_cost_usd": 0.0703926,
+        "message_count": 2,
+        "total_tokens": 8297
+      }
+    },
+    "I want to run k-core decomposition and get the core value for the Stockwell station. Reply strictly with Stockwell:answer and do not output anything else.": {
+      "overall_score": 1.0,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "call_efficiency": 1.0,
+        "missing_tools": [],
+        "unexpected_tools": [],
+        "exact_match": true
+      },
+      "parameter_evaluation": {
+        "k_core_decomposition": {
+          "match": true,
+          "matches": [
+            "nodeIdentifierProperty"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 1,
+        "answer_total_count": 1
+      },
+      "metadata": {
+        "num_turns": 3,
+        "duration_ms": 106887
+      },
+      "token_usage": {
+        "total_input_tokens": 18,
+        "total_output_tokens": 84,
+        "total_cache_creation_tokens": 15034,
+        "total_cache_read_tokens": 127982,
+        "total_cost_usd": 0.09608610000000001,
+        "message_count": 2,
+        "total_tokens": 15136
+      }
+    },
+    "I want to know the community modularity scores using community property rail. Reply only with community:score and nothing else. If the community is a number, write it as text e.g., 0 --> zero.": {
+      "overall_score": 1.0,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "call_efficiency": 1.0,
+        "missing_tools": [],
+        "unexpected_tools": [],
+        "exact_match": true
+      },
+      "parameter_evaluation": {
+        "modularity_metric": {
+          "match": true,
+          "matches": [
+            "communityProperty"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 2,
+        "answer_total_count": 2
+      },
+      "metadata": {
+        "num_turns": 3,
+        "duration_ms": 7501
+      },
+      "token_usage": {
+        "total_input_tokens": 18,
+        "total_output_tokens": 82,
+        "total_cache_creation_tokens": 1164,
+        "total_cache_read_tokens": 128000,
+        "total_cost_usd": 0.0443666,
+        "message_count": 2,
+        "total_tokens": 1264
+      }
+    },
+    "I want to know the community conductance scores using community property rail. Reply only with community:score and nothing else. If the community is a number, write it as text e.g., 0 --> zero.": {
+      "overall_score": 1.0,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "call_efficiency": 1.0,
+        "missing_tools": [],
+        "unexpected_tools": [],
+        "exact_match": true
+      },
+      "parameter_evaluation": {
+        "conductance": {
+          "match": true,
+          "matches": [
+            "communityProperty"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 2,
+        "answer_total_count": 2
+      },
+      "metadata": {
+        "num_turns": 3,
+        "duration_ms": 5837
+      },
+      "token_usage": {
+        "total_input_tokens": 18,
+        "total_output_tokens": 80,
+        "total_cache_creation_tokens": 1148,
+        "total_cache_read_tokens": 128000,
+        "total_cost_usd": 0.043959,
+        "message_count": 2,
+        "total_tokens": 1246
+      }
+    },
+    "I want to run louvain for one iteration (and one level) using rail as a seed property  and get the community of Paddington. Reply only with Paddington:answer and nothing else.": {
+      "overall_score": 0.8888888888888888,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1_score": 0.6666666666666666,
+        "call_efficiency": 1.0,
+        "missing_tools": [
+          "mcp__gds-agent__get_node_properties_keys"
+        ],
+        "unexpected_tools": [],
+        "exact_match": false
+      },
+      "parameter_evaluation": {
+        "louvain": {
+          "match": true,
+          "matches": [
+            "maxIterations",
+            "maxLevels",
+            "seedProperty"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 1,
+        "answer_total_count": 1
+      },
+      "metadata": {
+        "num_turns": 3,
+        "duration_ms": 8169
+      },
+      "token_usage": {
+        "total_input_tokens": 18,
+        "total_output_tokens": 138,
+        "total_cache_creation_tokens": 18912,
+        "total_cache_read_tokens": 127996,
+        "total_cost_usd": 0.1117756,
+        "message_count": 2,
+        "total_tokens": 19068
+      }
+    },
+    "I want to run leiden for one level using rail as a seed property and get the community of Paddington. Reply only with Paddington:answer and nothing else.": {
+      "overall_score": 0.8888888888888888,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1_score": 0.6666666666666666,
+        "call_efficiency": 1.0,
+        "missing_tools": [
+          "mcp__gds-agent__get_node_properties_keys"
+        ],
+        "unexpected_tools": [],
+        "exact_match": false
+      },
+      "parameter_evaluation": {
+        "leiden": {
+          "match": true,
+          "matches": [
+            "maxLevels",
+            "seedProperty"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 1,
+        "answer_total_count": 1
+      },
+      "metadata": {
+        "num_turns": 3,
+        "duration_ms": 7559
+      },
+      "token_usage": {
+        "total_input_tokens": 18,
+        "total_output_tokens": 113,
+        "total_cache_creation_tokens": 18812,
+        "total_cache_read_tokens": 127980,
+        "total_cost_usd": 0.11068800000000001,
+        "message_count": 2,
+        "total_tokens": 18943
+      }
+    },
+    "I want to run modularity optimization for one iteration using rail as a seed property and get the community of Redbridge. Reply only with Redbridge:answer and nothing else.": {
+      "overall_score": 0.8888888888888888,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1_score": 0.6666666666666666,
+        "call_efficiency": 1.0,
+        "missing_tools": [
+          "mcp__gds-agent__get_node_properties_keys"
+        ],
+        "unexpected_tools": [],
+        "exact_match": false
+      },
+      "parameter_evaluation": {
+        "modularity_optimization": {
+          "match": true,
+          "matches": [
+            "maxIterations",
+            "seedProperty"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 1,
+        "answer_total_count": 1
+      },
+      "metadata": {
+        "num_turns": 3,
+        "duration_ms": 8948
+      },
+      "token_usage": {
+        "total_input_tokens": 18,
+        "total_output_tokens": 119,
+        "total_cache_creation_tokens": 15176,
+        "total_cache_read_tokens": 127984,
+        "total_cost_usd": 0.09745619999999999,
+        "message_count": 2,
+        "total_tokens": 15313
+      }
+    },
+    "I want to run (k-1) coloring algorithm and find out how many colours do I need to color my graph. Run 20 iterations. Reply strictly with colours:answer\"": {
+      "overall_score": 1.0,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "call_efficiency": 1.0,
+        "missing_tools": [],
+        "unexpected_tools": [],
+        "exact_match": true
+      },
+      "parameter_evaluation": {
+        "k_1_coloring": {
+          "match": true,
+          "matches": [
+            "maxIterations"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 1,
+        "answer_total_count": 1
+      },
+      "metadata": {
+        "num_turns": 4,
+        "duration_ms": 6237
+      },
+      "token_usage": {
+        "total_input_tokens": 18,
+        "total_output_tokens": 105,
+        "total_cache_creation_tokens": 8442,
+        "total_cache_read_tokens": 127988,
+        "total_cost_usd": 0.0716829,
+        "message_count": 3,
+        "total_tokens": 8565
+      }
+    },
+    "I want to run label propagation for one iteration using rail as a seed property and get the community of Kennington. Reply only with Kennington:answer and nothing else.": {
+      "overall_score": 0.8888888888888888,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1_score": 0.6666666666666666,
+        "call_efficiency": 1.0,
+        "missing_tools": [
+          "mcp__gds-agent__get_node_properties_keys"
+        ],
+        "unexpected_tools": [],
+        "exact_match": false
+      },
+      "parameter_evaluation": {
+        "label_propagation": {
+          "match": true,
+          "matches": [
+            "maxIterations",
+            "seedProperty"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 1,
+        "answer_total_count": 1
+      },
+      "metadata": {
+        "num_turns": 3,
+        "duration_ms": 7791
+      },
+      "token_usage": {
+        "total_input_tokens": 18,
+        "total_output_tokens": 119,
+        "total_cache_creation_tokens": 15176,
+        "total_cache_read_tokens": 127984,
+        "total_cost_usd": 0.097533,
+        "message_count": 2,
+        "total_tokens": 15313
+      }
+    },
+    "I want to run SLLPA for one iteration and get the community of Kennington. Reply only with Kennington:answer and nothing else. If the answer contains \"[\" or \"]\" remove them.": {
+      "overall_score": 0.8888888888888888,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1_score": 0.6666666666666666,
+        "call_efficiency": 1.0,
+        "missing_tools": [
+          "mcp__gds-agent__get_node_properties_keys"
+        ],
+        "unexpected_tools": [],
+        "exact_match": false
+      },
+      "parameter_evaluation": {
+        "speaker_listener_label_propagation": {
+          "match": true,
+          "matches": [
+            "maxIterations"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 1,
+        "answer_total_count": 1
+      },
+      "metadata": {
+        "num_turns": 3,
+        "duration_ms": 7566
+      },
+      "token_usage": {
+        "total_input_tokens": 18,
+        "total_output_tokens": 103,
+        "total_cache_creation_tokens": 23588,
+        "total_cache_read_tokens": 128000,
+        "total_cost_usd": 0.12845399999999998,
+        "message_count": 2,
+        "total_tokens": 23709
+      }
+    },
+    "I want to run node similarity and find the eight most similar station pairs using cosine similarity. Return each pair in the following format \"station1 station2: similarity\". Do not return anything else.": {
+      "overall_score": 0.7037037037037036,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1_score": 0.6666666666666666,
+        "call_efficiency": 1.0,
+        "missing_tools": [
+          "mcp__gds-agent__get_node_properties_keys"
+        ],
+        "unexpected_tools": [],
+        "exact_match": false
+      },
+      "parameter_evaluation": {
+        "node_similarity": {
+          "match": true,
+          "matches": [
+            "topN",
+            "nodeIdentifierProperty",
+            "similarityMetric"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 0.4444444444444444,
+        "answer_matched_count": 4,
+        "answer_total_count": 9
+      },
+      "metadata": {
+        "num_turns": 3,
+        "duration_ms": 6729
+      },
+      "token_usage": {
+        "total_input_tokens": 18,
+        "total_output_tokens": 162,
+        "total_cache_creation_tokens": 1904,
+        "total_cache_read_tokens": 127992,
+        "total_cost_usd": 0.0483416,
+        "message_count": 2,
+        "total_tokens": 2084
+      }
+    },
+    "I want to run node similarity and find the two most similar stations to Sloane Square from available stations Knightsbridge, Acton Town, Green Park, and Pimlico. Return results as station: similarity. Separate answers with a common. Do not write anything else.": {
+      "overall_score": 0.9166666666666666,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "call_efficiency": 1.0,
+        "missing_tools": [],
+        "unexpected_tools": [],
+        "exact_match": true
+      },
+      "parameter_evaluation": {
+        "node_similarity": {
+          "match": false,
+          "matches": [
+            "topK",
+            "nodeIdentifierProperty",
+            "targetNodeFilter"
+          ],
+          "mismatches": [
+            {
+              "param": "sourceNodeFilter",
+              "expected": "Sloane Square",
+              "actual": [
+                "Sloane Square"
+              ]
+            }
+          ],
+          "score": 0.75
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 2,
+        "answer_total_count": 2
+      },
+      "metadata": {
+        "num_turns": 5,
+        "duration_ms": 17025
+      },
+      "token_usage": {
+        "total_input_tokens": 24,
+        "total_output_tokens": 126,
+        "total_cache_creation_tokens": 1486,
+        "total_cache_read_tokens": 160659,
+        "total_cost_usd": 0.055732199999999996,
+        "message_count": 3,
+        "total_tokens": 1636
+      }
+    },
+    "I want to run filtered knn and find the two most similar stations to Amersham from available stations Northwood, North Harrow, Chesham, and Pinner based on properties latitude, and longitude. Return results as station: similarity. I want to seed target nodes. Separate answers with a common. Do not write anything else.": {
+      "overall_score": 0.8888888888888888,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1_score": 0.6666666666666666,
+        "call_efficiency": 1.0,
+        "missing_tools": [
+          "mcp__gds-agent__get_node_properties_keys"
+        ],
+        "unexpected_tools": [],
+        "exact_match": false
+      },
+      "parameter_evaluation": {
+        "k_nearest_neighbors": {
+          "match": true,
+          "matches": [
+            "topK",
+            "nodeIdentifierProperty",
+            "seedTargetNodes",
+            "sourceNodeFilter",
+            "targetNodeFilter",
+            "nodeProperties"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 2,
+        "answer_total_count": 2
+      },
+      "metadata": {
+        "num_turns": 3,
+        "duration_ms": 7570
+      },
+      "token_usage": {
+        "total_input_tokens": 18,
+        "total_output_tokens": 231,
+        "total_cache_creation_tokens": 1846,
+        "total_cache_read_tokens": 128058,
+        "total_cost_usd": 0.0492421,
+        "message_count": 2,
+        "total_tokens": 2095
+      }
+    },
+    "Execute the Delta-Stepping shortest path algorithm from Covent Garden using travel time as the relationship weight, with delta = 50. Response with all the paths and costs and nothing else in the example format. For example, the answer might be: [\"Covent Garden\", \"X\"]: [0.0, 2.0], [\"Covent Garden\", \"A\", \"C\"]: [0.0, 1.0, 2.0].": {
+      "overall_score": 0.36685823754789265,
+      "tool_evaluation": {
+        "precision": 0.33333333333333337,
+        "recall": 0.3333333333333333,
+        "f1_score": 0.3333333333333333,
+        "call_efficiency": 0.25,
+        "missing_tools": [
+          "mcp__gds-agent__get_node_properties_keys",
+          "mcp__gds-agent__get_relationship_properties_keys"
+        ],
+        "unexpected_tools": [
+          "mcp__gds-agent__find_shortest_path",
+          "mcp__gds-agent__dijkstra_single_source_shortest_path"
+        ],
+        "exact_match": false
+      },
+      "parameter_evaluation": {
+        "delta_stepping_shortest_path": {
+          "match": false,
+          "matches": [
+            "sourceNode",
+            "delta",
+            "nodeIdentifierProperty"
+          ],
+          "mismatches": [
+            {
+              "param": "relationshipWeightProperty",
+              "expected": "time",
+              "actual": "travel_time"
+            }
+          ],
+          "score": 0.75
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 0.017241379310344827,
+        "answer_matched_count": 11,
+        "answer_total_count": 638
+      },
+      "metadata": {
+        "num_turns": 10,
+        "duration_ms": 37373
+      },
+      "token_usage": {
+        "total_input_tokens": 46,
+        "total_output_tokens": 769,
+        "total_cache_creation_tokens": 4534,
+        "total_cache_read_tokens": 327040,
+        "total_cost_usd": 0.1267875,
+        "message_count": 6,
+        "total_tokens": 5349
+      }
+    },
+    "Please run the Dijkstra shortest path algorithm from Barons Court to South Kensington. I want the answer to be in the format of the path and the costs. For example, [\"Barons Court\", \"X\", \"Y\", \"South Kensington\"]: [0.0, 3.0, 4.5, 9.9].": {
+      "overall_score": 0.7777777777777777,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "call_efficiency": 1.0,
+        "missing_tools": [],
+        "unexpected_tools": [],
+        "exact_match": true
+      },
+      "parameter_evaluation": {
+        "find_shortest_path": {
+          "match": false,
+          "matches": [
+            "nodeIdentifierProperty"
+          ],
+          "mismatches": [
+            {
+              "param": "sourceNode",
+              "expected": "Barons Court",
+              "actual": null
+            },
+            {
+              "param": "targetNode",
+              "expected": "South Kensington",
+              "actual": null
+            }
+          ],
+          "score": 0.3333333333333333
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 1.0,
+        "answer_matched_count": 7,
+        "answer_total_count": 7
+      },
+      "metadata": {
+        "num_turns": 7,
+        "duration_ms": 9698
+      },
+      "token_usage": {
+        "total_input_tokens": 28,
+        "total_output_tokens": 270,
+        "total_cache_creation_tokens": 10114,
+        "total_cache_read_tokens": 186274,
+        "total_cost_usd": 0.0986717,
+        "message_count": 5,
+        "total_tokens": 10412
+      }
+    },
+    "I would like to use the Dijkstra single-source shortest path to find all paths from Arsenal, using distance as the weight. Provide the paths with costs as answers. The example format is: [\"Holloway Road\", \"X\"]: [0.0, 42.0], [\"Holloway Road\", \"B\", \"C\"]: [0.0, 9.5, 9.6].": {
+      "overall_score": 0.5899897593445981,
+      "tool_evaluation": {
+        "precision": 0.6,
+        "recall": 1.0,
+        "f1_score": 0.7499999999999999,
+        "call_efficiency": 0.375,
+        "missing_tools": [],
+        "unexpected_tools": [
+          "mcp__gds-agent__find_shortest_path",
+          "Task",
+          "mcp__gds-agent__find_shortest_path",
+          "mcp__gds-agent__find_shortest_path"
+        ],
+        "exact_match": false
+      },
+      "parameter_evaluation": {
+        "dijkstra_single_source_shortest_path": {
+          "match": true,
+          "matches": [
+            "sourceNode",
+            "relationshipWeightProperty",
+            "nodeIdentifierProperty"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 0.019969278033794162,
+        "answer_matched_count": 13,
+        "answer_total_count": 651
+      },
+      "metadata": {
+        "num_turns": 20,
+        "duration_ms": 73886
+      },
+      "token_usage": {
+        "total_input_tokens": 78,
+        "total_output_tokens": 1281,
+        "total_cache_creation_tokens": 9284,
+        "total_cache_read_tokens": 531564,
+        "total_cost_usd": 0.4504938,
+        "message_count": 14,
+        "total_tokens": 10643
+      }
+    },
+    "Compute the shortest path from Eastcote to Sudbury Town using A* shortest path. Format the result as path: costs, for example, [\"A\", \"B\", \"C\"]: [0.0, 98.7, 100.1].": {
+      "overall_score": 0.9629629629629629,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "call_efficiency": 1.0,
+        "missing_tools": [],
+        "unexpected_tools": [],
+        "exact_match": true
+      },
+      "parameter_evaluation": {
+        "a_star_shortest_path": {
+          "match": true,
+          "matches": [
+            "sourceNode",
+            "targetNode",
+            "nodeIdentifierProperty",
+            "latitudeProperty",
+            "longitudeProperty"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 0.8888888888888888,
+        "answer_matched_count": 8,
+        "answer_total_count": 9
+      },
+      "metadata": {
+        "num_turns": 7,
+        "duration_ms": 11695
+      },
+      "token_usage": {
+        "total_input_tokens": 28,
+        "total_output_tokens": 333,
+        "total_cache_creation_tokens": 3696,
+        "total_cache_read_tokens": 192954,
+        "total_cost_usd": 0.07882919999999999,
+        "message_count": 5,
+        "total_tokens": 4057
+      }
+    },
+    "Find the 3 shortest paths from Bank to Waterloo using the Yen's algorithm using time as the relationship weight. Format the results as path: costs, for example, [\"A\", \"B\", \"C\"]: [0.0, 98.7, 100.1], [\"A\", \"E\", \"C\"]: [0.0, 32.5, 150.0].": {
+      "overall_score": 0.5,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 0.3333333333333333,
+        "f1_score": 0.5,
+        "call_efficiency": 1.0,
+        "missing_tools": [
+          "mcp__gds-agent__get_node_properties_keys",
+          "mcp__gds-agent__get_relationship_properties_keys"
+        ],
+        "unexpected_tools": [],
+        "exact_match": false
+      },
+      "parameter_evaluation": {
+        "yens_shortest_paths": {
+          "match": true,
+          "matches": [
+            "sourceNode",
+            "targetNode",
+            "k",
+            "relationshipWeightProperty",
+            "nodeIdentifierProperty"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 0.0,
+        "answer_matched_count": 0,
+        "answer_total_count": 14
+      },
+      "metadata": {
+        "num_turns": 4,
+        "duration_ms": 8506
+      },
+      "token_usage": {
+        "total_input_tokens": 16,
+        "total_output_tokens": 335,
+        "total_cache_creation_tokens": 12678,
+        "total_cache_read_tokens": 128050,
+        "total_cost_usd": 0.0910305,
+        "message_count": 3,
+        "total_tokens": 13029
+      }
+    },
+    "I would like to find the minimum weighted spanning tree rooted at Hammersmith using time as the relationship weight. I want the output to be in the format of a sequence of [node, parent, weight]. For example: [\"A\", \"B\", 2.0], [\"A\", \"C\", 3.0], [\"K\", \"L\", 9.5].": {
+      "overall_score": 0.46726618705035966,
+      "tool_evaluation": {
+        "precision": 0.25,
+        "recall": 1.0,
+        "f1_score": 0.4,
+        "call_efficiency": 0.125,
+        "missing_tools": [],
+        "unexpected_tools": [
+          "TodoWrite",
+          "TodoWrite",
+          "Task",
+          "mcp__gds-agent__count_nodes",
+          "Write",
+          "Write",
+          "mcp__gds-agent__breadth_first_search",
+          "Write",
+          "Bash",
+          "mcp__gds-agent__dijkstra_single_source_shortest_path",
+          "mcp__gds-agent__random_walk",
+          "mcp__gds-agent__find_shortest_path",
+          "mcp__gds-agent__find_shortest_path",
+          "mcp__gds-agent__find_shortest_path",
+          "mcp__gds-agent__find_shortest_path",
+          "TodoWrite"
+        ],
+        "exact_match": false
+      },
+      "parameter_evaluation": {
+        "minimum_weight_spanning_tree": {
+          "match": true,
+          "matches": [
+            "sourceNode",
+            "relationshipWeightProperty",
+            "nodeIdentifierProperty"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 0.0017985611510791368,
+        "answer_matched_count": 1,
+        "answer_total_count": 556
+      },
+      "metadata": {
+        "num_turns": 21,
+        "duration_ms": 175018
+      },
+      "token_usage": {
+        "total_input_tokens": 92,
+        "total_output_tokens": 1646,
+        "total_cache_creation_tokens": 5686,
+        "total_cache_read_tokens": 528986,
+        "total_cost_usd": 0.6996432,
+        "message_count": 29,
+        "total_tokens": 7424
+      }
+    },
+    "Find the minimum directed steiner tree from Bank to Waterloo, Southwark and Westminster. I want the output to be in the format of a sequence of [node, parent, weight]. For example: [\"A\", \"B\", 2.0], [\"A\", \"C\", 3.0], [\"K\", \"L\", 9.5].": {
+      "overall_score": 0.6388888888888888,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1_score": 0.6666666666666666,
+        "call_efficiency": 0.5,
+        "missing_tools": [
+          "mcp__gds-agent__get_node_properties_keys"
+        ],
+        "unexpected_tools": [],
+        "exact_match": false
+      },
+      "parameter_evaluation": {
+        "minimum_directed_steiner_tree": {
+          "match": true,
+          "matches": [
+            "sourceNode",
+            "targetNodes",
+            "nodeIdentifierProperty"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 0.25,
+        "answer_matched_count": 2,
+        "answer_total_count": 8
+      },
+      "metadata": {
+        "num_turns": 7,
+        "duration_ms": 12033
+      },
+      "token_usage": {
+        "total_input_tokens": 24,
+        "total_output_tokens": 432,
+        "total_cache_creation_tokens": 10800,
+        "total_cache_read_tokens": 186936,
+        "total_cost_usd": 0.10313280000000001,
+        "message_count": 5,
+        "total_tokens": 11256
+      }
+    },
+    "Compute the prize collecting Steiner tree on my graph in the database with distance as the relationship weight and zone as the node prize. Format the results as a sequence of [node, parent, weight]. For example: [\"A\", \"B\", 2.0], [\"A\", \"C\", 3.0], [\"K\", \"L\", 9.5].": {
+      "overall_score": 0.47222222222222215,
+      "tool_evaluation": {
+        "precision": 0.6,
+        "recall": 1.0,
+        "f1_score": 0.7499999999999999,
+        "call_efficiency": 0.3333333333333333,
+        "missing_tools": [],
+        "unexpected_tools": [
+          "TodoWrite",
+          "TodoWrite",
+          "TodoWrite",
+          "mcp__gds-agent__count_nodes",
+          "TodoWrite",
+          "TodoWrite"
+        ],
+        "exact_match": false
+      },
+      "parameter_evaluation": {
+        "prize_collecting_steiner_tree": {
+          "match": false,
+          "matches": [
+            "relationshipWeightProperty",
+            "prizeProperty"
+          ],
+          "mismatches": [
+            {
+              "param": "nodeIdentifierProperty",
+              "expected": "name",
+              "actual": null
+            }
+          ],
+          "score": 0.6666666666666666
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 0.0,
+        "answer_matched_count": 0,
+        "answer_total_count": 479
+      },
+      "metadata": {
+        "num_turns": 0,
+        "duration_ms": 37575
+      },
+      "token_usage": {
+        "total_input_tokens": 106,
+        "total_output_tokens": 1402,
+        "total_cache_creation_tokens": 4666,
+        "total_cache_read_tokens": 593860,
+        "total_cost_usd": 0.2176043,
+        "message_count": 14,
+        "total_tokens": 6174
+      }
+    },
+    "Execute all pairs shortest paths on the entire graph using time as the relationship weight. Format the output result as a sequence of [source, target, distance]. For example, [\"A\", \"B\", 20.5], [\"A\", \"Z\", 21.0].": {
+      "overall_score": 0.0,
+      "error": "No actual result found"
+    },
+    "Execute BFS on my database with source station Aldgate and max depth 4. The result data should be paths, for example: [\"A\", \"B\", \"C\"], [\"D, \"A\", \"F\"].": {
+      "overall_score": 0.7999999999999999,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "call_efficiency": 1.0,
+        "missing_tools": [],
+        "unexpected_tools": [],
+        "exact_match": true
+      },
+      "parameter_evaluation": {
+        "breadth_first_search": {
+          "match": true,
+          "matches": [
+            "sourceNode",
+            "maxDepth",
+            "nodeIdentifierProperty"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 0.4,
+        "answer_matched_count": 14,
+        "answer_total_count": 35
+      },
+      "metadata": {
+        "num_turns": 6,
+        "duration_ms": 17553
+      },
+      "token_usage": {
+        "total_input_tokens": 28,
+        "total_output_tokens": 897,
+        "total_cache_creation_tokens": 10474,
+        "total_cache_read_tokens": 193044,
+        "total_cost_usd": 0.11116329999999999,
+        "message_count": 4,
+        "total_tokens": 11399
+      }
+    },
+    "Execute DFS on my database with source station Aldgate and max depth 4. The result data should be paths, for example: [\"A\", \"B\", \"C\"], [\"D, \"A\", \"F\"].": {
+      "overall_score": 0.8229166666666666,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "call_efficiency": 1.0,
+        "missing_tools": [],
+        "unexpected_tools": [],
+        "exact_match": true
+      },
+      "parameter_evaluation": {
+        "depth_first_search": {
+          "match": true,
+          "matches": [
+            "sourceNode",
+            "maxDepth",
+            "nodeIdentifierProperty"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 0.46875,
+        "answer_matched_count": 15,
+        "answer_total_count": 32
+      },
+      "metadata": {
+        "num_turns": 6,
+        "duration_ms": 16453
+      },
+      "token_usage": {
+        "total_input_tokens": 28,
+        "total_output_tokens": 837,
+        "total_cache_creation_tokens": 9748,
+        "total_cache_read_tokens": 193072,
+        "total_cost_usd": 0.1071156,
+        "message_count": 4,
+        "total_tokens": 10613
+      }
+    },
+    "I want to run the Bellman-Ford algorithm from Chancery Lane using time as the weight property. The result should be formatted as path: costs, for example: [\"A\", \"X\"]: [0.0, 42.0], [\"A\", \"B\", \"C\"]: [0.0, 9.5, 9.6].": {
+      "overall_score": 0.5089662447257384,
+      "tool_evaluation": {
+        "precision": 1.0,
+        "recall": 0.3333333333333333,
+        "f1_score": 0.5,
+        "call_efficiency": 1.0,
+        "missing_tools": [
+          "mcp__gds-agent__get_node_properties_keys",
+          "mcp__gds-agent__get_relationship_properties_keys"
+        ],
+        "unexpected_tools": [],
+        "exact_match": false
+      },
+      "parameter_evaluation": {
+        "bellman_ford_single_source_shortest_path": {
+          "match": true,
+          "matches": [
+            "sourceNode",
+            "relationshipWeightProperty",
+            "nodeIdentifierProperty"
+          ],
+          "mismatches": [],
+          "score": 1.0
+        }
+      },
+      "answer_evaluation": {
+        "answer_match_score": 0.02689873417721519,
+        "answer_matched_count": 17,
+        "answer_total_count": 632
+      },
+      "metadata": {
+        "num_turns": 4,
+        "duration_ms": 17425
+      },
+      "token_usage": {
+        "total_input_tokens": 20,
+        "total_output_tokens": 477,
+        "total_cache_creation_tokens": 1666,
+        "total_cache_read_tokens": 128146,
+        "total_cost_usd": 0.0532623,
+        "message_count": 3,
+        "total_tokens": 2163
+      }
+    }
+  }
+}
