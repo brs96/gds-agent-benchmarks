@@ -8,17 +8,22 @@ import pandas as pd
 from pathlib import Path
 
 
-def load_evaluation_files(pattern="*_evaluation.json"):
-    """Load all evaluation JSON files matching the pattern"""
+def load_evaluation_files(pattern="results/*_evaluation_aggregated.json"):
+    """Load all aggregated evaluation JSON files from results folder"""
     files = glob.glob(pattern)
     evaluations = {}
+    
+    if not files:
+        # Fallback to old pattern if no aggregated files found
+        files = glob.glob("*_evaluation.json")
+        print("No aggregated evaluation files found, falling back to old format")
     
     for file in files:
         try:
             with open(file, 'r') as f:
                 data = json.load(f)
                 # Extract dataset name from filename
-                dataset_name = Path(file).stem.replace('_evaluation', '')
+                dataset_name = Path(file).stem.replace('_evaluation_aggregated', '').replace('_evaluation', '')
                 evaluations[dataset_name] = data
         except Exception as e:
             print(f"Error loading {file}: {e}")
@@ -27,7 +32,7 @@ def load_evaluation_files(pattern="*_evaluation.json"):
 
 
 def extract_metrics(evaluations):
-    """Extract metrics from evaluation data"""
+    """Extract metrics from aggregated evaluation data"""
     results = {
         'datasets': [],
         'overall_scores': [],
@@ -50,71 +55,91 @@ def extract_metrics(evaluations):
     }
     
     question_results = []
+    run_variation_data = {}  # New: Store data for variation analysis
     
     for dataset_name, data in evaluations.items():
+        run_variation_data[dataset_name] = []
+        
+        # Extract data from detailed_evaluations (individual runs)
         for question, evaluation in data['detailed_evaluations'].items():
-            # Basic info
-            results['datasets'].append(dataset_name)
-            results['overall_scores'].append(evaluation['overall_score'])
+            runs = evaluation.get('runs', [])
             
-            # Tool evaluation metrics
-            tool_eval = evaluation.get('tool_evaluation', {})
-            results['tool_precision'].append(tool_eval.get('precision', 0))
-            results['tool_recall'].append(tool_eval.get('recall', 0))
-            results['tool_f1'].append(tool_eval.get('f1_score', 0))
-            results['call_efficiency'].append(tool_eval.get('call_efficiency', 1.0))
+            # Process each individual run
+            for run_idx, run_eval in enumerate(runs):
+                # Basic info
+                results['datasets'].append(dataset_name)
+                results['overall_scores'].append(run_eval['overall_score'])
+                
+                # Tool evaluation metrics
+                tool_eval = run_eval.get('tool_evaluation', {})
+                results['tool_precision'].append(tool_eval.get('precision', 0))
+                results['tool_recall'].append(tool_eval.get('recall', 0))
+                results['tool_f1'].append(tool_eval.get('f1_score', 0))
+                results['call_efficiency'].append(tool_eval.get('call_efficiency', 1.0))
+                
+                # Parameter evaluation
+                param_eval = run_eval.get('parameter_evaluation', {})
+                param_scores = [v.get('score', 0) for v in param_eval.values() if isinstance(v, dict)]
+                avg_param_score = np.mean(param_scores) if param_scores else 0
+                results['parameter_scores'].append(avg_param_score)
+                
+                # Answer evaluation
+                answer_eval = run_eval.get('answer_evaluation', {})
+                answer_match_score = answer_eval.get('answer_match_score', 0.0)
+                if isinstance(answer_match_score, bool):
+                    answer_match_score = float(answer_match_score)
+                results['answer_scores'].append(answer_match_score)
+                results['answer_match_score'].append(answer_match_score)
+                
+                # Metadata
+                metadata = run_eval.get('metadata', {})
+                results['num_turns'].append(metadata.get('num_turns', 0))
+                results['duration_ms'].append(metadata.get('duration_ms', 0))
+                
+                # Token usage
+                token_usage = run_eval.get('token_usage', {})
+                results['total_input_tokens'].append(token_usage.get('total_input_tokens', 0))
+                results['total_output_tokens'].append(token_usage.get('total_output_tokens', 0))
+                results['total_cache_creation_tokens'].append(token_usage.get('total_cache_creation_tokens', 0))
+                results['total_cache_read_tokens'].append(token_usage.get('total_cache_read_tokens', 0))
+                results['total_tokens'].append(token_usage.get('total_tokens', 0))
+                results['total_cost_usd'].append(token_usage.get('total_cost_usd', 0.0))
+                results['message_count'].append(token_usage.get('message_count', 0))
+                
+                # Store individual run results
+                question_results.append({
+                    'dataset': dataset_name,
+                    'question': question[:100] + "..." if len(question) > 100 else question,
+                    'run_number': run_idx + 1,
+                    'overall_score': run_eval['overall_score'],
+                    'tool_precision': tool_eval.get('precision', 0),
+                    'tool_recall': tool_eval.get('recall', 0),
+                    'tool_f1': tool_eval.get('f1_score', 0),
+                    'call_efficiency': tool_eval.get('call_efficiency', 1.0),
+                    'param_score': avg_param_score,
+                    'answer_score': answer_match_score,
+                    'answer_match_score': answer_match_score,
+                    'num_turns': metadata.get('num_turns', 0),
+                    'duration_ms': metadata.get('duration_ms', 0),
+                    'total_input_tokens': token_usage.get('total_input_tokens', 0),
+                    'total_output_tokens': token_usage.get('total_output_tokens', 0),
+                    'total_tokens': token_usage.get('total_tokens', 0),
+                    'total_cost_usd': token_usage.get('total_cost_usd', 0.0),
+                    'source_file': run_eval.get('source_file', ''),
+                    'cost_per_question': token_usage.get('total_cost_usd', 0.0)
+                })
             
-            # Parameter evaluation
-            param_eval = evaluation.get('parameter_evaluation', {})
-            param_scores = [v.get('score', 0) for v in param_eval.values() if isinstance(v, dict)]
-            avg_param_score = np.mean(param_scores) if param_scores else 0
-            results['parameter_scores'].append(avg_param_score)
-            
-            # Answer evaluation
-            answer_eval = evaluation.get('answer_evaluation', {})
-            answer_match_score = answer_eval.get('answer_match_score', 0.0)
-            if isinstance(answer_match_score, bool):
-                answer_match_score = float(answer_match_score)
-            results['answer_scores'].append(answer_match_score)
-            results['answer_match_score'].append(answer_match_score)
-            
-            # Metadata
-            metadata = evaluation.get('metadata', {})
-            results['num_turns'].append(metadata.get('num_turns', 0))
-            results['duration_ms'].append(metadata.get('duration_ms', 0))
-            
-            # Token usage
-            token_usage = evaluation.get('token_usage', {})
-            results['total_input_tokens'].append(token_usage.get('total_input_tokens', 0))
-            results['total_output_tokens'].append(token_usage.get('total_output_tokens', 0))
-            results['total_cache_creation_tokens'].append(token_usage.get('total_cache_creation_tokens', 0))
-            results['total_cache_read_tokens'].append(token_usage.get('total_cache_read_tokens', 0))
-            results['total_tokens'].append(token_usage.get('total_tokens', 0))
-            results['total_cost_usd'].append(token_usage.get('total_cost_usd', 0.0))
-            results['message_count'].append(token_usage.get('message_count', 0))
-            
-            # Store individual question results
-            question_results.append({
-                'dataset': dataset_name,
-                'question': question[:100] + "..." if len(question) > 100 else question,
-                'overall_score': evaluation['overall_score'],
-                'tool_precision': tool_eval.get('precision', 0),
-                'tool_recall': tool_eval.get('recall', 0),
-                'tool_f1': tool_eval.get('f1_score', 0),
-                'call_efficiency': tool_eval.get('call_efficiency', 1.0),
-                'param_score': avg_param_score,
-                'answer_score': answer_match_score,
-                'answer_match_score': answer_match_score,
-                'num_turns': metadata.get('num_turns', 0),
-                'duration_ms': metadata.get('duration_ms', 0),
-                'total_input_tokens': token_usage.get('total_input_tokens', 0),
-                'total_output_tokens': token_usage.get('total_output_tokens', 0),
-                'total_tokens': token_usage.get('total_tokens', 0),
-                'total_cost_usd': token_usage.get('total_cost_usd', 0.0),
-                'cost_per_question': token_usage.get('total_cost_usd', 0.0)
-            })
+            # Store variation data for this question
+            if runs:
+                run_variation_data[dataset_name].append({
+                    'question': question,
+                    'scores': [run['overall_score'] for run in runs],
+                    'tool_f1s': [run.get('tool_evaluation', {}).get('f1_score', 0) for run in runs],
+                    'answer_scores': [run.get('answer_evaluation', {}).get('answer_match_score', 0) for run in runs],
+                    'num_runs': len(runs)
+                })
     
-    return results, question_results
+    return results, question_results, run_variation_data
 
 
 def calculate_summary_stats(results):
@@ -138,7 +163,109 @@ def calculate_summary_stats(results):
     return stats
 
 
-def create_visualizations(results, question_results, stats, evaluations):
+def create_variation_plots(run_variation_data, dataset_name):
+    """Create plots showing variation across runs for a single dataset"""
+    
+    if not run_variation_data:
+        return
+        
+    # Create results/plots directory
+    plots_dir = Path(f"results/plots_{dataset_name}")
+    plots_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Plot 1: Score variation across questions
+    plt.figure(figsize=(14, 8))
+    
+    questions = [item['question'][:30] + '...' if len(item['question']) > 30 else item['question'] 
+                for item in run_variation_data]
+    
+    # Create box plots for score variation
+    score_data = [item['scores'] for item in run_variation_data]
+    
+    bp = plt.boxplot(score_data, patch_artist=True, labels=range(1, len(questions)+1))
+    
+    # Color the boxes
+    for patch in bp['boxes']:
+        patch.set_facecolor('lightblue')
+        patch.set_alpha(0.7)
+    
+    plt.xlabel('Question Number')
+    plt.ylabel('Overall Score')
+    plt.title(f'Score Variation Across Runs - {dataset_name}')
+    plt.xticks(rotation=45)
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(plots_dir / 'score_variation_boxplot.png', dpi=300, bbox_inches='tight')
+    plt.close()
+    
+    # Plot 2: Success rate heatmap
+    plt.figure(figsize=(12, 8))
+    
+    # Calculate success rates (score >= 0.8) for each question
+    success_rates = []
+    question_labels = []
+    
+    for item in run_variation_data:
+        if item['scores']:
+            success_rate = sum(1 for score in item['scores'] if score >= 0.8) / len(item['scores'])
+            success_rates.append(success_rate)
+            question_labels.append(item['question'][:40] + '...' if len(item['question']) > 40 else item['question'])
+    
+    if success_rates:
+        # Create horizontal bar chart
+        y_pos = np.arange(len(question_labels))
+        colors = ['red' if rate < 0.5 else 'yellow' if rate < 0.8 else 'green' for rate in success_rates]
+        
+        plt.barh(y_pos, success_rates, color=colors, alpha=0.7)
+        plt.yticks(y_pos, question_labels)
+        plt.xlabel('Success Rate (Score ≥ 0.8)')
+        plt.title(f'Success Rate by Question - {dataset_name}')
+        plt.xlim(0, 1)
+        
+        # Add value labels
+        for i, rate in enumerate(success_rates):
+            plt.text(rate + 0.01, i, f'{rate:.2f}', va='center')
+        
+        plt.tight_layout()
+        plt.savefig(plots_dir / 'success_rate_by_question.png', dpi=300, bbox_inches='tight')
+        plt.close()
+    
+    # Plot 3: Coefficient of variation (CV) analysis
+    plt.figure(figsize=(12, 6))
+    
+    cvs = []
+    means = []
+    question_nums = []
+    
+    for i, item in enumerate(run_variation_data):
+        if len(item['scores']) > 1:
+            mean_score = np.mean(item['scores'])
+            std_score = np.std(item['scores'])
+            cv = std_score / mean_score if mean_score > 0 else 0
+            
+            cvs.append(cv)
+            means.append(mean_score)
+            question_nums.append(i + 1)
+    
+    if cvs:
+        plt.scatter(means, cvs, alpha=0.7, s=60)
+        plt.xlabel('Mean Score')
+        plt.ylabel('Coefficient of Variation')
+        plt.title(f'Score Variability vs Performance - {dataset_name}')
+        
+        # Add question number annotations
+        for i, (mean, cv, qnum) in enumerate(zip(means, cvs, question_nums)):
+            plt.annotate(str(qnum), (mean, cv), xytext=(5, 5), textcoords='offset points', fontsize=8)
+        
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+        plt.savefig(plots_dir / 'variability_analysis.png', dpi=300, bbox_inches='tight')
+        plt.close()
+    
+    print(f"Variation plots for {dataset_name} saved to {plots_dir}/")
+
+
+def create_visualizations(results, question_results, stats, evaluations, run_variation_data):
     """Create comprehensive visualizations"""
     
     # Set up the plotting style and fonts
@@ -281,22 +408,30 @@ def create_visualizations(results, question_results, stats, evaluations):
     print("Chart 5 saved as 'token_usage_analysis.png'")
     
     print("All charts saved successfully!")
+    
+    # Create variation plots for each dataset
+    print("\nCreating variation analysis plots...")
+    for dataset_name, variation_data in run_variation_data.items():
+        create_variation_plots(variation_data, dataset_name)
 
 
 def print_detailed_stats(stats, evaluations):
     """Print detailed statistics to console"""
     print("\n" + "="*80)
-    print("BENCHMARK STATISTICS SUMMARY")
+    print("BENCHMARK STATISTICS SUMMARY (MULTIPLE RUNS)")
     print("="*80)
     
     total_questions = sum(data['summary']['total_questions'] for data in evaluations.values())
+    total_runs = sum(data['summary']['total_runs'] for data in evaluations.values())
     print(f"\nTotal Questions Evaluated: {total_questions}")
+    print(f"Total Runs Processed: {total_runs}")
     print(f"Total Datasets: {len(evaluations)}")
     
     print(f"\nDataset Breakdown:")
     for name, data in evaluations.items():
         print(f"  {name}: {data['summary']['total_questions']} questions, "
-              f"avg score: {data['summary']['average_score']:.3f}")
+              f"{data['summary']['total_runs']} runs, "
+              f"avg score: {data['summary']['average_score_across_questions']:.3f}")
     
     print(f"\n{'Metric':<20} {'Mean':<8} {'Std':<8} {'Median':<8} {'Min':<8} {'Max':<8}")
     print("-" * 68)
@@ -377,13 +512,13 @@ def main():
         print(f"  - {name}")
     
     print("\nExtracting metrics...")
-    results, question_results = extract_metrics(evaluations)
+    results, question_results, run_variation_data = extract_metrics(evaluations)
     
     print("Calculating summary statistics...")
     stats = calculate_summary_stats(results)
     
     print("Creating visualizations...")
-    create_visualizations(results, question_results, stats, evaluations)
+    create_visualizations(results, question_results, stats, evaluations, run_variation_data)
     
     print_detailed_stats(stats, evaluations)
     
@@ -393,6 +528,7 @@ def main():
     print(f"\nDetailed results saved to 'detailed_question_results.csv'")
     
     print("\nAnalysis complete!")
+    print(f"\nVariation analysis plots saved in results/plots_<dataset_name>/ directories")
 
 
 if __name__ == "__main__":

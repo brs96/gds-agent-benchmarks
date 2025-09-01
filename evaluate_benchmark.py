@@ -13,6 +13,7 @@ import re
 import argparse
 from pathlib import Path
 from typing import Dict, List, Any
+import glob
 
 # Import the fine-grained path questions evaluator functions
 from path_questions_evaluation import evaluate_path_algorithm_output
@@ -33,19 +34,26 @@ class BenchmarkEvaluator:
         self.questions_file = Path(questions_file)
         
         
-        # Auto-derive results file from questions file if not provided
+        # Auto-derive results files from questions file if not provided
         if results_file is None:
-            # Convert x.csv to x_results.json
+            # Find all matching results files in the results folder
             base_name = self.questions_file.stem
-            self.results_file = Path(f"{base_name}_results.json")
+            pattern = f"results/{base_name}_results_*.json"
+            self.results_files = list(Path().glob(pattern))
+            
+            # Fallback to old naming convention if no timestamped files found
+            if not self.results_files:
+                old_pattern = f"{base_name}_results.json"
+                if Path(old_pattern).exists():
+                    self.results_files = [Path(old_pattern)]
         else:
-            self.results_file = Path(results_file)
+            self.results_files = [Path(results_file)]
             
         # Auto-derive evaluation file from questions file if not provided
         if evaluation_file is None:
-            # Convert x.csv to x_evaluation.json
+            # Convert x.csv to x_evaluation_aggregated.json
             base_name = self.questions_file.stem
-            self.evaluation_file = Path(f"{base_name}_evaluation.json")
+            self.evaluation_file = Path(f"results/{base_name}_evaluation_aggregated.json")
         else:
             self.evaluation_file = Path(evaluation_file)
         
@@ -166,42 +174,58 @@ class BenchmarkEvaluator:
             'total_tokens': total_input_tokens + total_output_tokens + total_cache_creation_tokens
         }
 
-    def load_actual_results(self) -> Dict[str, Dict[str, Any]]:
-        """Load actual results from benchmark results JSON."""
-        actual = {}
+    def load_actual_results(self) -> Dict[str, List[Dict[str, Any]]]:
+        """Load actual results from all benchmark results JSON files."""
+        all_results = {}
         
-        if not self.results_file.exists():
-            logger.error(f"Results file not found: {self.results_file}")
-            return actual
+        if not self.results_files:
+            logger.error("No results files found")
+            return all_results
             
-        try:
-            with open(self.results_file, 'r', encoding='utf-8') as file:
-                data = json.load(file)
+        logger.info(f"Loading results from {len(self.results_files)} files")
+        
+        for results_file in self.results_files:
+            if not results_file.exists():
+                logger.warning(f"Results file not found: {results_file}")
+                continue
                 
-            for result in data.get('raw_results', []):
-                if result.get('success', False) and result.get('response_data'):
-                    question = result['question'].strip()
-                    response_data = result['response_data']
+            try:
+                with open(results_file, 'r', encoding='utf-8') as file:
+                    data = json.load(file)
                     
-                    # Extract token usage from raw_stream
-                    token_usage = self.extract_token_usage_from_raw_stream(
-                        response_data.get('raw_stream', '')
-                    )
-                    
-                    actual[question] = {
-                        'tool_calls': response_data.get('tool_calls', []),
-                        'tool_results': response_data.get('tool_results', []),
-                        'final_result': response_data.get('final_result', ''),
-                        'num_turns': response_data.get('num_turns', 0),
-                        'duration_ms': response_data.get('duration_ms', 0),
-                        'token_usage': token_usage
-                    }
-                    
-        except Exception as e:
-            logger.error(f"Error loading actual results: {e}")
-            
-        logger.info(f"Loaded {len(actual)} actual results")
-        return actual
+                logger.info(f"Processing {results_file}")
+                
+                for result in data.get('raw_results', []):
+                    if result.get('success', False) and result.get('response_data'):
+                        question = result['question'].strip()
+                        response_data = result['response_data']
+                        
+                        # Extract token usage from raw_stream
+                        token_usage = self.extract_token_usage_from_raw_stream(
+                            response_data.get('raw_stream', '')
+                        )
+                        
+                        result_data = {
+                            'tool_calls': response_data.get('tool_calls', []),
+                            'tool_results': response_data.get('tool_results', []),
+                            'final_result': response_data.get('final_result', ''),
+                            'num_turns': response_data.get('num_turns', 0),
+                            'duration_ms': response_data.get('duration_ms', 0),
+                            'token_usage': token_usage,
+                            'source_file': str(results_file)
+                        }
+                        
+                        # Store multiple runs per question
+                        if question not in all_results:
+                            all_results[question] = []
+                        all_results[question].append(result_data)
+                        
+            except Exception as e:
+                logger.error(f"Error loading actual results from {results_file}: {e}")
+                
+        total_results = sum(len(runs) for runs in all_results.values())
+        logger.info(f"Loaded {total_results} total results across {len(all_results)} questions")
+        return all_results
         
     def evaluate_tool_calls(self, expected_tools: List[str], actual_tools: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Evaluate if the correct tools were called."""
@@ -506,7 +530,7 @@ class BenchmarkEvaluator:
         }
         
     def run_evaluation(self) -> Dict[str, Any]:
-        """Run the complete evaluation."""
+        """Run the complete evaluation across all result files."""
         logger.info("Starting benchmark evaluation...")
         
         expected_results = self.load_expected_results()
@@ -521,97 +545,122 @@ class BenchmarkEvaluator:
             return {}
             
         evaluations = {}
+        aggregated_stats = {}
         
         for question in expected_results:
             if question in actual_results:
-                logger.info(f"Evaluating: {question[:50]}...")
-                evaluation = self.evaluate_question(
-                    expected_results[question],
-                    actual_results[question]
-                )
-                evaluations[question] = evaluation
+                logger.info(f"Evaluating: {question[:50]}... ({len(actual_results[question])} runs)")
+                
+                # Evaluate each run for this question
+                run_evaluations = []
+                for i, actual_result in enumerate(actual_results[question]):
+                    run_eval = self.evaluate_question(
+                        expected_results[question],
+                        actual_result
+                    )
+                    run_eval['run_number'] = i + 1
+                    run_eval['source_file'] = actual_result.get('source_file', '')
+                    run_evaluations.append(run_eval)
+                
+                evaluations[question] = {
+                    'runs': run_evaluations,
+                    'num_runs': len(run_evaluations)
+                }
+                
+                # Calculate aggregated statistics for this question
+                scores = [run['overall_score'] for run in run_evaluations]
+                tool_f1s = [run['tool_evaluation']['f1_score'] for run in run_evaluations]
+                answer_scores = [run['answer_evaluation']['answer_match_score'] for run in run_evaluations]
+                
+                aggregated_stats[question] = {
+                    'overall_score_mean': sum(scores) / len(scores),
+                    'overall_score_min': min(scores),
+                    'overall_score_max': max(scores),
+                    'tool_f1_mean': sum(tool_f1s) / len(tool_f1s),
+                    'answer_score_mean': sum(answer_scores) / len(answer_scores),
+                    'success_rate': len([s for s in scores if s > 0.8]) / len(scores),
+                    'num_runs': len(scores)
+                }
             else:
                 logger.warning(f"No actual result found for question: {question[:50]}...")
                 evaluations[question] = {
-                    'overall_score': 0.0,
+                    'runs': [],
+                    'num_runs': 0,
                     'error': 'No actual result found'
                 }
+                aggregated_stats[question] = {
+                    'overall_score_mean': 0.0,
+                    'success_rate': 0.0,
+                    'num_runs': 0
+                }
         
-        # Calculate summary statistics
-        valid_scores = [e['overall_score'] for e in evaluations.values() if 'error' not in e]
+        # Calculate overall summary statistics
+        all_mean_scores = [stats['overall_score_mean'] for stats in aggregated_stats.values() if stats['num_runs'] > 0]
+        total_runs = sum(stats['num_runs'] for stats in aggregated_stats.values())
         
         summary = {
             'total_questions': len(expected_results),
-            'evaluated_questions': len(valid_scores),
-            'average_score': sum(valid_scores) / len(valid_scores) if valid_scores else 0.0,
-            'scores': valid_scores
+            'total_runs': total_runs,
+            'average_score_across_questions': sum(all_mean_scores) / len(all_mean_scores) if all_mean_scores else 0.0,
+            'results_files_processed': len(self.results_files)
         }
         
         return {
             'summary': summary,
+            'aggregated_stats': aggregated_stats,
             'detailed_evaluations': evaluations
         }
         
     def print_evaluation_report(self, evaluation_results: Dict[str, Any]) -> None:
-        """Print a detailed evaluation report."""
+        """Print a detailed evaluation report for multiple runs."""
         
         if not evaluation_results:
             print("❌ No evaluation results to display")
             return
             
         summary = evaluation_results.get('summary', {})
-        evaluations = evaluation_results.get('detailed_evaluations', {})
+        aggregated_stats = evaluation_results.get('aggregated_stats', {})
+        detailed_evaluations = evaluation_results.get('detailed_evaluations', {})
         
         print("\n" + "="*80)
-        print("GDS AGENT BENCHMARK EVALUATION REPORT")
+        print("GDS AGENT BENCHMARK EVALUATION REPORT (MULTIPLE RUNS)")
         print("="*80)
         
         print(f"\n📊 SUMMARY:")
         print(f"Total Questions: {summary.get('total_questions', 0)}")
-        print(f"Evaluated Questions: {summary.get('evaluated_questions', 0)}")
-        print(f"Average Score: {summary.get('average_score', 0.0):.2%}")
+        print(f"Total Runs Processed: {summary.get('total_runs', 0)}")
+        print(f"Results Files Processed: {summary.get('results_files_processed', 0)}")
+        print(f"Average Score Across Questions: {summary.get('average_score_across_questions', 0.0):.2%}")
         
-        print(f"\n📋 DETAILED RESULTS:")
+        print(f"\n📋 AGGREGATED RESULTS BY QUESTION:")
         
-        for i, (question, evaluation) in enumerate(evaluations.items(), 1):
-            if 'error' in evaluation:
+        for i, (question, stats) in enumerate(aggregated_stats.items(), 1):
+            if stats['num_runs'] == 0:
                 print(f"\n{i}. ❌ {question[:60]}...")
-                print(f"   Error: {evaluation['error']}")
+                print(f"   Error: No runs found")
                 continue
                 
-            score = evaluation['overall_score']
-            status = "✅" if score >= 0.8 else "⚠️" if score >= 0.6 else "❌"
+            mean_score = stats['overall_score_mean']
+            success_rate = stats['success_rate']
+            status = "✅" if mean_score >= 0.8 else "⚠️" if mean_score >= 0.6 else "❌"
             
-            print(f"\n{i}. {status} Score: {score:.2%}")
-            print(f"   Question: {question}")
+            print(f"\n{i}. {status} Question: {question}")
+            print(f"   📊 Runs: {stats['num_runs']}")
+            print(f"   📈 Mean Score: {mean_score:.2%} (min: {stats['overall_score_min']:.2%}, max: {stats['overall_score_max']:.2%})")
+            print(f"   ✅ Success Rate (>80%): {success_rate:.2%}")
+            print(f"   🔧 Tool F1 Mean: {stats['tool_f1_mean']:.2%}")
+            print(f"   💬 Answer Score Mean: {stats['answer_score_mean']:.2%}")
             
-            # Tool evaluation
-            tool_eval = evaluation['tool_evaluation']
-            print(f"   🔧 Tools: P={tool_eval['precision']:.2f}, R={tool_eval['recall']:.2f}, F1={tool_eval['f1_score']:.2f}")
-            if tool_eval['missing_tools']:
-                print(f"      Missing: {', '.join(tool_eval['missing_tools'])}")
-            if tool_eval['unexpected_tools']:
-                print(f"      Unexpected: {', '.join(tool_eval['unexpected_tools'])}")
-                
-            # Parameter evaluation  
-            param_eval = evaluation['parameter_evaluation']
-            for tool_key, params in param_eval.items():
-                match_status = "✓" if params['match'] else "✗"
-                print(f"   ⚙️  {tool_key}: {match_status} (Score: {params.get('score', 0):.2f})")
-                if params.get('mismatches'):
-                    for mismatch in params['mismatches']:
-                        print(f"      {mismatch['param']}: expected {mismatch['expected']}, got {mismatch['actual']}")
-                        
-            # Answer evaluation
-            answer_eval = evaluation['answer_evaluation']
-            answer_match_score = answer_eval.get('answer_match_score', 0.0)
-            matched_count = answer_eval.get('answer_matched_count', 0)
-            total_count = answer_eval.get('answer_total_count', 1)
-            print(f"   💬 Answer: {matched_count}/{total_count} matches ({answer_match_score:.2%})")
-            
-            # Metadata
-            metadata = evaluation['metadata']
-            print(f"   ⏱️  Performance: {metadata['num_turns']} turns, {metadata['duration_ms']}ms")
+            # Show individual run details if requested (first few runs)
+            evaluation = detailed_evaluations.get(question, {})
+            runs = evaluation.get('runs', [])
+            if runs:
+                print(f"   🏃 Individual Runs:")
+                for j, run in enumerate(runs[:3], 1):  # Show first 3 runs
+                    run_status = "✅" if run['overall_score'] >= 0.8 else "⚠️" if run['overall_score'] >= 0.6 else "❌"
+                    print(f"      Run {j}: {run_status} {run['overall_score']:.2%} ({run.get('source_file', 'unknown')[-20:]})")
+                if len(runs) > 3:
+                    print(f"      ... and {len(runs) - 3} more runs")
             
         print("\n" + "="*80)
 
@@ -662,6 +711,7 @@ def main():
         evaluator.print_evaluation_report(results)
         
         # Save detailed results to the auto-generated file
+        evaluator.evaluation_file.parent.mkdir(parents=True, exist_ok=True)
         with open(evaluator.evaluation_file, 'w') as f:
             json.dump(results, f, indent=2)
         print(f"\n💾 Detailed results saved to: {evaluator.evaluation_file}")

@@ -30,9 +30,10 @@ class GDSBenchmark:
         
         # Auto-generate results filename if not provided
         if results_file is None:
-            # Remove .csv extension and add _results.json
+            # Remove .csv extension and add timestamp for unique results file
             base_name = self.questions_file.stem
-            self.results_file = Path(f"{base_name}_results.json")
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            self.results_file = Path(f"results/{base_name}_results_{timestamp}.json")
         else:
             self.results_file = Path(results_file)
             
@@ -311,6 +312,9 @@ class GDSBenchmark:
         if not self.results:
             logger.warning("No results to save")
             return
+        
+        # Ensure results directory exists
+        self.results_file.parent.mkdir(parents=True, exist_ok=True)
         
         logger.info(f"Saving results to {self.results_file}")
         
