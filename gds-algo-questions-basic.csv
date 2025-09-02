@@ -1,5 +1,5 @@
 question,expected_tools,expected_parameters,expected_answer
-I want to run personalised article rank with damping factor 0.8 on Paddington and I want to know the scores for Paddington & Bayswater.Give answer in the format station:answer. Separate the stations' result with a comma.
+Execute personalised article rank with damping factor 0.8 on Paddington and I want to know the scores for Paddington & Bayswater.Give answer in the format station:answer. Separate the stations' result with a comma.
 ["mcp__gds-agent__article_rank","mcp__gds-agent__get_node_properties_keys"]
 {"article_rank": {"dampingFactor": 0.8, "sourceNodes": "Paddington", "nodeIdentifierProperty": "name", "nodes": ["Paddington", "Bayswater"]}}
 Paddington: 0.235156, Bayswater: 0.036966
@@ -11,7 +11,7 @@ I want to run Degree Centrality with reverse orientation and get the centrality 
 ["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__degree_centrality"]
 {"degree_centrality": {"nodeIdentifierProperty": "name", "orientation": "REVERSE"}}
 Farringdon: 6
-I want to run harmonic centrality and get the centrality scores for stations Westminster and Waterloo. Answer should be given as  Station: score.Separate the stations' result with a comma.
+Call harmonic centrality and get the centrality scores for stations Westminster and Waterloo. Answer should be given as  Station: score.Separate the stations' result with a comma.
 ["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__harmonic_centrality"]
 {"harmonic_centrality": {"nodeIdentifierProperty": "name", "nodes": ["Westminster", "Waterloo"]}}
 Westminster: 0.162430, Waterloo: 0.166866
@@ -19,19 +19,19 @@ I want to run closeness centrality with the Wasserman-Faust formula and get scor
 ["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__closeness_centrality"]
 {"closeness_centrality": {"nodeIdentifierProperty": "name", "useWassermanFaust": "True", "nodes": ["Westminster", "Waterloo"]}}
 Westminster: 0.112734, Waterloo: 0.110784
-I want to run betweenness centrality and get the centrality scores for Westminster and Waterloo.  Answer should be given as Station: score.Separate the stations' result with a comma.
+Call betweenness centrality and get the centrality scores for Westminster and Waterloo.  Answer should be given as Station: score.Separate the stations' result with a comma.
 ["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__betweenness_centrality"]
 {"betweenness_centrality": {"nodeIdentifierProperty": "name", "nodes": ["Westminster", "Waterloo"]}}
 westminster': '27013.589157, waterloo: 29947.939609
-I want to count how in how many triangles do stations named Hatton Cross, and Green Park participate in. Give final answer in the format station: answer. Separate answers with comma. Do not output anything else.
+Count how many triangles do stations named Hatton Cross, and Green Park participate in. Give final answer in the format station: answer. Separate answers with comma. Do not output anything else.
 ["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__triangle_count"]
 {"triangle_count": {"nodeIdentifierProperty": "name", "nodes": ["Hatton Cross", "Green Park"]}}
 Hatton Cross: 1, Green Park: 2
-I want to run pagerank with Paddington station  as source node and get score for Royal Oak. Answer format should be Royal Oak:answer and nothing else.
+Could you execute the pagerank algorithm with Paddington station as source node and get score for Royal Oak? Answer format should be Royal Oak:answer and nothing else.
 ["mcp__gds-agent__pagerank", "mcp__gds-agent__get_node_properties_keys"]
 {"pagerank": {"nodeIdentifierProperty": "name",  "sourceNodes": "Paddington", "nodes": ["Royal Oak"]}}
 Royal Oak: 0.038735
-I want to run bridges to find out the number of relationships that disconnect the graph. Give the answer as relationships:x. Do not emit anything else.
+Could you run the bridges algorithm to find out the number of relationships that disconnect the graph? Give the answer as relationships:x. Do not emit anything else.
 ["mcp__gds-agent__bridges"]
 {"bridges": {}}
 relationships:0
@@ -39,15 +39,15 @@ I want to run eigenvector and get score for Canada water. Answer format should b
 ["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__eigenvector_centrality"]
 {"eigenvector_centrality": {"nodeIdentifierProperty": "name", "nodes": ["Canada Water"]}}
 Canada Water: 0.000615
-I want to know how many weakly connected components algorithm exist in my graph. Reply only with wcc:answer and nothing else.
+Find out how many weakly connected components algorithm exist in my graph. Reply only with wcc:answer and nothing else.
 ["mcp__gds-agent__weakly_connected_components"]
 {"weakly_connected_components":{}}
 wcc: 1
-I want to know how many strongly connected components exist in my graph. Reply only with scc:answer and nothing else.
+Find out how many strongly connected components exist in my graph. Reply only with scc:answer and nothing else.
 ["mcp__gds-agent__strongly_connected_components"]
 {"strongly_connected_components":{}}
 scc:1
-I want to run k-core decomposition and get the core value for the Stockwell station. Reply strictly with Stockwell:answer and do not output anything else.
+Execute k-core decomposition and obtain the core value for the Stockwell station. Reply strictly with Stockwell:answer and do not output anything else.
 ["mcp__gds-agent__k_core_decomposition"]
 {"k_core_decomposition":{"nodeIdentifierProperty": "name"}}
 Stockwell:4
@@ -59,11 +59,11 @@ I want to know the community conductance scores using community property rail. R
 ["mcp__gds-agent__conductance"]
 {"conductance": { "communityProperty": "rail"}}
 zero: 0.166417, one: 0.765517
-I want to run louvain for one iteration (and one level) using rail as a seed property  and get the community of Paddington. Reply only with Paddington:answer and nothing else.
+Use louvain with one iteration (and one level) using rail as a seed property and get the community of Paddington. Reply only with Paddington:answer and nothing else.
 ["mcp__gds-agent__louvain", "mcp__gds-agent__get_node_properties_keys"]
 {"louvain": { "maxIterations": 1, "maxLevels": 1, "seedProperty": "rail"}}
 Paddington: 1
-I want to run leiden for one level using rail as a seed property and get the community of Paddington. Reply only with Paddington:answer and nothing else.
+Execute the leiden algorithm for one level using rail as a seed property and get the community of Paddington. Reply only with Paddington:answer and nothing else.
 ["mcp__gds-agent__leiden", "mcp__gds-agent__get_node_properties_keys"]
 {"leiden": { "maxLevels": 1, "seedProperty": "rail"}}
 Paddington: 1
@@ -71,7 +71,7 @@ I want to run modularity optimization for one iteration using rail as a seed pro
 [ "mcp__gds-agent__modularity_optimization", "mcp__gds-agent__get_node_properties_keys"]
 {"modularity_optimization": { "maxIterations": 1, "seedProperty": "rail"}}
 Redbridge: 0
-I want to run (k-1) coloring algorithm and find out how many colours do I need to color my graph. Run 20 iterations. Reply strictly with colours:answer"
+Call the (k-1) coloring algorithm and find out how many colours do I need to color my graph. Run 20 iterations. Reply strictly with colours:answer"
 [ "mcp__gds-agent__k_1_coloring"]
 {"k_1_coloring" : { "maxIterations": 20}}
 colours: 4
