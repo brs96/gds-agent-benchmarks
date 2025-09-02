@@ -12,17 +12,11 @@ def load_evaluation_files(pattern="results/*_evaluation_aggregated.json"):
     """Load all aggregated evaluation JSON files from results folder"""
     files = glob.glob(pattern)
     evaluations = {}
-    
-    if not files:
-        # Fallback to old pattern if no aggregated files found
-        files = glob.glob("*_evaluation.json")
-        print("No aggregated evaluation files found, falling back to old format")
-    
+
     for file in files:
         try:
             with open(file, 'r') as f:
                 data = json.load(f)
-                # Extract dataset name from filename
                 dataset_name = Path(file).stem.replace('_evaluation_aggregated', '').replace('_evaluation', '')
                 evaluations[dataset_name] = data
         except Exception as e:
@@ -32,7 +26,6 @@ def load_evaluation_files(pattern="results/*_evaluation_aggregated.json"):
 
 
 def extract_metrics(evaluations):
-    """Extract metrics from aggregated evaluation data"""
     results = {
         'datasets': [],
         'overall_scores': [],
@@ -55,7 +48,7 @@ def extract_metrics(evaluations):
     }
     
     question_results = []
-    run_variation_data = {}  # New: Store data for variation analysis
+    run_variation_data = {}
     
     for dataset_name, data in evaluations.items():
         run_variation_data[dataset_name] = []
@@ -64,26 +57,21 @@ def extract_metrics(evaluations):
         for question, evaluation in data['detailed_evaluations'].items():
             runs = evaluation.get('runs', [])
             
-            # Process each individual run
             for run_idx, run_eval in enumerate(runs):
-                # Basic info
                 results['datasets'].append(dataset_name)
                 results['overall_scores'].append(run_eval['overall_score'])
                 
-                # Tool evaluation metrics
                 tool_eval = run_eval.get('tool_evaluation', {})
                 results['tool_precision'].append(tool_eval.get('precision', 0))
                 results['tool_recall'].append(tool_eval.get('recall', 0))
                 results['tool_f1'].append(tool_eval.get('f1_score', 0))
                 results['call_efficiency'].append(tool_eval.get('call_efficiency', 1.0))
                 
-                # Parameter evaluation
                 param_eval = run_eval.get('parameter_evaluation', {})
                 param_scores = [v.get('score', 0) for v in param_eval.values() if isinstance(v, dict)]
                 avg_param_score = np.mean(param_scores) if param_scores else 0
                 results['parameter_scores'].append(avg_param_score)
                 
-                # Answer evaluation
                 answer_eval = run_eval.get('answer_evaluation', {})
                 answer_match_score = answer_eval.get('answer_match_score', 0.0)
                 if isinstance(answer_match_score, bool):
@@ -91,12 +79,10 @@ def extract_metrics(evaluations):
                 results['answer_scores'].append(answer_match_score)
                 results['answer_match_score'].append(answer_match_score)
                 
-                # Metadata
                 metadata = run_eval.get('metadata', {})
                 results['num_turns'].append(metadata.get('num_turns', 0))
                 results['duration_ms'].append(metadata.get('duration_ms', 0))
                 
-                # Token usage
                 token_usage = run_eval.get('token_usage', {})
                 results['total_input_tokens'].append(token_usage.get('total_input_tokens', 0))
                 results['total_output_tokens'].append(token_usage.get('total_output_tokens', 0))
@@ -106,7 +92,6 @@ def extract_metrics(evaluations):
                 results['total_cost_usd'].append(token_usage.get('total_cost_usd', 0.0))
                 results['message_count'].append(token_usage.get('message_count', 0))
                 
-                # Store individual run results
                 question_results.append({
                     'dataset': dataset_name,
                     'question': question[:100] + "..." if len(question) > 100 else question,
@@ -129,7 +114,6 @@ def extract_metrics(evaluations):
                     'cost_per_question': token_usage.get('total_cost_usd', 0.0)
                 })
             
-            # Store variation data for this question
             if runs:
                 run_variation_data[dataset_name].append({
                     'question': question,
@@ -143,7 +127,6 @@ def extract_metrics(evaluations):
 
 
 def calculate_summary_stats(results):
-    """Calculate summary statistics"""
     stats = {}
     
     for metric in ['overall_scores', 'tool_precision', 'tool_recall', 'tool_f1', 
@@ -164,12 +147,9 @@ def calculate_summary_stats(results):
 
 
 def create_variation_plots(run_variation_data, dataset_name):
-    """Create plots showing variation across runs for a single dataset"""
-    
     if not run_variation_data:
         return
         
-    # Create results/plots directory
     plots_dir = Path(f"results/plots_{dataset_name}")
     plots_dir.mkdir(parents=True, exist_ok=True)
     
@@ -179,12 +159,9 @@ def create_variation_plots(run_variation_data, dataset_name):
     questions = [item['question'][:30] + '...' if len(item['question']) > 30 else item['question'] 
                 for item in run_variation_data]
     
-    # Create box plots for score variation
     score_data = [item['scores'] for item in run_variation_data]
-    
     bp = plt.boxplot(score_data, patch_artist=True, labels=range(1, len(questions)+1))
     
-    # Color the boxes
     for patch in bp['boxes']:
         patch.set_facecolor('lightblue')
         patch.set_alpha(0.7)
@@ -201,7 +178,6 @@ def create_variation_plots(run_variation_data, dataset_name):
     # Plot 2: Success rate heatmap
     plt.figure(figsize=(12, 8))
     
-    # Calculate success rates (score >= 0.8) for each question
     success_rates = []
     question_labels = []
     
@@ -212,7 +188,6 @@ def create_variation_plots(run_variation_data, dataset_name):
             question_labels.append(item['question'][:40] + '...' if len(item['question']) > 40 else item['question'])
     
     if success_rates:
-        # Create horizontal bar chart
         y_pos = np.arange(len(question_labels))
         colors = ['red' if rate < 0.5 else 'yellow' if rate < 0.8 else 'green' for rate in success_rates]
         
@@ -222,7 +197,6 @@ def create_variation_plots(run_variation_data, dataset_name):
         plt.title(f'Success Rate by Question - {dataset_name}')
         plt.xlim(0, 1)
         
-        # Add value labels
         for i, rate in enumerate(success_rates):
             plt.text(rate + 0.01, i, f'{rate:.2f}', va='center')
         
@@ -268,17 +242,16 @@ def create_variation_plots(run_variation_data, dataset_name):
 def create_visualizations(results, question_results, stats, evaluations, run_variation_data):
     """Create comprehensive visualizations"""
     
-    # Set up the plotting style and fonts
     plt.style.use('default')
     plt.rcParams.update({
-        'font.size': 12,           # Default font size
-        'axes.titlesize': 16,      # Title font size (larger)
-        'axes.labelsize': 14,      # Axis labels font size (larger)
-        'xtick.labelsize': 11,     # X-axis tick labels
-        'ytick.labelsize': 11,     # Y-axis tick labels
-        'legend.fontsize': 13,     # Legend font size (larger)
-        'figure.titlesize': 18,    # Figure title font size (larger)
-        'font.family': 'DejaVu Sans'  # Better font family
+        'font.size': 12,
+        'axes.titlesize': 16,
+        'axes.labelsize': 14,
+        'xtick.labelsize': 11,
+        'ytick.labelsize': 11,
+        'legend.fontsize': 13,
+        'figure.titlesize': 18,
+        'font.family': 'DejaVu Sans'
     })
     
     # Chart 1: F1 Score Distribution
@@ -303,29 +276,24 @@ def create_visualizations(results, question_results, stats, evaluations, run_var
     
     x_pos = np.arange(len(tool_metrics))
     
-    # Extract mean, min, max for each metric
     means = [stats[metric]['mean'] for metric in tool_metrics]
     mins = [stats[metric]['min'] for metric in tool_metrics]
     maxs = [stats[metric]['max'] for metric in tool_metrics]
     
-    # Draw clean lines for min, mean, max for each metric
     for i, (color, x, mean_val, min_val, max_val) in enumerate(zip(colors, x_pos, means, mins, maxs)):
-        # Vertical line from min to max
         plt.plot([x, x], [min_val, max_val], '-', color=color, linewidth=2, alpha=0.7)
         
-        # Smaller, cleaner horizontal lines for min, mean, max - matching vertical line color
-        line_width = 0.15  # Smaller width for horizontal lines
+        line_width = 0.15
         plt.plot([x - line_width, x + line_width], [min_val, min_val], '-', color=color, linewidth=2, alpha=1.0)
         plt.plot([x - line_width, x + line_width], [mean_val, mean_val], '-', color=color, linewidth=2, alpha=1.0)
         plt.plot([x - line_width, x + line_width], [max_val, max_val], '-', color=color, linewidth=2, alpha=1.0)
         
-        # Add consistent value labels with same font size - all on the right, closer to lines
         label_fontsize = 10
-        label_offset = 0.18  # Closer to the lines
+        label_offset = 0.18
         
         # Special handling for Recall (index 1) to avoid overlap between mean and max
         if i == 1 and abs(mean_val - max_val) < 0.05:  # If mean and max are too close in Recall
-            mean_offset = -0.02  # Move mean label up slightly, but not too much
+            mean_offset = -0.02  # Move mean label up slightly
         else:
             mean_offset = 0
         
@@ -363,10 +331,9 @@ def create_visualizations(results, question_results, stats, evaluations, run_var
     # Chart 4: Number of Turns Distribution
     plt.figure(figsize=(10, 6))
     
-    # Create bins aligned with integer values
     min_turns = min(results['num_turns'])
     max_turns = max(results['num_turns'])
-    bins = np.arange(min_turns - 0.5, max_turns + 1.5, 1)  # Bins centered on integers
+    bins = np.arange(min_turns - 0.5, max_turns + 1.5, 1)
     
     plt.hist(results['num_turns'], bins=bins, alpha=0.7, edgecolor='black', color='lightgreen', linewidth=1.2)
     plt.axvline(stats['num_turns']['mean'], color='red', linestyle='--', linewidth=2,
@@ -375,7 +342,6 @@ def create_visualizations(results, question_results, stats, evaluations, run_var
     plt.ylabel('Frequency')
     plt.title('Distribution of Number of Turns')
     
-    # Set x-axis ticks to integer values
     plt.xticks(range(min_turns, max_turns + 1))
     
     plt.legend(frameon=True, fancybox=True, shadow=True, loc='upper right')
@@ -388,7 +354,6 @@ def create_visualizations(results, question_results, stats, evaluations, run_var
     # Chart 5: Token Usage Distribution
     plt.figure(figsize=(10, 6))
     
-    # Create properly aligned bins for token distribution
     min_tokens = min(results['total_tokens'])
     max_tokens = max(results['total_tokens'])
     bin_width = (max_tokens - min_tokens) / 20
@@ -416,7 +381,6 @@ def create_visualizations(results, question_results, stats, evaluations, run_var
 
 
 def print_detailed_stats(stats, evaluations):
-    """Print detailed statistics to console"""
     print("\n" + "="*80)
     print("BENCHMARK STATISTICS SUMMARY (MULTIPLE RUNS)")
     print("="*80)
@@ -459,7 +423,6 @@ def print_detailed_stats(stats, evaluations):
         if metric in stats:
             stat = stats[metric]
             if metric == 'total_cost_usd':
-                # Format cost with more precision
                 print(f"{metric.replace('_', ' ').title():<20} ${stat['mean']:<11.4f} "
                       f"${stat['std']:<11.4f} ${stat['median']:<11.4f} ${stat['min']:<11.4f} ${stat['max']:<11.4f}")
             else:
@@ -467,14 +430,15 @@ def print_detailed_stats(stats, evaluations):
                       f"{stat['std']:<12.0f} {stat['median']:<12.0f} {stat['min']:<12.0f} {stat['max']:<12.0f}")
     
     print(f"\nPerformance Thresholds:")
-    overall_scores = [score for data in evaluations.values() 
-                     for score in data['summary']['scores']]
+    overall_scores = [run_eval['overall_score'] 
+                     for data in evaluations.values()
+                     for evaluation in data['detailed_evaluations'].values()
+                     for run_eval in evaluation.get('runs', [])]
     thresholds = [0.9, 0.8, 0.7, 0.5]
     for threshold in thresholds:
         success_rate = np.mean([score >= threshold for score in overall_scores]) * 100
         print(f"  Score ≥ {threshold:.1f}: {success_rate:.1f}% ({int(success_rate * len(overall_scores) / 100)}/{len(overall_scores)} questions)")
     
-    # Cost analysis summary
     if 'total_cost_usd' in stats:
         total_benchmark_cost = sum(cost for data in evaluations.values() 
                                  for eval_data in data['detailed_evaluations'].values() 

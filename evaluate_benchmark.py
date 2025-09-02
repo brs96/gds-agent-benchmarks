@@ -1,12 +1,3 @@
-#!/usr/bin/env python3
-"""
-GDS Agent Benchmark Evaluation Tool
-
-This script evaluates the performance of the GDS agent by comparing
-actual results from benchmark_results.json against expected results
-from the enhanced CSV file.
-"""
-
 import json
 import logging
 import re
@@ -14,11 +5,8 @@ import argparse
 from pathlib import Path
 from typing import Dict, List, Any
 import glob
-
-# Import the fine-grained path questions evaluator functions
 from path_questions_evaluation import evaluate_path_algorithm_output
 
-# Set up logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
@@ -27,38 +15,19 @@ logger = logging.getLogger(__name__)
 
 
 class BenchmarkEvaluator:
-    def __init__(self, 
-                 questions_file: str = "path_questions_basic.csv",
-                 results_file: str = None,
-                 evaluation_file: str = None):
+    def __init__(self, questions_file: str = "path_questions_basic.csv"):
         self.questions_file = Path(questions_file)
-        
-        
-        # Auto-derive results files from questions file if not provided
-        if results_file is None:
-            # Find all matching results files in the results folder
-            base_name = self.questions_file.stem
-            pattern = f"results/{base_name}_results_*.json"
-            self.results_files = list(Path().glob(pattern))
-            
-            # Fallback to old naming convention if no timestamped files found
-            if not self.results_files:
-                old_pattern = f"{base_name}_results.json"
-                if Path(old_pattern).exists():
-                    self.results_files = [Path(old_pattern)]
-        else:
-            self.results_files = [Path(results_file)]
-            
-        # Auto-derive evaluation file from questions file if not provided
-        if evaluation_file is None:
-            # Convert x.csv to x_evaluation_aggregated.json
-            base_name = self.questions_file.stem
-            self.evaluation_file = Path(f"results/{base_name}_evaluation_aggregated.json")
-        else:
-            self.evaluation_file = Path(evaluation_file)
+                
+
+        base_name = self.questions_file.stem
+        pattern = f"results/{base_name}_results_*.json"
+        self.results_files = list(Path().glob(pattern))
+
+        base_name = self.questions_file.stem
+        self.evaluation_file = Path(f"results/{base_name}_evaluation_aggregated.json")
         
     def load_expected_results(self) -> Dict[str, Dict[str, Any]]:
-        """Load expected results from CSV file with new 4-lines-per-question format."""
+        """Load expected results from CSV file with 4-lines-per-question format."""
         expected = {}
         
         if not self.questions_file.exists():
@@ -73,24 +42,12 @@ class BenchmarkEvaluator:
                     logger.error("Questions file is empty")
                     return expected
                 
-                # Skip header line if present
-                start_idx = 0
-                if lines[0].lower().startswith(('question', 'expected_tools', 'expected_parameters', 'expected_answer')):
-                    start_idx = 1
-                
                 # Process lines in groups of 4: question, tools, parameters, answer
-                i = start_idx
+                i = 1
                 while i + 3 < len(lines):
-                    # Line i: question (clean format - no quotes needed)
                     question = lines[i].strip()
-                    
-                    # Line i+1: expected_tools (clean format - no quotes needed)
                     tools_str = lines[i+1].strip()
-                    
-                    # Line i+2: expected_parameters (clean format - no quotes needed)
                     params_str = lines[i+2].strip()
-                    
-                    # Line i+3: expected_answer (clean format - no quotes needed)
                     answer = lines[i+3].strip()
                     
                     if question:
@@ -106,7 +63,7 @@ class BenchmarkEvaluator:
                             logger.warning(f"Params string: '{params_str}'")
                             logger.warning(f"JSON Error: {e}")
                     
-                    i += 4  # Move to next question block
+                    i += 4
                     
         except Exception as e:
             logger.error(f"Error loading expected results: {e}")
@@ -115,7 +72,6 @@ class BenchmarkEvaluator:
         return expected
         
     def extract_token_usage_from_raw_stream(self, raw_stream: str) -> Dict[str, Any]:
-        """Extract token usage information from raw_stream."""
         import json as json_module
         
         total_input_tokens = 0
@@ -129,14 +85,12 @@ class BenchmarkEvaluator:
             return {}
             
         try:
-            # Split by lines and parse each JSON object
             lines = raw_stream.strip().split('\n')
             for line in lines:
                 if line.strip():
                     try:
                         message = json_module.loads(line)
                         
-                        # Check for usage information in assistant messages
                         if message.get('type') == 'assistant' and 'message' in message:
                             usage = message['message'].get('usage', {})
                             if usage:
@@ -146,20 +100,17 @@ class BenchmarkEvaluator:
                                 total_cache_read_tokens += usage.get('cache_read_input_tokens', 0)
                                 message_count += 1
                         
-                        # Check for final result with cost information
                         elif message.get('type') == 'result' and 'total_cost_usd' in message:
                             total_cost_usd = message.get('total_cost_usd', 0.0)
-                            # Also get final usage summary if available
                             final_usage = message.get('usage', {})
                             if final_usage:
-                                # Use final counts if they exist (more accurate)
                                 total_input_tokens = final_usage.get('input_tokens', total_input_tokens)
                                 total_output_tokens = final_usage.get('output_tokens', total_output_tokens)
                                 total_cache_creation_tokens = final_usage.get('cache_creation_input_tokens', total_cache_creation_tokens)
                                 total_cache_read_tokens = final_usage.get('cache_read_input_tokens', total_cache_read_tokens)
                             
                     except json_module.JSONDecodeError:
-                        continue  # Skip malformed JSON lines
+                        logger.error(f"Skipped malformed JSON line: {line[:100] if line else 'None'}...")
                         
         except Exception as e:
             logger.warning(f"Error parsing raw_stream for token usage: {e}")
@@ -175,7 +126,6 @@ class BenchmarkEvaluator:
         }
 
     def load_actual_results(self) -> Dict[str, List[Dict[str, Any]]]:
-        """Load actual results from all benchmark results JSON files."""
         all_results = {}
         
         if not self.results_files:
@@ -200,7 +150,6 @@ class BenchmarkEvaluator:
                         question = result['question'].strip()
                         response_data = result['response_data']
                         
-                        # Extract token usage from raw_stream
                         token_usage = self.extract_token_usage_from_raw_stream(
                             response_data.get('raw_stream', '')
                         )
@@ -215,7 +164,6 @@ class BenchmarkEvaluator:
                             'source_file': str(results_file)
                         }
                         
-                        # Store multiple runs per question
                         if question not in all_results:
                             all_results[question] = []
                         all_results[question].append(result_data)
@@ -231,39 +179,32 @@ class BenchmarkEvaluator:
         """Evaluate if the correct tools were called."""
         actual_tool_names = [tool['name'] for tool in actual_tools]
         
-        # Check if all expected tools were called
         missing_tools = [tool for tool in expected_tools if tool not in actual_tool_names]
         unexpected_tools = [tool for tool in actual_tool_names if tool not in expected_tools]
         
-        # Calculate precision (only unexpected tools), recall, and call efficiency
         if len(expected_tools) == 0:
             precision = 1.0 if len(actual_tool_names) == 0 else 0.0
             recall = 1.0
             call_efficiency = 1.0 if len(actual_tool_names) == 0 else 0.0
         else:
-            # Count unique expected tools that were actually called (for recall)
             unique_correct_tools = len(set(expected_tools).intersection(set(actual_tool_names)))
             
-            # New precision: only measures unexpected tools (not redundant calls)
             unique_actual_tools = len(set(actual_tool_names))
             unique_unexpected_tools = len(set(actual_tool_names) - set(expected_tools))
             precision = 1.0 - (unique_unexpected_tools / unique_actual_tools) if unique_actual_tools > 0 else 1.0
             
-            # Recall: what fraction of expected tools were called
             recall = unique_correct_tools / len(set(expected_tools))
             
-            # Call efficiency: penalizes redundant calls (how efficiently were the correct tools called)
             total_actual_calls = len(actual_tool_names)
             call_efficiency = unique_correct_tools / total_actual_calls if total_actual_calls > 0 else 1.0
         
-        # Standard F1 score for precision/recall
         f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
         
         return {
-            'precision': precision,  # Now only measures unexpected tools
-            'recall': recall,        # Measures missing expected tools  
-            'f1_score': f1_score,    # Standard F1 for precision/recall
-            'call_efficiency': call_efficiency,  # Measures redundant repeated calls
+            'precision': precision,
+            'recall': recall,
+            'f1_score': f1_score,
+            'call_efficiency': call_efficiency,
             'missing_tools': missing_tools,
             'unexpected_tools': unexpected_tools,
             'exact_match': len(missing_tools) == 0 and len(unexpected_tools) == 0
@@ -274,7 +215,6 @@ class BenchmarkEvaluator:
         parameter_scores = {}
         
         for tool_key, expected_tool_params in expected_params.items():
-            # Find corresponding actual tool calls
             matching_tools = []
             for tool in actual_tools:
                 if tool_key.lower() in tool['name'].lower():
@@ -287,10 +227,8 @@ class BenchmarkEvaluator:
                 }
                 continue
                 
-            # Check parameters for the first matching tool
             actual_params = matching_tools[0].get('parameters', {})
             
-            # Compare key parameters
             matches = []
             mismatches = []
             
@@ -315,15 +253,10 @@ class BenchmarkEvaluator:
             
         return parameter_scores
         
-    def evaluate_answer_similarity(self, expected_answer: str, actual_answer: str, expected_tools: List[str] = None) -> Dict[str, Any]:
-        """Evaluate similarity between expected and actual answers."""
-        
-        # Check if this is a path questions file based on filename
+    def evaluate_answer_similarity(self, expected_answer: str, actual_answer: str, expected_tools: List[str] = None) -> Dict[str, Any]:        
         if "path_questions" in str(self.questions_file) and expected_tools:
-            # Use fine-grained evaluation for path questions
             result = evaluate_path_algorithm_output(str(expected_tools), expected_answer, actual_answer)
             
-            # Convert to expected format for compatibility
             if result.get('success'):
                 return {
                     'answer_match_score': 1.0,
@@ -337,19 +270,15 @@ class BenchmarkEvaluator:
                     'answer_total_count': 1
                 }
         else:
-            # Use unified answer evaluation for all other questions
             return self.evaluate_unified_answer(expected_answer, actual_answer)
     
     def evaluate_unified_answer(self, expected_answer: str, actual_answer: str) -> Dict[str, Any]:
-        """Unified answer evaluation that handles all answer formats with order-independent matching."""
         import re
         
         def normalize_text(text):
-            """Normalize text for comparison."""
             return text.lower().strip()
         
         def extract_structured_items(text):
-            """Extract structured items from different answer formats."""
             items = set()
             
             # Pattern 1: "path: cost" format (e.g., "path1: 5.0, path2: 3.2")
@@ -379,7 +308,7 @@ class BenchmarkEvaluator:
                 simple_items = re.split(r'[,;|]', text)
                 for item in simple_items:
                     cleaned_item = normalize_text(item)
-                    if cleaned_item:  # Only add non-empty items
+                    if cleaned_item:
                         items.add(cleaned_item)
             
             # Pattern 5: Numbers only (counts, etc.)
@@ -412,10 +341,7 @@ class BenchmarkEvaluator:
             'answer_total_count': total_expected_count
         }
     
-    def evaluate_centrality_answer(self, expected_answer: str, actual_answer: str) -> Dict[str, Any]:
-        """Evaluate centrality-based answers with station: score format."""
-        
-        # Extract result scores more precisely - look for patterns like "Name: score"
+    def evaluate_centrality_answer(self, expected_answer: str, actual_answer: str) -> Dict[str, Any]:        
         def extract_result_scores(text):
             # Pattern to match "Name: number" or "Name**: number" etc.
             score_pattern = r'([A-Za-z\s\(\)]+)[:*\s]+(\d*\.?\d+)'
@@ -423,16 +349,13 @@ class BenchmarkEvaluator:
             
             scores = {}
             for name, score in matches:
-                # Clean up the name
                 name = re.sub(r'[*\-\s]+', ' ', name).strip()
                 name = re.sub(r'\s+', ' ', name)
                 scores[name.lower()] = score
             
             return scores
             
-        # Also extract just the numerical scores for fallback comparison
         def extract_score_numbers(text):
-            # Look for decimal numbers that appear to be scores (0.xxx format)
             return re.findall(r'\b0\.\d+\b', text)
             
         expected_scores = extract_result_scores(expected_answer)
@@ -488,32 +411,26 @@ class BenchmarkEvaluator:
             'actual_numbers': actual_numbers
         }
         
-    def evaluate_question(self, expected: Dict[str, Any], actual: Dict[str, Any]) -> Dict[str, Any]:
-        """Evaluate a single question's performance."""
-        
-        # Evaluate tool calls
+    def evaluate_question(self, expected: Dict[str, Any], actual: Dict[str, Any]) -> Dict[str, Any]:        
         tool_evaluation = self.evaluate_tool_calls(
             expected['expected_tools'], 
             actual['tool_calls']
         )
-        
-        # Evaluate parameters
+
         parameter_evaluation = self.evaluate_parameters(
             expected['expected_parameters'],
             actual['tool_calls']
         )
         
-        # Evaluate answer similarity
         answer_evaluation = self.evaluate_answer_similarity(
             expected['expected_answer'],
             actual['final_result'],
             expected['expected_tools']
         )
         
-        # Calculate overall score
         tool_score = tool_evaluation['f1_score']
         param_score = sum(p['score'] for p in parameter_evaluation.values()) / len(parameter_evaluation) if parameter_evaluation else 0.0
-        answer_score = answer_evaluation['answer_match_score']  # Use unified answer matching
+        answer_score = answer_evaluation['answer_match_score']
         
         overall_score = (tool_score + param_score + answer_score) / 3
         
@@ -530,7 +447,6 @@ class BenchmarkEvaluator:
         }
         
     def run_evaluation(self) -> Dict[str, Any]:
-        """Run the complete evaluation across all result files."""
         logger.info("Starting benchmark evaluation...")
         
         expected_results = self.load_expected_results()
@@ -551,7 +467,6 @@ class BenchmarkEvaluator:
             if question in actual_results:
                 logger.info(f"Evaluating: {question[:50]}... ({len(actual_results[question])} runs)")
                 
-                # Evaluate each run for this question
                 run_evaluations = []
                 for i, actual_result in enumerate(actual_results[question]):
                     run_eval = self.evaluate_question(
@@ -567,7 +482,6 @@ class BenchmarkEvaluator:
                     'num_runs': len(run_evaluations)
                 }
                 
-                # Calculate aggregated statistics for this question
                 scores = [run['overall_score'] for run in run_evaluations]
                 tool_f1s = [run['tool_evaluation']['f1_score'] for run in run_evaluations]
                 answer_scores = [run['answer_evaluation']['answer_match_score'] for run in run_evaluations]
@@ -594,7 +508,6 @@ class BenchmarkEvaluator:
                     'num_runs': 0
                 }
         
-        # Calculate overall summary statistics
         all_mean_scores = [stats['overall_score_mean'] for stats in aggregated_stats.values() if stats['num_runs'] > 0]
         total_runs = sum(stats['num_runs'] for stats in aggregated_stats.values())
         
@@ -612,10 +525,8 @@ class BenchmarkEvaluator:
         }
         
     def print_evaluation_report(self, evaluation_results: Dict[str, Any]) -> None:
-        """Print a detailed evaluation report for multiple runs."""
-        
         if not evaluation_results:
-            print("❌ No evaluation results to display")
+            print("No evaluation results to display")
             return
             
         summary = evaluation_results.get('summary', {})
@@ -626,13 +537,13 @@ class BenchmarkEvaluator:
         print("GDS AGENT BENCHMARK EVALUATION REPORT (MULTIPLE RUNS)")
         print("="*80)
         
-        print(f"\n📊 SUMMARY:")
+        print(f"\n SUMMARY:")
         print(f"Total Questions: {summary.get('total_questions', 0)}")
         print(f"Total Runs Processed: {summary.get('total_runs', 0)}")
         print(f"Results Files Processed: {summary.get('results_files_processed', 0)}")
         print(f"Average Score Across Questions: {summary.get('average_score_across_questions', 0.0):.2%}")
         
-        print(f"\n📋 AGGREGATED RESULTS BY QUESTION:")
+        print(f"\n AGGREGATED RESULTS BY QUESTION:")
         
         for i, (question, stats) in enumerate(aggregated_stats.items(), 1):
             if stats['num_runs'] == 0:
@@ -642,23 +553,20 @@ class BenchmarkEvaluator:
                 
             mean_score = stats['overall_score_mean']
             success_rate = stats['success_rate']
-            status = "✅" if mean_score >= 0.8 else "⚠️" if mean_score >= 0.6 else "❌"
             
-            print(f"\n{i}. {status} Question: {question}")
+            print(f"\n{i}. Question: {question}")
             print(f"   📊 Runs: {stats['num_runs']}")
             print(f"   📈 Mean Score: {mean_score:.2%} (min: {stats['overall_score_min']:.2%}, max: {stats['overall_score_max']:.2%})")
             print(f"   ✅ Success Rate (>80%): {success_rate:.2%}")
             print(f"   🔧 Tool F1 Mean: {stats['tool_f1_mean']:.2%}")
             print(f"   💬 Answer Score Mean: {stats['answer_score_mean']:.2%}")
             
-            # Show individual run details if requested (first few runs)
             evaluation = detailed_evaluations.get(question, {})
             runs = evaluation.get('runs', [])
             if runs:
                 print(f"   🏃 Individual Runs:")
                 for j, run in enumerate(runs[:3], 1):  # Show first 3 runs
-                    run_status = "✅" if run['overall_score'] >= 0.8 else "⚠️" if run['overall_score'] >= 0.6 else "❌"
-                    print(f"      Run {j}: {run_status} {run['overall_score']:.2%} ({run.get('source_file', 'unknown')[-20:]})")
+                    print(f"      Run {j}: {run['overall_score']:.2%} ({run.get('source_file', 'unknown')[-20:]})")
                 if len(runs) > 3:
                     print(f"      ... and {len(runs) - 3} more runs")
             
@@ -671,13 +579,13 @@ def main():
         description="GDS Agent Benchmark Evaluation Tool",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""Examples:
-  python evaluate_benchmark.py --questions path_questions_basic.csv"""
+  python evaluate_benchmark.py --questions gds-algo-questions-basic.csv"""
     )
     
     parser.add_argument(
         "--questions", "-q",
-        default="path_questions_basic.csv",
-        help="Path to the questions CSV file (default: path_questions_basic.csv)"
+        default="gds-algo-questions-basic.csv",
+        help="Path to the questions CSV file (default: gds-algo-questions-basic.csv)"
     )
     
     args = parser.parse_args()
@@ -687,7 +595,7 @@ def main():
     
     # Check if questions file exists
     if not Path(args.questions).exists():
-        print(f"❌ Questions file '{args.questions}' not found")
+        print(f"Questions file '{args.questions}' not found")
         return 1
     
     evaluator = BenchmarkEvaluator(
@@ -695,15 +603,15 @@ def main():
     )
     
     print(f"Questions file: {evaluator.questions_file}")
-    print(f"Results file: {evaluator.results_file}")
+    print(f"Results files: {evaluator.results_files}")
     print(f"Evaluation output: {evaluator.evaluation_file}")
     
-    # Check if results file exists
-    if not evaluator.results_file.exists():
-        print(f"❌ Results file '{evaluator.results_file}' not found")
+    # Check if results files exist
+    if not evaluator.results_files:
+        print(f"No results files found")
         return 1
     
-    print("✅ Setup looks good!")
+    print("Setup looks good!")
     print("")
     
     try:
@@ -714,7 +622,7 @@ def main():
         evaluator.evaluation_file.parent.mkdir(parents=True, exist_ok=True)
         with open(evaluator.evaluation_file, 'w') as f:
             json.dump(results, f, indent=2)
-        print(f"\n💾 Detailed results saved to: {evaluator.evaluation_file}")
+        print(f"\n Detailed results saved to: {evaluator.evaluation_file}")
         
     except Exception as e:
         logger.error(f"Evaluation failed: {e}")

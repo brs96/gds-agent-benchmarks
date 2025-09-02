@@ -10,9 +10,8 @@ import tempfile
 import os
 import csv
 
-# Set up logging
 logging.basicConfig(
-    level=logging.DEBUG,  # Enable debug logging
+    level=logging.DEBUG,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler('benchmark_results.log'),
@@ -28,9 +27,7 @@ class GDSBenchmark:
                  results_file: str = None):
         self.questions_file = Path(questions_file)
         
-        # Auto-generate results filename if not provided
         if results_file is None:
-            # Remove .csv extension and add timestamp for unique results file
             base_name = self.questions_file.stem
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             self.results_file = Path(f"results/{base_name}_results_{timestamp}.json")
@@ -41,7 +38,7 @@ class GDSBenchmark:
 
 
     def load_questions(self) -> List[str]:
-        """Load questions from CSV file with new 4-lines-per-question format."""
+        """Load questions from CSV file with 4-lines-per-question format."""
         logger.info(f"Loading questions from {self.questions_file}")
         questions = []
         
@@ -56,21 +53,15 @@ class GDSBenchmark:
                 if not lines:
                     logger.error("Questions file is empty")
                     return []
-                
-                # Skip header line if present
-                start_idx = 0
-                if lines[0].lower().startswith(('question', 'expected_tools', 'expected_parameters', 'expected_answer')):
-                    start_idx = 1
-                
+
                 # Process lines in groups of 4: question, tools, parameters, answer
-                i = start_idx
+                i = 1
                 while i < len(lines):
                     if i + 3 < len(lines):  # Ensure we have all 4 lines
-                        # Line i is the question (clean format - no quotes needed)
                         question = lines[i].strip()
                         if question:
                             questions.append(question)
-                        i += 4  # Move to next question block
+                        i += 4
                     else:
                         # Handle incomplete block at end - check if it's a question line
                         if not lines[i].startswith('[') and not lines[i].startswith('{'):
@@ -88,7 +79,6 @@ class GDSBenchmark:
         return questions
 
     def create_mcp_config(self) -> Path:
-        """Create MCP configuration for connecting to running server."""
         config = {
             "mcpServers": {
                 "gds-agent": {
@@ -102,8 +92,6 @@ class GDSBenchmark:
                 }
             }
         }
-        
-        # Use temporary file for config
         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
             json.dump(config, f, indent=2)
             logger.debug(f"Created MCP config: {config}")
@@ -111,14 +99,11 @@ class GDSBenchmark:
 
 
     def send_question_to_claude_subprocess(self, config_file: Path, question: str) -> Optional[dict]:
-        """Send question using stream-json mode to capture detailed tool calls."""
         try:
             logger.debug(f"Sending question via subprocess: {question}")
             
-            # Frame question to strongly encourage tool usage
-            enhanced_question = f"You MUST use the available MCP tools to query the actual Neo4j database to answer this question. Do not rely on output from previous questions. Do not provide a hypothetical answer. Question: {question}"
+            formatted_prompt = f"You MUST use the available MCP tools to query the actual Neo4j database to answer this question. Do not rely on output from previous questions. Do not provide a hypothetical answer. Question: {question}"
             
-            # Use stream-json mode to capture all tool calls and intermediate steps
             cmd = [
                 "claude", " --model claude-sonnet-4-20250514 ","-p", "--verbose", "--output-format", "stream-json",
                 "--mcp-config", str(config_file), 
@@ -127,11 +112,10 @@ class GDSBenchmark:
             ]
             
             logger.debug(f"Running command: {' '.join(cmd)}")
-            logger.debug(f"Input: {enhanced_question}")
+            logger.debug(f"Input: {formatted_prompt}")
             logger.debug(f"Config file exists: {config_file.exists()}")
             logger.debug(f"Config file path: {config_file}")
             
-            # Read and log config file contents
             try:
                 with open(config_file, 'r') as f:
                     config_contents = f.read()
@@ -140,11 +124,10 @@ class GDSBenchmark:
                 logger.error(f"Could not read config file: {e}")
             
             logger.info("Starting subprocess call...")
-            result = subprocess.run(cmd, input=f"{enhanced_question}\n", 
+            result = subprocess.run(cmd, input=f"{formatted_prompt}\n", 
                                   capture_output=True, text=True, timeout=300)
             logger.info("Subprocess call completed")
             
-            # Log stderr to see any MCP connection issues
             if result.stderr:
                 logger.debug(f"Claude stderr: {result.stderr}")
             
@@ -154,14 +137,13 @@ class GDSBenchmark:
             if result.returncode == 0:
                 logger.debug(f"Claude stream JSON response length: {len(result.stdout)} chars")
                 
-                # Parse the stream JSON to extract tool calls and final result
                 return self.parse_stream_json_response(result.stdout)
             else:
                 logger.debug(f"Claude error: {result.stderr}")
                 return None
             
         except subprocess.TimeoutExpired:
-            logger.warning(f"Question timed out after 120s: {question[:50]}")
+            logger.warning(f"Question timed out after 300s: {question[:50]}")
             logger.debug("This might indicate MCP server connection issues or very complex queries")
             return None
         except Exception as e:
@@ -169,7 +151,6 @@ class GDSBenchmark:
             return None
 
     def parse_stream_json_response(self, stream_output: str) -> dict:
-        """Parse stream JSON output to extract tool calls, results, and final answer."""
         parsed_data = {
             "tool_calls": [],
             "tool_results": [],
@@ -199,11 +180,8 @@ class GDSBenchmark:
                                     "parameters": item.get('input', {}),
                                     "id": item['id']
                                 }
-                                # Only add if not already present (avoid duplicates)
-                                if tool_call not in parsed_data["tool_calls"]:
-                                    parsed_data["tool_calls"].append(tool_call)
-                                    logger.debug(f"Found tool call: {item['name']} (line {line_num})")
-                    
+                                parsed_data["tool_calls"].append(tool_call)
+                                logger.debug(f"Found tool call: {item['name']} (line {line_num})")
                     # Extract tool results from user messages (these are tool responses)
                     elif data.get('type') == 'user' and 'message' in data:
                         content = data['message'].get('content', [])
@@ -220,20 +198,16 @@ class GDSBenchmark:
                                     "tool_use_id": item.get('tool_use_id', ''),
                                     "result": result_text
                                 }
-                                # Only add if not already present (avoid duplicates)
-                                if tool_result not in parsed_data["tool_results"]:
-                                    parsed_data["tool_results"].append(tool_result)
-                                    logger.debug(f"Found tool result for: {item.get('tool_use_id', 'unknown')} (line {line_num})")
+                                parsed_data["tool_results"].append(tool_result)
+                                logger.debug(f"Found tool result for: {item.get('tool_use_id', 'unknown')} (line {line_num})")
                     
-                    # Extract final result and metadata
                     elif data.get('type') == 'result':
                         parsed_data["final_result"] = data.get('result', '')
                         parsed_data["num_turns"] = data.get('num_turns', 0)
                         parsed_data["duration_ms"] = data.get('duration_ms', 0)
                         
                 except json.JSONDecodeError:
-                    # Skip non-JSON lines
-                    continue
+                    logger.error(f"Skipped non-JSON line: {line[:100] if line else 'None'}...")
                     
         except Exception as e:
             logger.error(f"Error parsing stream JSON: {e}")
@@ -242,30 +216,24 @@ class GDSBenchmark:
         return parsed_data
 
     def send_question_to_claude(self, config_file: Path, question: str) -> Optional[dict]:
-        """Send a question to Claude - uses stream-json mode to capture detailed tool calls."""
-        # Always use subprocess with stream-json mode for detailed tool capture
         return self.send_question_to_claude_subprocess(config_file, question)
 
     def create_result_record(self, question: str, response: dict) -> Dict[str, Any]:
-        """Create a simple result record with raw response data."""
         return {
             "question": question,
             "timestamp": datetime.now().isoformat(),
-            "response_data": response,  # Store the complete parsed response
+            "response_data": response,
             "success": response is not None
         }
 
     def run_benchmark(self) -> List[Dict[str, Any]]:
-        """Run the complete benchmark."""
         logger.info("Starting GDS Agent benchmark...")
         
-        # Load questions
         questions = self.load_questions()
         if not questions:
             logger.error("No questions to process")
             return []
         
-        # Create MCP config once for all questions
         config_file = None
         
         try:
@@ -280,7 +248,6 @@ class GDSBenchmark:
                 result = self.create_result_record(question, response)
                 results.append(result)
                 
-                # Log basic status
                 if response:
                     num_tools = len(response.get('tool_calls', []))
                     num_turns = response.get('num_turns', 0)
@@ -288,7 +255,6 @@ class GDSBenchmark:
                 else:
                     logger.info(f"Question {i}: ✗ (no response)")
                 
-                # Small delay between questions
                 import time
                 time.sleep(1)
             
@@ -300,7 +266,6 @@ class GDSBenchmark:
             return []
             
         finally:
-            # Cleanup config file
             if config_file and config_file.exists():
                 try:
                     os.unlink(config_file)
@@ -308,12 +273,10 @@ class GDSBenchmark:
                     pass
 
     def save_results(self) -> None:
-        """Save benchmark results to file."""
         if not self.results:
             logger.warning("No results to save")
             return
         
-        # Ensure results directory exists
         self.results_file.parent.mkdir(parents=True, exist_ok=True)
         
         logger.info(f"Saving results to {self.results_file}")
@@ -375,18 +338,16 @@ class GDSBenchmark:
 
 
 def main():
-    """Main entry point."""
     parser = argparse.ArgumentParser(
         description="GDS Agent Benchmarking Tool",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""Examples:
-  python benchmark_gds_agent.py --questions path_questions_basic.csv"""
+        epilog="""Examples: python benchmark_gds_agent.py --questions gds-algo-questions-basic.csv"""
     )
     
     parser.add_argument(
         "--questions", "-q",
-        default="path_questions_basic.csv",
-        help="Path to the questions CSV file (default: path_questions_basic.csv)"
+        default="gds-algo-questions-basic.csv",
+        help="Path to the questions CSV file (default: gds-algo-questions-basic.csv)"
     )
     
     args = parser.parse_args()
@@ -407,12 +368,10 @@ def main():
         print("Please ensure 'gds_agent-0.3.0-py3-none-any.whl' is in the current directory")
         sys.exit(1)
     
-    # Create benchmark instance (results file will be auto-generated)
     benchmark = GDSBenchmark(questions_file=args.questions)
     
     print(f"Results file: {benchmark.results_file}")
-    print("✅ Setup looks good!")
-    print("\n📋 Starting benchmark...")
+    print("\n Starting benchmark...")
     
     try:
         benchmark.run_benchmark()
@@ -420,7 +379,7 @@ def main():
         benchmark.print_summary()
         
     except KeyboardInterrupt:
-        print("\n⛔ Benchmark interrupted by user")
+        print("\n Benchmark interrupted by user")
     except Exception as e:
         logger.error(f"Benchmark failed: {e}")
         sys.exit(1)
