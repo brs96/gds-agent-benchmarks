@@ -278,6 +278,41 @@ class BenchmarkEvaluator:
         def normalize_text(text):
             return text.lower().strip()
         
+        # Handle empty expected answer (e.g., longest path with no result)
+        if not expected_answer.strip():
+            # Expected answer is empty, actual should also be empty
+            if not actual_answer.strip():
+                return {
+                    'answer_match_score': 1.0,
+                    'answer_matched_count': 1,
+                    'answer_total_count': 1
+                }
+            else:
+                return {
+                    'answer_match_score': 0.0,
+                    'answer_matched_count': 0,
+                    'answer_total_count': 1
+                }
+        
+        # Handle Yes/No questions
+        expected_normalized = normalize_text(expected_answer)
+        actual_normalized = normalize_text(actual_answer)
+        
+        if expected_normalized in ['yes', 'no']:
+            # Simple Yes/No comparison
+            if expected_normalized == actual_normalized:
+                return {
+                    'answer_match_score': 1.0,
+                    'answer_matched_count': 1,
+                    'answer_total_count': 1
+                }
+            else:
+                return {
+                    'answer_match_score': 0.0,
+                    'answer_matched_count': 0,
+                    'answer_total_count': 1
+                }
+        
         def extract_structured_items(text):
             items = set()
             
@@ -302,7 +337,19 @@ class BenchmarkEvaluator:
                 normalized_station = normalize_text(station)
                 items.add((normalized_station, float(score)))
             
-            # Pattern 4: Simple comma-separated paths/items (if no other patterns found)
+            # Pattern 4: JSON list format like ["A", "B", "C"]
+            if not items:
+                try:
+                    import json
+                    # Try to parse as JSON list
+                    parsed = json.loads(text)
+                    if isinstance(parsed, list):
+                        for item in parsed:
+                            items.add(normalize_text(str(item)))
+                except (json.JSONDecodeError, TypeError):
+                    pass
+            
+            # Pattern 5: Simple comma-separated paths/items (if no other patterns found)
             if not items:
                 # Split by common separators and clean up
                 simple_items = re.split(r'[,;|]', text)
@@ -311,7 +358,7 @@ class BenchmarkEvaluator:
                     if cleaned_item:
                         items.add(cleaned_item)
             
-            # Pattern 5: Numbers only (counts, etc.)
+            # Pattern 6: Numbers only (counts, etc.)
             if not items:
                 number_pattern = r'\b(\d+(?:\.\d+)?)\b'
                 numbers = re.findall(number_pattern, text)
