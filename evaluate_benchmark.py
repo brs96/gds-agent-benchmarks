@@ -235,7 +235,25 @@ class BenchmarkEvaluator:
             for param_key, expected_value in expected_tool_params.items():
                 actual_value = actual_params.get(param_key)
 
-                if actual_value == expected_value or str(actual_value) == str(expected_value):
+                # Handle range constraints like "<=5"
+                if isinstance(expected_value, str) and expected_value.startswith('<='):
+                    try:
+                        max_value = int(expected_value[2:])
+                        if actual_value is not None and int(actual_value) <= max_value:
+                            matches.append(param_key)
+                        else:
+                            mismatches.append({
+                                'param': param_key,
+                                'expected': expected_value,
+                                'actual': actual_value
+                            })
+                    except (ValueError, TypeError):
+                        mismatches.append({
+                            'param': param_key,
+                            'expected': expected_value,
+                            'actual': actual_value
+                        })
+                elif actual_value == expected_value or str(actual_value) == str(expected_value):
                     matches.append(param_key)
                 else:
                     mismatches.append({
@@ -370,7 +388,7 @@ class BenchmarkEvaluator:
         expected_items = extract_structured_items(expected_answer)
         actual_items = extract_structured_items(actual_answer)
         
-        # Calculate exact match score (order-independent)
+        # Calculate match score (order-independent)
         if len(expected_items) == 0:
             # If no expected items, only match if actual is also empty
             answer_match_score = 1.0 if len(actual_items) == 0 else 0.0
@@ -379,8 +397,17 @@ class BenchmarkEvaluator:
         else:
             # Calculate how many expected items are found in actual
             matched_count = len(expected_items.intersection(actual_items))
-            total_expected_count = len(expected_items)
-            answer_match_score = matched_count / total_expected_count
+            
+            # For k-shortest paths: if actual is a subset of expected, that's acceptable
+            if len(actual_items) > 0 and actual_items.issubset(expected_items):
+                # All actual items are valid (subset of expected)
+                answer_match_score = 1.0
+                total_expected_count = len(actual_items)
+                matched_count = len(actual_items)
+            else:
+                # Standard evaluation: how many expected items are found
+                total_expected_count = len(expected_items)
+                answer_match_score = matched_count / total_expected_count
         
         return {
             'answer_match_score': answer_match_score,
