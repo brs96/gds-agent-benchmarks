@@ -503,7 +503,7 @@ class BenchmarkEvaluator:
         )
         
         tool_score = tool_evaluation['f1_score']
-        param_score = sum(p['score'] for p in parameter_evaluation.values()) / len(parameter_evaluation) if parameter_evaluation else 0.0
+        param_score = sum(p.get('score', 0.0) for p in parameter_evaluation.values()) / len(parameter_evaluation) if parameter_evaluation else 0.0
         answer_score = answer_evaluation['answer_match_score']
         
         overall_score = (tool_score + param_score + answer_score) / 3
