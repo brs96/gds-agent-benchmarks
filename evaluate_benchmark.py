@@ -653,13 +653,13 @@ def main():
         description="GDS Agent Benchmark Evaluation Tool",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""Examples:
-  python evaluate_benchmark.py --questions gds-algo-questions-basic.csv"""
+  python evaluate_benchmark.py --questions gds-algo-questions-ln.csv"""
     )
     
     parser.add_argument(
         "--questions", "-q",
-        default="gds-algo-questions-basic.csv",
-        help="Path to the questions CSV file (default: gds-algo-questions-basic.csv)"
+        default="gds-algo-questions-ln.csv",
+        help="Path to the questions CSV file (default: gds-algo-questions-ln.csv)"
     )
     
     args = parser.parse_args()

@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 class GDSBenchmark:
     def __init__(self, 
-                 questions_file: str = "gds-algo-questions-basic.csv",
+                 questions_file: str = "gds-algo-questions-ln.csv",
                  results_file: str = None):
         self.questions_file = Path(questions_file)
         
@@ -341,13 +341,13 @@ def main():
     parser = argparse.ArgumentParser(
         description="GDS Agent Benchmarking Tool",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""Examples: python benchmark_gds_agent.py --questions gds-algo-questions-basic.csv"""
+        epilog="""Examples: python benchmark_gds_agent.py --questions gds-algo-questions-ln.csv"""
     )
     
     parser.add_argument(
         "--questions", "-q",
-        default="gds-algo-questions-basic.csv",
-        help="Path to the questions CSV file (default: gds-algo-questions-basic.csv)"
+        default="gds-algo-questions-ln.csv",
+        help="Path to the questions CSV file (default: gds-algo-questions-ln.csv)"
     )
     
     args = parser.parse_args()
