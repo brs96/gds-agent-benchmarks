@@ -15,16 +15,27 @@ logger = logging.getLogger(__name__)
 
 
 class BenchmarkEvaluator:
-    def __init__(self, questions_file: str = "path_questions_basic.csv"):
-        self.questions_file = Path(questions_file)
-                
-
-        base_name = self.questions_file.stem
-        pattern = f"results/{base_name}_results_*.json"
+    def __init__(self, dataset: str = "ln"):
+        # Map dataset names to question files
+        dataset_files = {
+            "ln": "gds-algo-questions-ln.csv",
+            "got": "gds-algo-questions-got.csv"
+        }
+        
+        if dataset not in dataset_files:
+            raise ValueError(f"Unknown dataset: {dataset}. Available: {list(dataset_files.keys())}")
+        
+        self.dataset = dataset
+        self.questions_file = Path(dataset_files[dataset])
+        
+        # Look for results files matching the dataset pattern
+        pattern = f"results/{dataset}_results_*.json"
         self.results_files = list(Path().glob(pattern))
 
-        base_name = self.questions_file.stem
-        self.evaluation_file = Path(f"results/{base_name}_evaluation_aggregated.json")
+        # Set evaluation output file with dataset-specific name
+        from datetime import datetime
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.evaluation_file = Path(f"results/{dataset}_evaluation_{timestamp}.json")
         
     def load_expected_results(self) -> Dict[str, Dict[str, Any]]:
         """Load expected results from CSV file with 4-lines-per-question format."""
@@ -586,6 +597,8 @@ class BenchmarkEvaluator:
         total_runs = sum(stats['num_runs'] for stats in aggregated_stats.values())
         
         summary = {
+            'dataset': self.dataset,
+            'questions_file': str(self.questions_file),
             'total_questions': len(expected_results),
             'total_runs': total_runs,
             'average_score_across_questions': sum(all_mean_scores) / len(all_mean_scores) if all_mean_scores else 0.0,
@@ -611,7 +624,9 @@ class BenchmarkEvaluator:
         print("GDS AGENT BENCHMARK EVALUATION REPORT (MULTIPLE RUNS)")
         print("="*80)
         
-        print(f"\n SUMMARY:")
+        print(f"\n📊 SUMMARY:")
+        print(f"Dataset: {summary.get('dataset', 'unknown')}")
+        print(f"Questions File: {summary.get('questions_file', 'unknown')}")
         print(f"Total Questions: {summary.get('total_questions', 0)}")
         print(f"Total Runs Processed: {summary.get('total_runs', 0)}")
         print(f"Results Files Processed: {summary.get('results_files_processed', 0)}")
@@ -653,28 +668,32 @@ def main():
         description="GDS Agent Benchmark Evaluation Tool",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""Examples:
-  python evaluate_benchmark.py --questions gds-algo-questions-ln.csv"""
+  python evaluate_benchmark.py ln    # Evaluate LN questions
+  python evaluate_benchmark.py got   # Evaluate GoT questions"""
     )
     
     parser.add_argument(
-        "--questions", "-q",
-        default="gds-algo-questions-ln.csv",
-        help="Path to the questions CSV file (default: gds-algo-questions-ln.csv)"
+        "dataset",
+        choices=["ln", "got"],
+        help="Dataset to evaluate: 'ln' for London network questions, 'got' for Game of Thrones questions"
     )
     
     args = parser.parse_args()
     
     print("GDS Agent Benchmark Evaluation Tool")
     print("="*50)
+    print(f"Dataset: {args.dataset}")
     
-    # Check if questions file exists
-    if not Path(args.questions).exists():
-        print(f"Questions file '{args.questions}' not found")
+    try:
+        evaluator = BenchmarkEvaluator(dataset=args.dataset)
+    except ValueError as e:
+        print(f"❌ {e}")
         return 1
     
-    evaluator = BenchmarkEvaluator(
-        questions_file=args.questions
-    )
+    # Check if questions file exists
+    if not evaluator.questions_file.exists():
+        print(f"❌ Questions file not found: {evaluator.questions_file}")
+        return 1
     
     print(f"Questions file: {evaluator.questions_file}")
     print(f"Results files: {evaluator.results_files}")
@@ -682,7 +701,7 @@ def main():
     
     # Check if results files exist
     if not evaluator.results_files:
-        print(f"No results files found")
+        print(f"❌ No results files found matching pattern: results/{args.dataset}_results_*.json")
         return 1
     
     print("Setup looks good!")
@@ -696,7 +715,7 @@ def main():
         evaluator.evaluation_file.parent.mkdir(parents=True, exist_ok=True)
         with open(evaluator.evaluation_file, 'w') as f:
             json.dump(results, f, indent=2)
-        print(f"\n Detailed results saved to: {evaluator.evaluation_file}")
+        print(f"\n✅ Detailed results saved to: {evaluator.evaluation_file}")
         
     except Exception as e:
         logger.error(f"Evaluation failed: {e}")

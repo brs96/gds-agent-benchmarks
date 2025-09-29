@@ -23,35 +23,44 @@ logger = logging.getLogger(__name__)
 
 class GDSBenchmark:
     def __init__(self, 
-                 questions_file: str = "gds-algo-questions-ln.csv",
+                 dataset: str = "ln",
                  results_file: str = None):
-        self.questions_file = Path(questions_file)
+        # Map dataset names to question files
+        dataset_files = {
+            "ln": "gds-algo-questions-ln.csv",
+            "got": "gds-algo-questions-got.csv"
+        }
+        
+        if dataset not in dataset_files:
+            raise ValueError(f"Unknown dataset: {dataset}. Available: {list(dataset_files.keys())}")
+        
+        self.dataset = dataset
+        self.questions_file = Path(dataset_files[dataset])
         
         if results_file is None:
-            base_name = self.questions_file.stem
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            self.results_file = Path(f"results/{base_name}_results_{timestamp}.json")
+            self.results_file = Path(f"results/{dataset}_results_{timestamp}.json")
         else:
             self.results_file = Path(results_file)
             
         self.results = []
 
 
-    def load_questions(self) -> List[str]:
-        """Load questions from CSV file with 4-lines-per-question format."""
-        logger.info(f"Loading questions from {self.questions_file}")
+    def load_questions_from_file(self, questions_file: Path) -> List[str]:
+        """Load questions from a single CSV file with 4-lines-per-question format."""
+        logger.info(f"Loading questions from {questions_file}")
         questions = []
         
-        if not self.questions_file.exists():
-            logger.error(f"Questions file not found: {self.questions_file}")
+        if not questions_file.exists():
+            logger.error(f"Questions file not found: {questions_file}")
             return []
         
         try:
-            with open(self.questions_file, 'r', encoding='utf-8') as file:
+            with open(questions_file, 'r', encoding='utf-8') as file:
                 lines = [line.strip() for line in file.readlines() if line.strip()]
                 
                 if not lines:
-                    logger.error("Questions file is empty")
+                    logger.error(f"Questions file is empty: {questions_file}")
                     return []
 
                 # Process lines in groups of 4: question, tools, parameters, answer
@@ -72,11 +81,15 @@ class GDSBenchmark:
                         break
                         
         except Exception as e:
-            logger.error(f"Error loading questions: {e}")
+            logger.error(f"Error loading questions from {questions_file}: {e}")
             return []
             
-        logger.info(f"Loaded {len(questions)} questions")
+        logger.info(f"Loaded {len(questions)} questions from {questions_file}")
         return questions
+
+    def load_questions(self) -> List[str]:
+        """Load questions from the configured CSV file."""
+        return self.load_questions_from_file(self.questions_file)
 
     def create_mcp_config(self) -> Path:
         config = {
@@ -226,8 +239,9 @@ class GDSBenchmark:
             "success": response is not None
         }
 
+
     def run_benchmark(self) -> List[Dict[str, Any]]:
-        logger.info("Starting GDS Agent benchmark...")
+        logger.info(f"Starting GDS Agent benchmark for {self.dataset} dataset...")
         
         questions = self.load_questions()
         if not questions:
@@ -246,6 +260,7 @@ class GDSBenchmark:
                 
                 response = self.send_question_to_claude(config_file, question)
                 result = self.create_result_record(question, response)
+                result["dataset"] = self.dataset
                 results.append(result)
                 
                 if response:
@@ -272,6 +287,7 @@ class GDSBenchmark:
                 except:
                     pass
 
+
     def save_results(self) -> None:
         if not self.results:
             logger.warning("No results to save")
@@ -287,6 +303,7 @@ class GDSBenchmark:
         summary = {
             "benchmark_info": {
                 "timestamp": datetime.now().isoformat(),
+                "dataset": self.dataset,
                 "questions_file": str(self.questions_file),
                 "total_questions": total_questions,
                 "successful_responses": successful_responses,
@@ -341,26 +358,22 @@ def main():
     parser = argparse.ArgumentParser(
         description="GDS Agent Benchmarking Tool",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""Examples: python benchmark_gds_agent.py --questions gds-algo-questions-ln.csv"""
+        epilog="""Examples: 
+        python benchmark_gds_agent.py ln    # Run LN questions
+        python benchmark_gds_agent.py got   # Run GoT questions"""
     )
     
     parser.add_argument(
-        "--questions", "-q",
-        default="gds-algo-questions-ln.csv",
-        help="Path to the questions CSV file (default: gds-algo-questions-ln.csv)"
+        "dataset",
+        choices=["ln", "got"],
+        help="Dataset to run: 'ln' for London network questions, 'got' for Game of Thrones questions"
     )
     
     args = parser.parse_args()
     
     print("GDS Agent Benchmarking Tool")
     print("="*40)
-    print(f"Questions file: {args.questions}")
-    
-    # Check if questions file exists
-    if not Path(args.questions).exists():
-        print(f"❌ Questions file '{args.questions}' not found")
-        print("Please create a file with your test questions.")
-        sys.exit(1)
+    print(f"Dataset: {args.dataset}")
     
     # Check if wheel file exists
     if not Path("gds_agent-0.4.0-py3-none-any.whl").exists():
@@ -368,10 +381,20 @@ def main():
         print("Please ensure 'gds_agent-0.4.0-py3-none-any.whl' is in the current directory")
         sys.exit(1)
     
-    benchmark = GDSBenchmark(questions_file=args.questions)
+    try:
+        benchmark = GDSBenchmark(dataset=args.dataset)
+    except ValueError as e:
+        print(f"❌ {e}")
+        sys.exit(1)
     
+    # Check if questions file exists
+    if not benchmark.questions_file.exists():
+        print(f"❌ Questions file not found: {benchmark.questions_file}")
+        sys.exit(1)
+    
+    print(f"Questions file: {benchmark.questions_file}")
     print(f"Results file: {benchmark.results_file}")
-    print("\n Starting benchmark...")
+    print("\nStarting benchmark...")
     
     try:
         benchmark.run_benchmark()
@@ -379,7 +402,7 @@ def main():
         benchmark.print_summary()
         
     except KeyboardInterrupt:
-        print("\n Benchmark interrupted by user")
+        print("\nBenchmark interrupted by user")
     except Exception as e:
         logger.error(f"Benchmark failed: {e}")
         sys.exit(1)
