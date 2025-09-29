@@ -9,14 +9,20 @@ import pandas as pd
 from pathlib import Path
 
 
-def load_evaluation_files(dataset=None):
+def load_evaluation_files(dataset=None, model=None):
     """Load evaluation JSON files from results folder"""
-    if dataset:
-        # Load files for specific dataset
-        pattern = f"results/{dataset}_evaluation_*.json"
+    if dataset and model:
+        # Load files for specific dataset and model
+        pattern = f"results_{model}/{dataset}_evaluation_*.json"
+    elif model:
+        # Load all datasets for specific model
+        pattern = f"results_{model}/*_evaluation_*.json"
+    elif dataset:
+        # Load all models for specific dataset
+        pattern = f"results_*/{dataset}_evaluation_*.json"
     else:
         # Load all evaluation files
-        pattern = "results/*_evaluation_*.json"
+        pattern = "results_*/*_evaluation_*.json"
     
     files = glob.glob(pattern)
     evaluations = {}
@@ -25,9 +31,12 @@ def load_evaluation_files(dataset=None):
         try:
             with open(file, 'r') as f:
                 data = json.load(f)
-                # Extract dataset name from the data
-                dataset_name = data.get('summary', {}).get('dataset', 'unknown')
-                evaluations[dataset_name] = data
+                # Extract dataset and model from the data
+                file_dataset = data.get('summary', {}).get('dataset', 'unknown')
+                file_model = data.get('summary', {}).get('model', 'unknown')
+                # Create a combined key for dataset and model
+                key = f"{file_dataset}_{file_model}"
+                evaluations[key] = data
         except Exception as e:
             print(f"Error loading {file}: {e}")
     
@@ -248,17 +257,28 @@ def create_variation_plots(run_variation_data, dataset_name):
     print(f"Variation plots for {dataset_name} saved to {plots_dir}/")
 
 
-def create_visualizations(results, question_results, stats, evaluations, run_variation_data, dataset=None):
+def create_visualizations(results, question_results, stats, evaluations, run_variation_data, dataset=None, model=None):
     """Create comprehensive visualizations"""
     
-    # Create dataset-specific output directory
-    if dataset:
-        output_dir = Path(f"results/analysis_{dataset}")
+    # Create dataset and model-specific output directory
+    if dataset and model:
+        output_dir = Path(f"results_{model}/analysis_{dataset}")
+        output_dir.mkdir(parents=True, exist_ok=True)
+        file_prefix = f"{dataset}_{model}_"
+        title_suffix = f" - {dataset.upper()} Dataset ({model})"
+    elif model:
+        output_dir = Path(f"results_{model}/analysis")
+        output_dir.mkdir(parents=True, exist_ok=True)
+        file_prefix = f"{model}_"
+        title_suffix = f" - {model} Model"
+    elif dataset:
+        output_dir = Path(f"analysis_{dataset}")
         output_dir.mkdir(parents=True, exist_ok=True)
         file_prefix = f"{dataset}_"
         title_suffix = f" - {dataset.upper()} Dataset"
     else:
-        output_dir = Path(".")
+        output_dir = Path("analysis")
+        output_dir.mkdir(parents=True, exist_ok=True)
         file_prefix = ""
         title_suffix = ""
     
@@ -493,9 +513,11 @@ def main():
         description="GDS Agent Benchmark Statistics Analysis Tool",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""Examples:
-  python analyze_benchmark_stats.py ln     # Analyze LN evaluation results
-  python analyze_benchmark_stats.py got    # Analyze GoT evaluation results
-  python analyze_benchmark_stats.py        # Analyze all evaluation results"""
+  python analyze_benchmark_stats.py ln                            # Analyze LN results for default model
+  python analyze_benchmark_stats.py got                           # Analyze GoT results for default model  
+  python analyze_benchmark_stats.py ln --model haiku-3-20241022   # Analyze LN results for Haiku model
+  python analyze_benchmark_stats.py --model sonnet-4-20250514     # Analyze all datasets for Sonnet model
+  python analyze_benchmark_stats.py                               # Analyze all datasets and models"""
     )
     
     parser.add_argument(
@@ -503,6 +525,12 @@ def main():
         nargs="?",
         choices=["ln", "got"],
         help="Dataset to analyze: 'ln' for London network, 'got' for Game of Thrones (optional - if not specified, analyzes all datasets)"
+    )
+    
+    parser.add_argument(
+        "--model", "-m",
+        default="sonnet-4-20250514",
+        help="Model to analyze (default: sonnet-4-20250514). Examples: sonnet-4-20250514, haiku-3-20241022"
     )
     
     args = parser.parse_args()
@@ -515,12 +543,24 @@ def main():
     else:
         print("Dataset: All available datasets")
     
+    if args.model:
+        print(f"Model: {args.model}")
+    else:
+        print("Model: All available models")
+    
     print("\nLoading evaluation files...")
-    evaluations = load_evaluation_files(dataset=args.dataset)
+    evaluations = load_evaluation_files(dataset=args.dataset, model=args.model)
     
     if not evaluations:
-        dataset_info = f" for dataset '{args.dataset}'" if args.dataset else ""
-        print(f"No evaluation files found{dataset_info} matching '*_evaluation_*.json' pattern")
+        if args.dataset and args.model:
+            pattern_info = f"results_{args.model}/{args.dataset}_evaluation_*.json"
+        elif args.model:
+            pattern_info = f"results_{args.model}/*_evaluation_*.json" 
+        elif args.dataset:
+            pattern_info = f"results_*/{args.dataset}_evaluation_*.json"
+        else:
+            pattern_info = "results_*/*_evaluation_*.json"
+        print(f"No evaluation files found matching pattern: {pattern_info}")
         return
     
     print(f"Found {len(evaluations)} evaluation files:")
@@ -534,26 +574,42 @@ def main():
     stats = calculate_summary_stats(results)
     
     print("Creating visualizations...")
-    create_visualizations(results, question_results, stats, evaluations, run_variation_data, dataset=args.dataset)
+    create_visualizations(results, question_results, stats, evaluations, run_variation_data, dataset=args.dataset, model=args.model)
     
     print_detailed_stats(stats, evaluations)
     
     # Save detailed results to CSV
     df = pd.DataFrame(question_results)
-    if args.dataset:
-        output_dir = Path(f"results/analysis_{args.dataset}")
+    if args.dataset and args.model:
+        output_dir = Path(f"results_{args.model}/analysis_{args.dataset}")
+        output_dir.mkdir(parents=True, exist_ok=True)
+        csv_path = output_dir / f"{args.dataset}_{args.model}_detailed_question_results.csv"
+    elif args.model:
+        output_dir = Path(f"results_{args.model}/analysis")
+        output_dir.mkdir(parents=True, exist_ok=True)
+        csv_path = output_dir / f"{args.model}_detailed_question_results.csv"
+    elif args.dataset:
+        output_dir = Path(f"analysis_{args.dataset}")
         output_dir.mkdir(parents=True, exist_ok=True)
         csv_path = output_dir / f"{args.dataset}_detailed_question_results.csv"
     else:
-        csv_path = "detailed_question_results.csv"
+        output_dir = Path("analysis")
+        output_dir.mkdir(parents=True, exist_ok=True)
+        csv_path = output_dir / "detailed_question_results.csv"
     
     df.to_csv(csv_path, index=False)
     print(f"\nDetailed results saved to '{csv_path}'")
     
     print("\nAnalysis complete!")
-    if args.dataset:
-        print(f"\nAll outputs saved in results/analysis_{args.dataset}/ directory")
-    print(f"Variation analysis plots saved in results/plots_<dataset_name>/ directories")
+    if args.dataset and args.model:
+        print(f"\nAll outputs saved in results_{args.model}/analysis_{args.dataset}/ directory")
+    elif args.model:
+        print(f"\nAll outputs saved in results_{args.model}/analysis/ directory")
+    elif args.dataset:
+        print(f"\nAll outputs saved in analysis_{args.dataset}/ directory")
+    else:
+        print(f"\nAll outputs saved in analysis/ directory")
+    print(f"Variation analysis plots saved in results_<model>/plots_<dataset_name>/ directories")
 
 
 if __name__ == "__main__":

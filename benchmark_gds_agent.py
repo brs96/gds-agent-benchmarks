@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 class GDSBenchmark:
     def __init__(self, 
                  dataset: str = "ln",
+                 model: str = "sonnet-4-20250514",
                  results_file: str = None):
         # Map dataset names to question files
         dataset_files = {
@@ -35,11 +36,12 @@ class GDSBenchmark:
             raise ValueError(f"Unknown dataset: {dataset}. Available: {list(dataset_files.keys())}")
         
         self.dataset = dataset
+        self.model = model
         self.questions_file = Path(dataset_files[dataset])
         
         if results_file is None:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            self.results_file = Path(f"results/{dataset}_results_{timestamp}.json")
+            self.results_file = Path(f"results_{model}/{dataset}_results_{timestamp}.json")
         else:
             self.results_file = Path(results_file)
             
@@ -118,7 +120,7 @@ class GDSBenchmark:
             formatted_prompt = f"You MUST use the available MCP tools to query the actual Neo4j database to answer this question. Do not rely on output from previous questions. Do not provide a hypothetical answer. Question: {question}"
             
             cmd = [
-                "claude", " --model claude-sonnet-4-20250514 ","-p", "--verbose", "--output-format", "stream-json",
+                "claude", f"--model claude-{self.model}","-p", "--verbose", "--output-format", "stream-json",
                 "--mcp-config", str(config_file), 
                 "--dangerously-skip-permissions",
                 "--allowedTools", "mcp__*"  # Allow all MCP tools
@@ -261,6 +263,7 @@ class GDSBenchmark:
                 response = self.send_question_to_claude(config_file, question)
                 result = self.create_result_record(question, response)
                 result["dataset"] = self.dataset
+                result["model"] = self.model
                 results.append(result)
                 
                 if response:
@@ -304,6 +307,7 @@ class GDSBenchmark:
             "benchmark_info": {
                 "timestamp": datetime.now().isoformat(),
                 "dataset": self.dataset,
+                "model": self.model,
                 "questions_file": str(self.questions_file),
                 "total_questions": total_questions,
                 "successful_responses": successful_responses,
@@ -359,8 +363,9 @@ def main():
         description="GDS Agent Benchmarking Tool",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""Examples: 
-        python benchmark_gds_agent.py ln    # Run LN questions
-        python benchmark_gds_agent.py got   # Run GoT questions"""
+        python benchmark_gds_agent.py ln                            # Run LN questions with default model
+        python benchmark_gds_agent.py got                           # Run GoT questions with default model
+        python benchmark_gds_agent.py ln --model haiku-3-20241022   # Run LN questions with Haiku model"""
     )
     
     parser.add_argument(
@@ -369,11 +374,18 @@ def main():
         help="Dataset to run: 'ln' for London network questions, 'got' for Game of Thrones questions"
     )
     
+    parser.add_argument(
+        "--model", "-m",
+        default="sonnet-4-20250514",
+        help="Model to use (default: sonnet-4-20250514). Examples: sonnet-4-20250514, haiku-3-20241022"
+    )
+    
     args = parser.parse_args()
     
     print("GDS Agent Benchmarking Tool")
     print("="*40)
     print(f"Dataset: {args.dataset}")
+    print(f"Model: {args.model}")
     
     # Check if wheel file exists
     if not Path("gds_agent-0.4.0-py3-none-any.whl").exists():
@@ -382,7 +394,7 @@ def main():
         sys.exit(1)
     
     try:
-        benchmark = GDSBenchmark(dataset=args.dataset)
+        benchmark = GDSBenchmark(dataset=args.dataset, model=args.model)
     except ValueError as e:
         print(f"❌ {e}")
         sys.exit(1)

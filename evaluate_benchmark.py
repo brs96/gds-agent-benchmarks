@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class BenchmarkEvaluator:
-    def __init__(self, dataset: str = "ln"):
+    def __init__(self, dataset: str = "ln", model: str = "sonnet-4-20250514"):
         # Map dataset names to question files
         dataset_files = {
             "ln": "gds-algo-questions-ln.csv",
@@ -26,16 +26,17 @@ class BenchmarkEvaluator:
             raise ValueError(f"Unknown dataset: {dataset}. Available: {list(dataset_files.keys())}")
         
         self.dataset = dataset
+        self.model = model
         self.questions_file = Path(dataset_files[dataset])
         
-        # Look for results files matching the dataset pattern
-        pattern = f"results/{dataset}_results_*.json"
+        # Look for results files matching the dataset and model pattern
+        pattern = f"results_{model}/{dataset}_results_*.json"
         self.results_files = list(Path().glob(pattern))
 
-        # Set evaluation output file with dataset-specific name
+        # Set evaluation output file with dataset and model-specific name
         from datetime import datetime
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        self.evaluation_file = Path(f"results/{dataset}_evaluation_{timestamp}.json")
+        self.evaluation_file = Path(f"results_{model}/{dataset}_evaluation_{timestamp}.json")
         
     def load_expected_results(self) -> Dict[str, Dict[str, Any]]:
         """Load expected results from CSV file with 4-lines-per-question format."""
@@ -598,6 +599,7 @@ class BenchmarkEvaluator:
         
         summary = {
             'dataset': self.dataset,
+            'model': self.model,
             'questions_file': str(self.questions_file),
             'total_questions': len(expected_results),
             'total_runs': total_runs,
@@ -626,6 +628,7 @@ class BenchmarkEvaluator:
         
         print(f"\n📊 SUMMARY:")
         print(f"Dataset: {summary.get('dataset', 'unknown')}")
+        print(f"Model: {summary.get('model', 'unknown')}")
         print(f"Questions File: {summary.get('questions_file', 'unknown')}")
         print(f"Total Questions: {summary.get('total_questions', 0)}")
         print(f"Total Runs Processed: {summary.get('total_runs', 0)}")
@@ -668,8 +671,9 @@ def main():
         description="GDS Agent Benchmark Evaluation Tool",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""Examples:
-  python evaluate_benchmark.py ln    # Evaluate LN questions
-  python evaluate_benchmark.py got   # Evaluate GoT questions"""
+  python evaluate_benchmark.py ln                            # Evaluate LN questions with default model
+  python evaluate_benchmark.py got                           # Evaluate GoT questions with default model
+  python evaluate_benchmark.py ln --model haiku-3-20241022   # Evaluate LN questions for Haiku model"""
     )
     
     parser.add_argument(
@@ -678,14 +682,21 @@ def main():
         help="Dataset to evaluate: 'ln' for London network questions, 'got' for Game of Thrones questions"
     )
     
+    parser.add_argument(
+        "--model", "-m",
+        default="sonnet-4-20250514",
+        help="Model to evaluate (default: sonnet-4-20250514). Examples: sonnet-4-20250514, haiku-3-20241022"
+    )
+    
     args = parser.parse_args()
     
     print("GDS Agent Benchmark Evaluation Tool")
     print("="*50)
     print(f"Dataset: {args.dataset}")
+    print(f"Model: {args.model}")
     
     try:
-        evaluator = BenchmarkEvaluator(dataset=args.dataset)
+        evaluator = BenchmarkEvaluator(dataset=args.dataset, model=args.model)
     except ValueError as e:
         print(f"❌ {e}")
         return 1
@@ -701,7 +712,7 @@ def main():
     
     # Check if results files exist
     if not evaluator.results_files:
-        print(f"❌ No results files found matching pattern: results/{args.dataset}_results_*.json")
+        print(f"❌ No results files found matching pattern: results_{args.model}/{args.dataset}_results_*.json")
         return 1
     
     print("Setup looks good!")
