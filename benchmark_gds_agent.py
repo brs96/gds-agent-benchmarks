@@ -9,6 +9,10 @@ from typing import Dict, List, Optional, Any
 import tempfile
 import os
 import csv
+import asyncio
+from agents import Agent, Runner
+from agents.mcp import MCPServerStdio
+
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -37,6 +41,7 @@ class GDSBenchmark:
         
         self.dataset = dataset
         self.model = model
+        self.provider = self._detect_provider(model)
         self.questions_file = Path(dataset_files[dataset])
         
         if results_file is None:
@@ -47,6 +52,24 @@ class GDSBenchmark:
             
         self.results = []
 
+    def _detect_provider(self, model: str) -> str:
+        """Detect the provider based on model name."""
+        # OpenAI models
+        openai_models = [
+            'gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-4', 'gpt-3.5-turbo',
+            'o1-preview', 'o1-mini'
+        ]
+        
+        # Claude models (existing patterns)
+        if any(model.startswith(prefix) for prefix in ['sonnet', 'haiku', 'opus']):
+            return 'claude'
+        
+        # Check for OpenAI models
+        if model in openai_models:
+            return 'openai'
+        
+        # Default to claude for backward compatibility
+        return 'claude'
 
     def load_questions_from_file(self, questions_file: Path) -> List[str]:
         """Load questions from a single CSV file with 4-lines-per-question format."""
@@ -115,12 +138,12 @@ class GDSBenchmark:
 
     def send_question_to_claude_subprocess(self, config_file: Path, question: str) -> Optional[dict]:
         try:
-            logger.debug(f"Sending question via subprocess: {question}")
+            logger.debug(f"Sending question to Claude via subprocess: {question}")
             
             formatted_prompt = f"You MUST use the available MCP tools to query the actual Neo4j database to answer this question. Do not rely on output from previous questions. Do not provide a hypothetical answer. Question: {question}"
             
             cmd = [
-                "claude", f"--model claude-{self.model}","-p", "--verbose", "--output-format", "stream-json",
+                "claude", f"--model", f"claude-{self.model}", "-p", "--verbose", "--output-format", "stream-json",
                 "--mcp-config", str(config_file), 
                 "--dangerously-skip-permissions",
                 "--allowedTools", "mcp__*"  # Allow all MCP tools
@@ -230,8 +253,72 @@ class GDSBenchmark:
             
         return parsed_data
 
-    def send_question_to_claude(self, config_file: Path, question: str) -> Optional[dict]:
-        return self.send_question_to_claude_subprocess(config_file, question)
+    def send_question_to_openai_subprocess(self, config_file: Path, question: str) -> Optional[dict]:            
+        try:
+            return asyncio.run(self._send_question_to_openai_async(config_file, question))
+        except Exception as e:
+            logger.error(f"Error in OpenAI integration: {e}")
+            return None
+
+    async def _send_question_to_openai_async(self, config_file: Path, question: str) -> Optional[dict]:
+        try:
+            logger.debug(f"Starting OpenAI async request for: {question[:50]}")
+            
+            # Add timeout and environment variables
+            async with MCPServerStdio(
+                name="gds",
+                params={
+                    "command": "uvx",
+                    "args": ["--from", "./gds_agent-0.4.0-py3-none-any.whl", "gds-agent"],
+                    "env": {
+                        "NEO4J_URI": "bolt://localhost:7687",
+                        "NEO4J_USERNAME": "neo4j",
+                        "NEO4J_PASSWORD": "12345678",
+                    }
+                },
+            ) as server:
+                
+                formatted_prompt = f"You MUST use the available MCP tools to query the actual Neo4j database to answer this question. Do not rely on output from previous questions. Do not provide a hypothetical answer. Question: {question}"
+                
+                agent = Agent(
+                    name="GPT-NEO4J-GDS",
+                    instructions="You are a helpful assistant that uses the GDS (Graph Data Science) MCP tools to answer questions about Neo4j graph databases.",
+                    mcp_servers=[server],
+                    model=self.model,
+                )
+                
+                logger.debug("Running agent with question...")
+                result = await asyncio.wait_for(
+                    Runner.run(agent, formatted_prompt), 
+                    timeout=300
+                )
+                
+                # Convert result to expected format
+                response_data = {
+                    "tool_calls": getattr(result, 'tool_calls', []) or [],
+                    "tool_results": getattr(result, 'tool_results', []) or [],
+                    "final_result": str(result.final_output) if hasattr(result, 'final_output') else str(result),
+                    "num_turns": getattr(result, 'num_turns', 0) or 0,
+                    "duration_ms": getattr(result, 'duration_ms', 0) or 0,
+                    "raw_stream": str(result)
+                }
+                
+                logger.debug(f"OpenAI request completed successfully")
+                return response_data
+                
+        except asyncio.TimeoutError:
+            logger.error("OpenAI request timed out after 300 seconds")
+            return None
+        except Exception as e:
+            logger.error(f"Error in OpenAI async request: {e}")
+            return None
+
+    def send_question_to_provider(self, config_file: Path, question: str) -> Optional[dict]:
+        """Route question to appropriate provider based on model."""
+        if self.provider == 'openai':
+            return self.send_question_to_openai_subprocess(config_file, question)
+        else:  # claude or default
+            return self.send_question_to_claude_subprocess(config_file, question)
 
     def create_result_record(self, question: str, response: dict) -> Dict[str, Any]:
         return {
@@ -260,10 +347,11 @@ class GDSBenchmark:
             for i, question in enumerate(questions, 1):
                 logger.info(f"Processing question {i}/{len(questions)}: {question[:50]}...")
                 
-                response = self.send_question_to_claude(config_file, question)
+                response = self.send_question_to_provider(config_file, question)
                 result = self.create_result_record(question, response)
                 result["dataset"] = self.dataset
                 result["model"] = self.model
+                result["provider"] = self.provider
                 results.append(result)
                 
                 if response:
@@ -308,6 +396,7 @@ class GDSBenchmark:
                 "timestamp": datetime.now().isoformat(),
                 "dataset": self.dataset,
                 "model": self.model,
+                "provider": self.provider,
                 "questions_file": str(self.questions_file),
                 "total_questions": total_questions,
                 "successful_responses": successful_responses,
@@ -363,9 +452,11 @@ def main():
         description="GDS Agent Benchmarking Tool",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""Examples: 
-        python benchmark_gds_agent.py ln                            # Run LN questions with default model
-        python benchmark_gds_agent.py got                           # Run GoT questions with default model
-        python benchmark_gds_agent.py ln --model haiku-3-20241022   # Run LN questions with Haiku model"""
+        python benchmark_gds_agent.py ln                            # Run LN questions with default Claude model
+        python benchmark_gds_agent.py got                           # Run GoT questions with default Claude model
+        python benchmark_gds_agent.py ln --model haiku-3-20241022   # Run LN questions with Claude Haiku
+        python benchmark_gds_agent.py ln --model gpt-4o             # Run LN questions with OpenAI GPT-4o
+        python benchmark_gds_agent.py got --model gpt-4-turbo       # Run GoT questions with OpenAI GPT-4 Turbo"""
     )
     
     parser.add_argument(
@@ -377,7 +468,7 @@ def main():
     parser.add_argument(
         "--model", "-m",
         default="sonnet-4-20250514",
-        help="Model to use (default: sonnet-4-20250514). Examples: sonnet-4-20250514, haiku-3-20241022"
+        help="Model to use (default: sonnet-4-20250514). Claude examples: sonnet-4-20250514, haiku-3-20241022. OpenAI examples: gpt-4o, gpt-4-turbo, gpt-3.5-turbo"
     )
     
     args = parser.parse_args()
@@ -387,16 +478,17 @@ def main():
     print(f"Dataset: {args.dataset}")
     print(f"Model: {args.model}")
     
+    try:
+        benchmark = GDSBenchmark(dataset=args.dataset, model=args.model)
+        print(f"Provider: {benchmark.provider.upper()}")
+    except ValueError as e:
+        print(f"❌ {e}")
+        sys.exit(1)
+    
     # Check if wheel file exists
     if not Path("gds_agent-0.4.0-py3-none-any.whl").exists():
         print("❌ GDS agent wheel file not found")
         print("Please ensure 'gds_agent-0.4.0-py3-none-any.whl' is in the current directory")
-        sys.exit(1)
-    
-    try:
-        benchmark = GDSBenchmark(dataset=args.dataset, model=args.model)
-    except ValueError as e:
-        print(f"❌ {e}")
         sys.exit(1)
     
     # Check if questions file exists
