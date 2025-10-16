@@ -173,7 +173,7 @@ Is it the case that I can go from any station to any other station in this trans
 Yes
 Assuming that if there a connection from station A to B, there is also a connection from B to A, for all stations. Is it the case that I can go from any station to any other station in this transport network? Answer Yes or No and nothing else.
 ["mcp__gds-agent__get_node_labels", "mcp__gds-agent__get_relationship_types", "mcp__gds-agent__weakly_connected_components"]
-{"strongly_connected_components": {}}
+{"weakly_connected_components": {}}
 Yes
 Run personalised article rank (damping = 0.8) with Paddington as the seed. Return only the scores for Paddington and Bayswater. Give answer in the format station:answer. Separate the stations' result with a comma.
 ["mcp__gds-agent__article_rank","mcp__gds-agent__get_node_properties_keys"]
@@ -349,5 +349,5 @@ Can I travel between every pair of stations in this transport network? Answer Ye
 Yes
 If every link between two stations works both ways, can I reach any station from any other in this network?  Answer Yes or No and nothing else.
 ["mcp__gds-agent__get_node_labels", "mcp__gds-agent__get_relationship_types", "mcp__gds-agent__weakly_connected_components"]
-{"strongly_connected_components": {}}
+{"weakly_connected_components": {}}
 Yes
