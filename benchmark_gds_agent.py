@@ -96,9 +96,13 @@ class GDSBenchmark:
                     },
                 )
                 logger.debug("Starting MCP server connection...")
-                # Add timeout to server initialization
-                await asyncio.wait_for(self.mcp_server.__aenter__(), timeout=30.0)
-                logger.info("MCP server started successfully")
+                # Start the server process
+                await self.mcp_server.__aenter__()
+                
+                # Wait for server to be ready with proper polling
+                logger.debug("Waiting for MCP server to be ready...")
+                await self._wait_for_server_ready(timeout=60.0)
+                logger.info("MCP server started and ready")
             except asyncio.TimeoutError:
                 logger.error("MCP server initialization timed out after 30 seconds")
                 self.mcp_server = None
@@ -119,6 +123,50 @@ class GDSBenchmark:
             except Exception as e:
                 logger.error(f"Error stopping MCP server: {e}")
                 self.mcp_server = None
+
+    async def _wait_for_server_ready(self, timeout: float = 60.0):
+        """Wait for MCP server to be ready by testing actual functionality."""
+        start_time = asyncio.get_event_loop().time()
+        retry_delay = 2.0
+        max_retry_delay = 8.0
+        
+        logger.debug(f"Polling for server readiness for up to {timeout} seconds...")
+        
+        while (asyncio.get_event_loop().time() - start_time) < timeout:
+            try:
+                # Test if we can list tools from the server
+                if hasattr(self.mcp_server, 'list_tools'):
+                    logger.debug("Attempting to list tools...")
+                    tools = await asyncio.wait_for(self.mcp_server.list_tools(), timeout=10.0)
+                    if tools and len(tools) > 0:
+                        logger.info(f"MCP server ready! Found {len(tools)} tools: {[t.name if hasattr(t, 'name') else str(t) for t in tools[:3]]}")
+                        return
+                    else:
+                        logger.debug("Server responded but no tools found yet")
+                
+                # Alternative: try to call a simple tool if list_tools doesn't work
+                elif hasattr(self.mcp_server, 'call_tool'):
+                    logger.debug("Testing server with ping...")
+                    # Try a simple operation that should work
+                    try:
+                        await asyncio.wait_for(self.mcp_server.call_tool("ping", {}), timeout=5.0)
+                        logger.info("MCP server ready! Ping successful")
+                        return
+                    except Exception:
+                        logger.debug("Server not ready for tool calls yet")
+                        
+            except asyncio.TimeoutError:
+                logger.debug(f"Server readiness check timed out, retrying in {retry_delay}s...")
+            except Exception as e:
+                logger.debug(f"Server readiness check failed: {str(e)[:100]}, retrying in {retry_delay}s...")
+            
+            # Wait before retrying with exponential backoff
+            await asyncio.sleep(retry_delay)
+            retry_delay = min(retry_delay * 1.4, max_retry_delay)
+        
+        # If we get here, we timed out
+        elapsed = asyncio.get_event_loop().time() - start_time
+        raise asyncio.TimeoutError(f"MCP server not ready after {elapsed:.1f} seconds")
 
     def load_questions_from_file(self, questions_file: Path) -> List[str]:
         """Load questions from a single CSV file with 4-lines-per-question format."""
@@ -302,13 +350,6 @@ class GDSBenchmark:
             
         return parsed_data
 
-    def send_question_to_openai_subprocess(self, config_file: Path, question: str) -> Optional[dict]:            
-        try:
-            return asyncio.run(self._send_question_to_openai_async(config_file, question))
-        except Exception as e:
-            logger.error(f"Error in OpenAI integration: {e}")
-            return None
-
     async def _send_question_to_openai_async(self, config_file: Path, question: str) -> Optional[dict]:
         try:
             logger.debug(f"Starting OpenAI async request for: {question[:50]}")
@@ -331,17 +372,33 @@ class GDSBenchmark:
                 Runner.run(agent, formatted_prompt), 
                 timeout=300
             )
-            
-            # Convert result to expected format
+            logger.debug(f"Result: {result}")
             response_data = {
-                "tool_calls": getattr(result, 'tool_calls', []) or [],
-                "tool_results": getattr(result, 'tool_results', []) or [],
-                "final_result": str(result.final_output) if hasattr(result, 'final_output') else str(result),
-                "num_turns": getattr(result, 'num_turns', 0) or 0,
-                "duration_ms": getattr(result, 'duration_ms', 0) or 0,
-                "raw_stream": str(result)
+                "tool_calls": [],
+                "tool_results": [],
+                "final_result": [],
+                "num_turns": 0,
+                "duration_ms": 0,
+                "raw_stream": ""
             }
-            
+            raw_responses = result.raw_responses
+            for raw_response in raw_responses:
+                outputs = raw_response.output
+                for output in outputs:
+                    if output.type == "function_call":
+                        # Parse arguments from JSON string to dictionary
+                        try:
+                            parsed_args = json.loads(output.arguments) if isinstance(output.arguments, str) else output.arguments
+                        except (json.JSONDecodeError, TypeError):
+                            parsed_args = output.arguments
+                        
+                        response_data["tool_calls"].append({
+                            "name": output.name,
+                            "parameters": parsed_args,
+                        })
+                    elif output.type == "message":
+                        response_data["final_result"] = output.content[0].text
+
             logger.debug(f"OpenAI request completed successfully")
             return response_data
                 
@@ -352,12 +409,6 @@ class GDSBenchmark:
             logger.error(f"Error in OpenAI async request: {e}")
             return None
 
-    def send_question_to_provider(self, config_file: Path, question: str) -> Optional[dict]:
-        """Route question to appropriate provider based on model."""
-        if self.provider == 'openai':
-            return self.send_question_to_openai_subprocess(config_file, question)
-        else:  # claude or default
-            return self.send_question_to_claude_subprocess(config_file, question)
 
     def create_result_record(self, question: str, response: dict) -> Dict[str, Any]:
         return {
@@ -433,7 +484,7 @@ class GDSBenchmark:
             for i, question in enumerate(questions, 1):
                 logger.info(f"Processing question {i}/{len(questions)}: {question[:50]}...")
                 
-                response = self.send_question_to_provider(config_file, question)
+                response = self.send_question_to_claude_subprocess(config_file, question)
                 result = self.create_result_record(question, response)
                 result["dataset"] = self.dataset
                 result["model"] = self.model

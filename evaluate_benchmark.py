@@ -507,7 +507,7 @@ class BenchmarkEvaluator:
             expected['expected_parameters'],
             actual['tool_calls']
         )
-        
+
         answer_evaluation = self.evaluate_answer_similarity(
             expected['expected_answer'],
             actual['final_result'],
