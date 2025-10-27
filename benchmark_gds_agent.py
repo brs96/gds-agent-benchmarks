@@ -73,12 +73,17 @@ class GDSBenchmark:
         return 'claude'
 
     async def start_mcp_server(self):
-        """Start MCP server for GPT models to be reused across questions."""
-        if self.provider == 'openai' and self.mcp_server is None:
-            logger.info("Starting reusable MCP server for GPT models...")
+        """Start fresh MCP server for GPT models."""
+        if self.provider == 'openai':
+            # Ensure any existing server is stopped first
+            if self.mcp_server is not None:
+                logger.debug("Stopping existing MCP server before starting new one")
+                await self.stop_mcp_server()
+                
+            logger.debug("Starting fresh MCP server for GPT models...")
             try:
                 # Check if wheel file exists
-                wheel_path = "./gds_agent-0.4.0-py3-none-any.whl"
+                wheel_path = "./gds_agent-0.5.1-py3-none-any.whl"
                 if not Path(wheel_path).exists():
                     raise Exception(f"Wheel file not found: {wheel_path}")
                 
@@ -94,6 +99,7 @@ class GDSBenchmark:
                             "NEO4J_PASSWORD": "12345678",
                         }
                     },
+                    client_session_timeout_seconds=600
                 )
                 logger.debug("Starting MCP server connection...")
                 # Start the server process
@@ -104,7 +110,7 @@ class GDSBenchmark:
                 await self._wait_for_server_ready(timeout=60.0)
                 logger.info("MCP server started and ready")
             except asyncio.TimeoutError:
-                logger.error("MCP server initialization timed out after 30 seconds")
+                logger.error("MCP server initialization timed out after 60 seconds")
                 self.mcp_server = None
                 raise Exception("Failed to initialize MCP server: timeout")
             except Exception as e:
@@ -115,13 +121,14 @@ class GDSBenchmark:
     async def stop_mcp_server(self):
         """Stop MCP server for GPT models."""
         if self.mcp_server is not None:
-            logger.info("Stopping MCP server...")
+            logger.debug("Stopping MCP server...")
             try:
                 await self.mcp_server.__aexit__(None, None, None)
-                self.mcp_server = None
-                logger.info("MCP server stopped successfully")
+                logger.debug("MCP server stopped successfully")
             except Exception as e:
-                logger.error(f"Error stopping MCP server: {e}")
+                logger.warning(f"Error stopping MCP server: {e}")
+            finally:
+                # Always clear the reference
                 self.mcp_server = None
 
     async def _wait_for_server_ready(self, timeout: float = 60.0):
@@ -218,7 +225,7 @@ class GDSBenchmark:
             "mcpServers": {
                 "gds-agent": {
                     "command": "uvx",
-                    "args": ["--from", "./gds_agent-0.4.0-py3-none-any.whl", "gds-agent"],
+                    "args": ["--from", "./gds_agent-0.5.1-py3-none-any.whl", "gds-agent"],
                     "env": {
                         "NEO4J_URI": "bolt://localhost:7687",
                         "NEO4J_USERNAME": "neo4j", 
@@ -386,14 +393,13 @@ class GDSBenchmark:
                 outputs = raw_response.output
                 for output in outputs:
                     if output.type == "function_call":
-                        # Parse arguments from JSON string to dictionary
                         try:
                             parsed_args = json.loads(output.arguments) if isinstance(output.arguments, str) else output.arguments
                         except (json.JSONDecodeError, TypeError):
                             parsed_args = output.arguments
                         
                         response_data["tool_calls"].append({
-                            "name": output.name,
+                            "name": "mcp__gds-agent__" + output.name,
                             "parameters": parsed_args,
                         })
                     elif output.type == "message":
@@ -406,6 +412,7 @@ class GDSBenchmark:
             logger.error("OpenAI request timed out after 300 seconds")
             return None
         except Exception as e:
+            logger.error(f"The exception type is: {type(e)}")
             logger.error(f"Error in OpenAI async request: {e}")
             return None
 
@@ -435,15 +442,16 @@ class GDSBenchmark:
             return self._run_benchmark_subprocess(questions)
 
     async def _run_benchmark_async(self, questions: List[str]) -> List[Dict[str, Any]]:
-        """Run benchmark for OpenAI models with persistent MCP server."""
-        try:
-            # Start MCP server once at the beginning
-            await self.start_mcp_server()
+        """Run benchmark for OpenAI models with fresh MCP server for each question."""
+        results = []
+        
+        for i, question in enumerate(questions, 1):
+            logger.info(f"Processing question {i}/{len(questions)}: {question[:50]}...")
             
-            results = []
-            
-            for i, question in enumerate(questions, 1):
-                logger.info(f"Processing question {i}/{len(questions)}: {question[:50]}...")
+            try:
+                # Start fresh MCP server for this question
+                logger.debug(f"Starting fresh MCP server for question {i}")
+                await self.start_mcp_server()
                 
                 response = await self._send_question_to_openai_async(None, question)
                 result = self.create_result_record(question, response)
@@ -458,19 +466,30 @@ class GDSBenchmark:
                     logger.info(f"Question {i}: ✓ ({num_tools} tools, {num_turns} turns)")
                 else:
                     logger.info(f"Question {i}: ✗ (no response)")
+                    
+            except Exception as e:
+                logger.error(f"Question {i} failed: {e}")
+                # Create failed result record
+                result = self.create_result_record(question, None)
+                result["dataset"] = self.dataset
+                result["model"] = self.model
+                result["provider"] = self.provider
+                results.append(result)
+                logger.info(f"Question {i}: ✗ (exception: {str(e)[:50]})")
                 
-                await asyncio.sleep(1)  # Small delay between questions
-            
-            self.results = results
-            return results
-            
-        except Exception as e:
-            logger.error(f"Async benchmark failed: {e}")
-            return []
-            
-        finally:
-            # Clean up MCP server
-            await self.stop_mcp_server()
+            finally:
+                # Always clean up MCP server after each question
+                try:
+                    await self.stop_mcp_server()
+                    logger.debug(f"Cleaned up MCP server for question {i}")
+                except Exception as cleanup_error:
+                    logger.warning(f"Error cleaning up MCP server for question {i}: {cleanup_error}")
+                
+                # Small delay between questions
+                await asyncio.sleep(2)
+        
+        self.results = results
+        return results
 
     def _run_benchmark_subprocess(self, questions: List[str]) -> List[Dict[str, Any]]:
         """Run benchmark for Claude models using subprocess approach."""
@@ -623,9 +642,9 @@ def main():
         sys.exit(1)
     
     # Check if wheel file exists
-    if not Path("gds_agent-0.4.0-py3-none-any.whl").exists():
+    if not Path("gds_agent-0.5.1-py3-none-any.whl").exists():
         print("❌ GDS agent wheel file not found")
-        print("Please ensure 'gds_agent-0.4.0-py3-none-any.whl' is in the current directory")
+        print("Please ensure 'gds_agent-0.5.1-py3-none-any.whl' is in the current directory")
         sys.exit(1)
     
     # Check if questions file exists
