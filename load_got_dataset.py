@@ -1,6 +1,7 @@
 from neo4j import GraphDatabase
 import os
 import logging
+from dotenv import load_dotenv
 
 
 def import_got_data(uri, username, password):
