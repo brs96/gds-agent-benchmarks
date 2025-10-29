@@ -221,6 +221,15 @@ class BenchmarkEvaluator:
             'unexpected_tools': unexpected_tools,
             'exact_match': len(missing_tools) == 0 and len(unexpected_tools) == 0
         }
+    
+    def _values_equal(self, expected_value: Any, actual_value: Any) -> bool:
+        """Compare two values, treating lists as equal regardless of order."""
+        if isinstance(expected_value, list) and isinstance(actual_value, list):
+            # For lists, compare as sets (order doesn't matter)
+            return set(expected_value) == set(actual_value)
+        else:
+            # For non-lists, use regular comparison
+            return actual_value == expected_value or str(actual_value) == str(expected_value)
         
     def evaluate_parameters(self, expected_params: Dict[str, Any], actual_tools: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Evaluate if the correct parameters were used."""
@@ -265,7 +274,7 @@ class BenchmarkEvaluator:
                             'expected': expected_value,
                             'actual': actual_value
                         })
-                elif actual_value == expected_value or str(actual_value) == str(expected_value):
+                elif self._values_equal(expected_value, actual_value):
                     matches.append(param_key)
                 else:
                     mismatches.append({
