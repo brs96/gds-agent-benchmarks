@@ -12,6 +12,7 @@ import csv
 import asyncio
 from agents import Agent, Runner
 from agents.mcp import MCPServerStdio
+import time
 
 
 logging.basicConfig(
@@ -55,22 +56,14 @@ class GDSBenchmark:
 
     def _detect_provider(self, model: str) -> str:
         """Detect the provider based on model name."""
-        # OpenAI models
-        openai_models = [
-            'gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-4', 'gpt-3.5-turbo',
-            'o1-preview', 'o1-mini'
-        ]
         
-        # Claude models (existing patterns)
         if any(model.startswith(prefix) for prefix in ['sonnet', 'haiku', 'opus']):
             return 'claude'
         
-        # Check for OpenAI models
-        if model in openai_models:
+        if any(model.startswith(prefix) for prefix in ['gpt']):
             return 'openai'
         
-        # Default to claude for backward compatibility
-        return 'claude'
+        raise ValueError(f"Unknown model: {model}")
 
     async def start_mcp_server(self):
         """Start fresh MCP server for GPT models."""
@@ -135,43 +128,25 @@ class GDSBenchmark:
         """Wait for MCP server to be ready by testing actual functionality."""
         start_time = asyncio.get_event_loop().time()
         retry_delay = 2.0
-        max_retry_delay = 8.0
         
         logger.debug(f"Polling for server readiness for up to {timeout} seconds...")
         
         while (asyncio.get_event_loop().time() - start_time) < timeout:
             try:
                 # Test if we can list tools from the server
-                if hasattr(self.mcp_server, 'list_tools'):
-                    logger.debug("Attempting to list tools...")
-                    tools = await asyncio.wait_for(self.mcp_server.list_tools(), timeout=10.0)
-                    if tools and len(tools) > 0:
-                        logger.info(f"MCP server ready! Found {len(tools)} tools: {[t.name if hasattr(t, 'name') else str(t) for t in tools[:3]]}")
-                        return
-                    else:
-                        logger.debug("Server responded but no tools found yet")
-                
-                # Alternative: try to call a simple tool if list_tools doesn't work
-                elif hasattr(self.mcp_server, 'call_tool'):
-                    logger.debug("Testing server with ping...")
-                    # Try a simple operation that should work
-                    try:
-                        await asyncio.wait_for(self.mcp_server.call_tool("ping", {}), timeout=5.0)
-                        logger.info("MCP server ready! Ping successful")
-                        return
-                    except Exception:
-                        logger.debug("Server not ready for tool calls yet")
-                        
-            except asyncio.TimeoutError:
-                logger.debug(f"Server readiness check timed out, retrying in {retry_delay}s...")
+                logger.debug("Attempting to list tools...")
+                tools = await asyncio.wait_for(self.mcp_server.list_tools(), timeout=10.0)
+                if tools and len(tools) > 0:
+                    logger.info(f"MCP server ready! Found {len(tools)} tools: {[t.name if hasattr(t, 'name') else str(t) for t in tools[:3]]}")
+                    return
+                else:
+                    logger.debug("Server responded but no tools found yet")
+
             except Exception as e:
                 logger.debug(f"Server readiness check failed: {str(e)[:100]}, retrying in {retry_delay}s...")
             
-            # Wait before retrying with exponential backoff
             await asyncio.sleep(retry_delay)
-            retry_delay = min(retry_delay * 1.4, max_retry_delay)
         
-        # If we get here, we timed out
         elapsed = asyncio.get_event_loop().time() - start_time
         raise asyncio.TimeoutError(f"MCP server not ready after {elapsed:.1f} seconds")
 
@@ -434,18 +409,17 @@ class GDSBenchmark:
             logger.error("No questions to process")
             return []
         
-        # For OpenAI models, use async approach with persistent MCP server
         if self.provider == 'openai':
-            return asyncio.run(self._run_benchmark_async(questions))
+            return asyncio.run(self._run_benchmark_openai(questions))
         else:
-            # For Claude models, use the existing subprocess approach
-            return self._run_benchmark_subprocess(questions)
+            return self._run_benchmark_claude(questions)
 
-    async def _run_benchmark_async(self, questions: List[str]) -> List[Dict[str, Any]]:
+    async def _run_benchmark_openai(self, questions: List[str]) -> List[Dict[str, Any]]:
         """Run benchmark for OpenAI models with fresh MCP server for each question."""
         results = []
         
         for i, question in enumerate(questions, 1):
+            time.sleep(2)
             logger.info(f"Processing question {i}/{len(questions)}: {question[:50]}...")
             
             try:
@@ -491,7 +465,7 @@ class GDSBenchmark:
         self.results = results
         return results
 
-    def _run_benchmark_subprocess(self, questions: List[str]) -> List[Dict[str, Any]]:
+    def _run_benchmark_claude(self, questions: List[str]) -> List[Dict[str, Any]]:
         """Run benchmark for Claude models using subprocess approach."""
         config_file = None
         
@@ -608,11 +582,7 @@ def main():
         description="GDS Agent Benchmarking Tool",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""Examples: 
-        python benchmark_gds_agent.py ln                            # Run LN questions with default Claude model
-        python benchmark_gds_agent.py got                           # Run GoT questions with default Claude model
-        python benchmark_gds_agent.py ln --model haiku-3-20241022   # Run LN questions with Claude Haiku
-        python benchmark_gds_agent.py ln --model gpt-4o             # Run LN questions with OpenAI GPT-4o
-        python benchmark_gds_agent.py got --model gpt-4-turbo       # Run GoT questions with OpenAI GPT-4 Turbo"""
+        python benchmark_gds_agent.py ln --model gpt-4o             # Run LN questions with OpenAI GPT-4o"""
     )
     
     parser.add_argument(
@@ -624,7 +594,7 @@ def main():
     parser.add_argument(
         "--model", "-m",
         default="sonnet-4-20250514",
-        help="Model to use (default: sonnet-4-20250514). Claude examples: sonnet-4-20250514, haiku-3-20241022. OpenAI examples: gpt-4o, gpt-4-turbo, gpt-3.5-turbo"
+        help="Model to use (default: sonnet-4-20250514). Examples: sonnet-4-20250514, gpt-4o"
     )
     
     args = parser.parse_args()
