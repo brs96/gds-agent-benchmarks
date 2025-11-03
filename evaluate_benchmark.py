@@ -197,18 +197,13 @@ class BenchmarkEvaluator:
         if len(expected_tools) == 0:
             precision = 1.0 if len(actual_tool_names) == 0 else 0.0
             recall = 1.0
-            call_efficiency = 1.0 if len(actual_tool_names) == 0 else 0.0
         else:
             unique_correct_tools = len(set(expected_tools).intersection(set(actual_tool_names)))
-            
-            unique_actual_tools = len(set(actual_tool_names))
-            unique_unexpected_tools = len(set(actual_tool_names) - set(expected_tools))
-            precision = 1.0 - (unique_unexpected_tools / unique_actual_tools) if unique_actual_tools > 0 else 1.0
             
             recall = unique_correct_tools / len(set(expected_tools))
             
             total_actual_calls = len(actual_tool_names)
-            call_efficiency = unique_correct_tools / total_actual_calls if total_actual_calls > 0 else 1.0
+            precision = unique_correct_tools / total_actual_calls if total_actual_calls > 0 else 1.0
         
         f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
         
@@ -216,7 +211,6 @@ class BenchmarkEvaluator:
             'precision': precision,
             'recall': recall,
             'f1_score': f1_score,
-            'call_efficiency': call_efficiency,
             'missing_tools': missing_tools,
             'unexpected_tools': unexpected_tools,
             'exact_match': len(missing_tools) == 0 and len(unexpected_tools) == 0

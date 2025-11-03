@@ -50,7 +50,6 @@ def extract_metrics(evaluations):
         'tool_precision': [],
         'tool_recall': [],
         'tool_f1': [],
-        'call_efficiency': [],
         'parameter_scores': [],
         'answer_scores': [],
         'answer_match_score': [],
@@ -83,7 +82,6 @@ def extract_metrics(evaluations):
                 results['tool_precision'].append(tool_eval.get('precision', 0))
                 results['tool_recall'].append(tool_eval.get('recall', 0))
                 results['tool_f1'].append(tool_eval.get('f1_score', 0))
-                results['call_efficiency'].append(tool_eval.get('call_efficiency', 1.0))
                 
                 param_eval = run_eval.get('parameter_evaluation', {})
                 param_scores = [v.get('score', 0) for v in param_eval.values() if isinstance(v, dict)]
@@ -118,7 +116,6 @@ def extract_metrics(evaluations):
                     'tool_precision': tool_eval.get('precision', 0),
                     'tool_recall': tool_eval.get('recall', 0),
                     'tool_f1': tool_eval.get('f1_score', 0),
-                    'call_efficiency': tool_eval.get('call_efficiency', 1.0),
                     'param_score': avg_param_score,
                     'answer_score': answer_match_score,
                     'answer_match_score': answer_match_score,
@@ -148,7 +145,7 @@ def calculate_summary_stats(results):
     stats = {}
     
     for metric in ['overall_scores', 'tool_precision', 'tool_recall', 'tool_f1', 
-                   'call_efficiency', 'parameter_scores', 'answer_scores', 'answer_match_score',
+                   'parameter_scores', 'answer_scores', 'answer_match_score',
                    'num_turns', 'duration_ms', 'total_input_tokens', 'total_output_tokens', 'total_tokens', 'total_cost_usd']:
         values = results[metric]
         if values:
@@ -162,99 +159,6 @@ def calculate_summary_stats(results):
             }
     
     return stats
-
-
-def create_variation_plots(run_variation_data, dataset_name):
-    if not run_variation_data:
-        return
-        
-    plots_dir = Path(f"results/plots_{dataset_name}")
-    plots_dir.mkdir(parents=True, exist_ok=True)
-    
-    # Plot 1: Score variation across questions
-    plt.figure(figsize=(14, 8))
-    
-    questions = [item['question'][:30] + '...' if len(item['question']) > 30 else item['question'] 
-                for item in run_variation_data]
-    
-    score_data = [item['scores'] for item in run_variation_data]
-    bp = plt.boxplot(score_data, patch_artist=True, labels=range(1, len(questions)+1))
-    
-    for patch in bp['boxes']:
-        patch.set_facecolor('lightblue')
-        patch.set_alpha(0.7)
-    
-    plt.xlabel('Question Number')
-    plt.ylabel('Overall Score')
-    plt.title(f'Score Variation Across Runs - {dataset_name}')
-    plt.xticks(rotation=45)
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
-    plt.savefig(plots_dir / 'score_variation_boxplot.png', dpi=300, bbox_inches='tight')
-    plt.close()
-    
-    # Plot 2: Success rate heatmap
-    plt.figure(figsize=(12, 8))
-    
-    success_rates = []
-    question_labels = []
-    
-    for item in run_variation_data:
-        if item['scores']:
-            success_rate = sum(1 for score in item['scores'] if score >= 0.8) / len(item['scores'])
-            success_rates.append(success_rate)
-            question_labels.append(item['question'][:40] + '...' if len(item['question']) > 40 else item['question'])
-    
-    if success_rates:
-        y_pos = np.arange(len(question_labels))
-        colors = ['red' if rate < 0.5 else 'yellow' if rate < 0.8 else 'green' for rate in success_rates]
-        
-        plt.barh(y_pos, success_rates, color=colors, alpha=0.7)
-        plt.yticks(y_pos, question_labels)
-        plt.xlabel('Success Rate (Score ≥ 0.8)')
-        plt.title(f'Success Rate by Question - {dataset_name}')
-        plt.xlim(0, 1)
-        
-        for i, rate in enumerate(success_rates):
-            plt.text(rate + 0.01, i, f'{rate:.2f}', va='center')
-        
-        plt.tight_layout()
-        plt.savefig(plots_dir / 'success_rate_by_question.png', dpi=300, bbox_inches='tight')
-        plt.close()
-    
-    # Plot 3: Coefficient of variation (CV) analysis
-    plt.figure(figsize=(12, 6))
-    
-    cvs = []
-    means = []
-    question_nums = []
-    
-    for i, item in enumerate(run_variation_data):
-        if len(item['scores']) > 1:
-            mean_score = np.mean(item['scores'])
-            std_score = np.std(item['scores'])
-            cv = std_score / mean_score if mean_score > 0 else 0
-            
-            cvs.append(cv)
-            means.append(mean_score)
-            question_nums.append(i + 1)
-    
-    if cvs:
-        plt.scatter(means, cvs, alpha=0.7, s=60)
-        plt.xlabel('Mean Score')
-        plt.ylabel('Coefficient of Variation')
-        plt.title(f'Score Variability vs Performance - {dataset_name}')
-        
-        # Add question number annotations
-        for i, (mean, cv, qnum) in enumerate(zip(means, cvs, question_nums)):
-            plt.annotate(str(qnum), (mean, cv), xytext=(5, 5), textcoords='offset points', fontsize=8)
-        
-        plt.grid(True, alpha=0.3)
-        plt.tight_layout()
-        plt.savefig(plots_dir / 'variability_analysis.png', dpi=300, bbox_inches='tight')
-        plt.close()
-    
-    print(f"Variation plots for {dataset_name} saved to {plots_dir}/")
 
 
 def create_visualizations(results, question_results, stats, evaluations, run_variation_data, dataset=None, model=None):
@@ -312,8 +216,8 @@ def create_visualizations(results, question_results, stats, evaluations, run_var
     
     # Chart 2: Tool Evaluation Metrics - Custom Mean/Min/Max Plot
     plt.figure(figsize=(12, 6))
-    tool_metrics = ['tool_precision', 'tool_recall', 'tool_f1', 'call_efficiency']
-    colors = ['skyblue', 'lightgreen', 'orange', 'lightcoral']
+    tool_metrics = ['tool_precision', 'tool_recall', 'tool_f1']
+    colors = ['skyblue', 'lightgreen', 'orange']
     
     x_pos = np.arange(len(tool_metrics))
     
@@ -345,7 +249,7 @@ def create_visualizations(results, question_results, stats, evaluations, run_var
     plt.xlabel('Metrics')
     plt.ylabel('Score')
     plt.title(f'Benchmark Evaluation Metrics (Mean, Min, Max){title_suffix}')
-    plt.xticks(x_pos, ['Precision', 'Recall', 'F1-Score', 'Call Eff'])
+    plt.xticks(x_pos, ['Precision', 'Recall', 'F1-Score'])
     plt.ylim(0, 1.05)
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
@@ -418,11 +322,6 @@ def create_visualizations(results, question_results, stats, evaluations, run_var
     print(f"Chart 5 saved as '{chart5_path}'")
     
     print("All charts saved successfully!")
-    
-    # Create variation plots for each dataset
-    print("\nCreating variation analysis plots...")
-    for dataset_name, variation_data in run_variation_data.items():
-        create_variation_plots(variation_data, dataset_name)
 
 
 def print_detailed_stats(stats, evaluations):
@@ -447,7 +346,7 @@ def print_detailed_stats(stats, evaluations):
     
     for metric, stat in stats.items():
         if metric in ['overall_scores', 'tool_precision', 'tool_recall', 'tool_f1', 
-                      'call_efficiency', 'parameter_scores', 'answer_scores']:
+                      'parameter_scores', 'answer_scores']:
             print(f"{metric.replace('_', ' ').title():<20} {stat['mean']:<8.3f} "
                   f"{stat['std']:<8.3f} {stat['median']:<8.3f} {stat['min']:<8.3f} {stat['max']:<8.3f}")
     
