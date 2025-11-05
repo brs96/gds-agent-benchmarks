@@ -2,7 +2,7 @@
 
 ### Make sure to only run the benchmarks in containerized or any other safe environment. The benchmark script contains `claude -p --dangerously-skip-permissions`, which means the LLM may decide to modify the system, including editting or deleting other files.
 
-The MCP server of GDS agent is at: https://github.com/neo4j-contrib/gds-agent/pulls
+The MCP server of GDS agent is at: https://github.com/neo4j-contrib/gds-agent
 
 Preparations:
 1. Download a `gds_agent-0.3.0-py3-none-any.whl` wheel file which contains implementation of the MCP server.

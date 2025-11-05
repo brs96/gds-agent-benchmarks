@@ -148,32 +148,32 @@ Execute the longest path algorihtm to find me the longest path towards Notting H
 {"longest_path": {"targetNode": "Notting Hill Gate", "nodeIdentifierProperty": "name"}}
 ""
 Could you help me find out what are the few quickest ways to go from Paddington to London Bridge? Format the results as path: costs, for example, ["A", "B", "C"]: [0.0, 98.7, 100.1], ["A", "E", "C"]: [0.0, 32.5, 150.0].
-["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__get_relationship_properties_keys", "mcp__gds-agent__yens_shortest_paths"]
+["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__get_relationship_properties_keys", "mcp__gds-agent__get_node_labels", "mcp__gds-agent__get_relationship_types", "mcp__gds-agent__yens_shortest_paths"]
 {"yens_shortest_paths": {"sourceNode": "Paddington", "targetNode": "London Bridge", "k": "<=5", "relationshipWeightProperty": "time", "nodeIdentifierProperty": "name"}}
 ["Paddington"", ""Edgware Road (C)"", ""Baker Street"", ""Bond Street"", ""Green Park"", ""Westminster"", ""Waterloo"", ""Southwark"", ""London Bridge""]: [0.0, 3.0, 6.0, 8.0, 10.0, 13.0, 15.0, 16.0, 18.0],["Paddington"", ""Edgware Road (C)"", ""Baker Street"", ""Bond Street"", ""Green Park"", ""Westminster"", ""Waterloo"", ""Southwark"", ""London Bridge""]: [0.0, 3.0, 6.0, 8.0, 10.0, 13.0, 15.0, 16.0, 18.0],["Paddington"", ""Edgware Road (C)"", ""Baker Street"", ""Bond Street"", ""Green Park"", ""Westminster"", ""Waterloo"", ""Southwark"", ""London Bridge""]: [0.0, 3.0, 6.0, 8.0, 10.0, 13.0, 15.0, 16.0, 18.0],["Paddington"", ""Edgware Road (C)"", ""Baker Street"", ""Bond Street"", ""Green Park"", ""Westminster"", ""Waterloo"", ""Southwark"", ""London Bridge""]: [0.0, 3.0, 6.0, 8.0, 10.0, 13.0, 15.0, 16.0, 18.0],["Paddington"", ""Edgware Road (B)"", ""Marylebone"", ""Baker Street"", ""Bond Street"", ""Green Park"", ""Westminster"", ""Waterloo"", ""Southwark"", ""London Bridge""]: [0.0, 3.0, 5.0, 6.0, 8.0, 10.0, 13.0, 15.0, 16.0, 18.0]
 I would like to find out whether King's Cross St. Pancras or Angel is a more important station. My definition of a station being important is that it should lie on many shortest paths for any two stations. Tell me the station that is the answer and nothing else.
-["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__betwenness_centrality"]
+["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__get_node_labels", "mcp__gds-agent__get_relationship_types", "mcp__gds-agent__betwenness_centrality"]
 {"betweenness_centrality": {"nodes": ["King's Cross St. Pancras", "Angel"], "nodeIdentifierProperty": "name"}}
 King's Cross St. Pancras
 Is there any stop that I cannot reach from Canary Wharf? List such stops in the format of ["A", "B", "C"].
-["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__count_nodes", "mcp__gds-agent__breadth_first_search"]
+["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__count_nodes", "mcp__gds-agent__get_node_labels", "mcp__gds-agent__get_relationship_types", "mcp__gds-agent__breadth_first_search"]
 {"breadth_first_search": {"sourceNode": "Canary Wharf", "nodeIdentifierProperty": "name"}}
 []
 What are the stations that, when closed, will create more stations that one can not go from one to the other? List such stops in the format of ["A", "B", "C"].
-["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__articulation_points"]
+["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__get_node_labels", "mcp__gds-agent__get_relationship_types", "mcp__gds-agent__articulation_points"]
 {"articulation_points": {"nodeIdentifierProperty": "name"}}
 ["Acton Town", "Archway", "Arnos Grove", "Balham", "Barking", "Beckton Park", "Becontree", "Belsize Park", "Blackhorse Road", "Boston Manor", "Bounds Green", "Brent Cross", "Buckhurst Hill", "Burnt Oak", "Camden Town", "Canada Water", "Canary Wharf", "Canning Town", "Canons Park", "Chalfont & Latimer", "Chalk Farm", "Chorleywood", "Clapham Common", "Clapham North", "Clapham South", "Colindale", "Colliers Wood", "Crossharbour & London Arena", "Croxley", "Custom House", "Cutty Sark", "Cyprus", "Dagenham East", "Dagenham Heathway", "Debden", "Deptford Bridge", "Earl's Court", "East Finchley", "East Ham", "East Putney", "Eastcote", "Elm Park", "Elverson Road", "Euston", "Finchley Central", "Finsbury Park", "Fulham Broadway", "Gallions Reach", "Golders Green", "Greenford", "Greenwich", "Gunnersbury", "Hampstead", "Hanger Lane", "Harlesden", "Harrow-on-the-Hill", "Hatton Cross", "Hendon Central", "Heron Quays", "Highgate", "Hillingdon", "Hornchurch", "Hounslow Central", "Hounslow East", "Hounslow West", "Ickenham", "Island Gardens", "Kensal Green", "Kentish Town", "Kenton", "Kew Gardens", "Kilburn Park", "King's Cross St. Pancras", "Kingsbury", "Leyton", "Leytonstone", "Loughton", "Maida Vale", "Manor House", "Moor Park", "Mudchute", "North Acton", "North Harrow", "North Wembley", "Northfields", "Northolt", "Northwood", "Northwood Hills", "Oakwood", "Osterley", "Paddington", "Parsons Green", "Perivale", "Pinner", "Plaistow", "Prince Regent", "Putney Bridge", "Queen's Park", "Queensbury", "Rayners Lane", "Rickmansworth", "Royal Albert", "Royal Victoria", "Ruislip", "Ruislip Gardens", "Ruislip Manor", "Seven Sisters", "Shadwell", "South Ealing", "South Kenton", "South Quay", "South Ruislip", "South Wimbledon", "Southfields", "Southgate", "Stockwell", "Stonebridge Park", "Stratford", "Surrey Quays", "Theydon Bois", "Tooting Bec", "Tooting Broadway", "Tottenham Hale", "Totteridge & Whetstone", "Tufnell Park", "Turnham Green", "Turnpike Lane", "Upminster Bridge", "Upney", "Upton Park", "Warwick Avenue", "Wembley Central", "Wembley Park", "West Brompton", "West Finchley", "West Ham", "Whitechapel", "Willesden Junction", "Wimbledon Park", "Wood Green", "Woodford", "Woodside Park"]
 Which 5 stations are geographically closest to Paddington? List the station names in the format ["A", "B", "C"].
-["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__k_nearest_neighbors"]
+["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__get_node_labels", "mcp__gds-agent__get_relationship_types", "mcp__gds-agent__k_nearest_neighbors"]
 {"k_nearest_neighbors": {"nodeProperties": ["longitude", "latitude"], "nodeIdentifierProperty": "name", "topK": 3, "sourceNodeFilter": "sourceNodeFilter"}}
 ["Lancaster Gate", "Edgware Road (C)", "Edgware Road (B)", "Bayswater", "Royal Oak"]
 Is it the case that I can go from any station to any other station in this transport network? Answer Yes or No and nothing else.
-["mcp__gds-agent__strongly_connected_components"]
+["mcp__gds-agent__get_node_labels", "mcp__gds-agent__get_relationship_types", "mcp__gds-agent__strongly_connected_components"]
 {"strongly_connected_components": {}}
 Yes
 Assuming that if there a connection from station A to B, there is also a connection from B to A, for all stations. Is it the case that I can go from any station to any other station in this transport network? Answer Yes or No and nothing else.
-["mcp__gds-agent__weakly_connected_components"]
-{"strongly_connected_components": {}}
+["mcp__gds-agent__get_node_labels", "mcp__gds-agent__get_relationship_types", "mcp__gds-agent__weakly_connected_components"]
+{"weakly_connected_components": {}}
 Yes
 Run personalised article rank (damping = 0.8) with Paddington as the seed. Return only the scores for Paddington and Bayswater. Give answer in the format station:answer. Separate the stations' result with a comma.
 ["mcp__gds-agent__article_rank","mcp__gds-agent__get_node_properties_keys"]
@@ -324,30 +324,30 @@ Run the longest path algorithm to compute the longest path leading to Notting Hi
 {"longest_path": {"targetNode": "Notting Hill Gate", "nodeIdentifierProperty": "name"}}
 ""
 What are some of the fastest options to travel from Paddington to London Bridge? Format the results as path: costs, for example, ["A", "B", "C"]: [0.0, 98.7, 100.1], ["A", "E", "C"]: [0.0, 32.5, 150.0].
-["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__get_relationship_properties_keys", "mcp__gds-agent__yens_shortest_paths"]
+["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__get_relationship_properties_keys", "mcp__gds-agent__get_node_labels", "mcp__gds-agent__get_relationship_types", "mcp__gds-agent__yens_shortest_paths"]
 {"yens_shortest_paths": {"sourceNode": "Paddington", "targetNode": "London Bridge", "k": "<=5", "relationshipWeightProperty": "time", "nodeIdentifierProperty": "name"}}
 ["Paddington"", ""Edgware Road (C)"", ""Baker Street"", ""Bond Street"", ""Green Park"", ""Westminster"", ""Waterloo"", ""Southwark"", ""London Bridge""]: [0.0, 3.0, 6.0, 8.0, 10.0, 13.0, 15.0, 16.0, 18.0],["Paddington"", ""Edgware Road (C)"", ""Baker Street"", ""Bond Street"", ""Green Park"", ""Westminster"", ""Waterloo"", ""Southwark"", ""London Bridge""]: [0.0, 3.0, 6.0, 8.0, 10.0, 13.0, 15.0, 16.0, 18.0],["Paddington"", ""Edgware Road (C)"", ""Baker Street"", ""Bond Street"", ""Green Park"", ""Westminster"", ""Waterloo"", ""Southwark"", ""London Bridge""]: [0.0, 3.0, 6.0, 8.0, 10.0, 13.0, 15.0, 16.0, 18.0],["Paddington"", ""Edgware Road (C)"", ""Baker Street"", ""Bond Street"", ""Green Park"", ""Westminster"", ""Waterloo"", ""Southwark"", ""London Bridge""]: [0.0, 3.0, 6.0, 8.0, 10.0, 13.0, 15.0, 16.0, 18.0],["Paddington"", ""Edgware Road (B)"", ""Marylebone"", ""Baker Street"", ""Bond Street"", ""Green Park"", ""Westminster"", ""Waterloo"", ""Southwark"", ""London Bridge""]: [0.0, 3.0, 5.0, 6.0, 8.0, 10.0, 13.0, 15.0, 16.0, 18.0]
 Tell me whether King’s Cross St. Pancras or Angel counts as the more important station, if importance means appearing on lots of shortest routes between stations. Tell me the station that is the answer and nothing else.
-["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__betwenness_centrality"]
+["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__get_node_labels", "mcp__gds-agent__get_relationship_types", "mcp__gds-agent__betwenness_centrality"]
 {"betweenness_centrality": {"nodes": ["King's Cross St. Pancras", "Angel"], "nodeIdentifierProperty": "name"}}
 King's Cross St. Pancras
 What are the stations that can’t be reached starting from Canary Wharf? List such stops in the format of ["A", "B", "C"].
-["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__count_nodes", "mcp__gds-agent__breadth_first_search"]
+["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__count_nodes", "mcp__gds-agent__get_node_labels", "mcp__gds-agent__get_relationship_types", "mcp__gds-agent__breadth_first_search"]
 {"breadth_first_search": {"sourceNode": "Canary Wharf", "nodeIdentifierProperty": "name"}}
 []
 Which stations, if shut down, would leave more stations cut off from each other? List such stops in the format of ["A", "B", "C"].
-["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__articulation_points"]
+["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__get_node_labels", "mcp__gds-agent__get_relationship_types", "mcp__gds-agent__articulation_points"]
 {"articulation_points": {"nodeIdentifierProperty": "name"}}
 ["Acton Town", "Archway", "Arnos Grove", "Balham", "Barking", "Beckton Park", "Becontree", "Belsize Park", "Blackhorse Road", "Boston Manor", "Bounds Green", "Brent Cross", "Buckhurst Hill", "Burnt Oak", "Camden Town", "Canada Water", "Canary Wharf", "Canning Town", "Canons Park", "Chalfont & Latimer", "Chalk Farm", "Chorleywood", "Clapham Common", "Clapham North", "Clapham South", "Colindale", "Colliers Wood", "Crossharbour & London Arena", "Croxley", "Custom House", "Cutty Sark", "Cyprus", "Dagenham East", "Dagenham Heathway", "Debden", "Deptford Bridge", "Earl's Court", "East Finchley", "East Ham", "East Putney", "Eastcote", "Elm Park", "Elverson Road", "Euston", "Finchley Central", "Finsbury Park", "Fulham Broadway", "Gallions Reach", "Golders Green", "Greenford", "Greenwich", "Gunnersbury", "Hampstead", "Hanger Lane", "Harlesden", "Harrow-on-the-Hill", "Hatton Cross", "Hendon Central", "Heron Quays", "Highgate", "Hillingdon", "Hornchurch", "Hounslow Central", "Hounslow East", "Hounslow West", "Ickenham", "Island Gardens", "Kensal Green", "Kentish Town", "Kenton", "Kew Gardens", "Kilburn Park", "King's Cross St. Pancras", "Kingsbury", "Leyton", "Leytonstone", "Loughton", "Maida Vale", "Manor House", "Moor Park", "Mudchute", "North Acton", "North Harrow", "North Wembley", "Northfields", "Northolt", "Northwood", "Northwood Hills", "Oakwood", "Osterley", "Paddington", "Parsons Green", "Perivale", "Pinner", "Plaistow", "Prince Regent", "Putney Bridge", "Queen's Park", "Queensbury", "Rayners Lane", "Rickmansworth", "Royal Albert", "Royal Victoria", "Ruislip", "Ruislip Gardens", "Ruislip Manor", "Seven Sisters", "Shadwell", "South Ealing", "South Kenton", "South Quay", "South Ruislip", "South Wimbledon", "Southfields", "Southgate", "Stockwell", "Stonebridge Park", "Stratford", "Surrey Quays", "Theydon Bois", "Tooting Bec", "Tooting Broadway", "Tottenham Hale", "Totteridge & Whetstone", "Tufnell Park", "Turnham Green", "Turnpike Lane", "Upminster Bridge", "Upney", "Upton Park", "Warwick Avenue", "Wembley Central", "Wembley Park", "West Brompton", "West Finchley", "West Ham", "Whitechapel", "Willesden Junction", "Wimbledon Park", "Wood Green", "Woodford", "Woodside Park"]
 What are the five stations located nearest to Paddington? List the station names in the format ["A", "B", "C"].
-["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__k_nearest_neighbors"]
+["mcp__gds-agent__get_node_properties_keys", "mcp__gds-agent__get_node_labels", "mcp__gds-agent__get_relationship_types", "mcp__gds-agent__k_nearest_neighbors"]
 {"k_nearest_neighbors": {"nodeProperties": ["longitude", "latitude"], "nodeIdentifierProperty": "name", "topK": 3, "sourceNodeFilter": "sourceNodeFilter"}}
 ["Lancaster Gate", "Edgware Road (C)", "Edgware Road (B)", "Bayswater", "Royal Oak"]
 Can I travel between every pair of stations in this transport network? Answer Yes or No and nothing else.
-["mcp__gds-agent__strongly_connected_components"]
+["mcp__gds-agent__get_node_labels", "mcp__gds-agent__get_relationship_types", "mcp__gds-agent__strongly_connected_components"]
 {"strongly_connected_components": {}}
 Yes
 If every link between two stations works both ways, can I reach any station from any other in this network?  Answer Yes or No and nothing else.
-["mcp__gds-agent__weakly_connected_components"]
-{"strongly_connected_components": {}}
+["mcp__gds-agent__get_node_labels", "mcp__gds-agent__get_relationship_types", "mcp__gds-agent__weakly_connected_components"]
+{"weakly_connected_components": {}}
 Yes
