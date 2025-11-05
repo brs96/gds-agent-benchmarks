@@ -299,27 +299,27 @@ def create_visualizations(results, question_results, stats, evaluations, run_var
     plt.close()
     print(f"Chart 4 saved as '{chart4_path}'")
     
-    # Chart 5: Token Usage Distribution
-    plt.figure(figsize=(10, 6))
+    # # Chart 5: Token Usage Distribution
+    # plt.figure(figsize=(10, 6))
     
-    min_tokens = min(results['total_tokens'])
-    max_tokens = max(results['total_tokens'])
-    bin_width = (max_tokens - min_tokens) / 20
-    bins = np.arange(min_tokens, max_tokens + bin_width, bin_width)
+    # min_tokens = min(results['total_tokens'])
+    # max_tokens = max(results['total_tokens'])
+    # bin_width = (max_tokens - min_tokens) / 20
+    # bins = np.arange(min_tokens, max_tokens + bin_width, bin_width)
     
-    plt.hist(results['total_tokens'], bins=bins, alpha=0.7, edgecolor='black', color='lightblue', linewidth=1.2, align='mid')
-    plt.axvline(stats['total_tokens']['mean'], color='red', linestyle='--', linewidth=2,
-                label=f'Mean: {stats["total_tokens"]["mean"]:.0f}')
-    plt.xlabel('Total Tokens')
-    plt.ylabel('Frequency')
-    plt.title(f'Total Token Usage Distribution{title_suffix}')
-    plt.legend(frameon=True, fancybox=True, shadow=True, loc='upper right')
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
-    chart5_path = output_dir / f'{file_prefix}token_usage_analysis.png'
-    plt.savefig(chart5_path, dpi=300, bbox_inches='tight')
-    plt.close()
-    print(f"Chart 5 saved as '{chart5_path}'")
+    # plt.hist(results['total_tokens'], bins=bins, alpha=0.7, edgecolor='black', color='lightblue', linewidth=1.2, align='mid')
+    # plt.axvline(stats['total_tokens']['mean'], color='red', linestyle='--', linewidth=2,
+    #             label=f'Mean: {stats["total_tokens"]["mean"]:.0f}')
+    # plt.xlabel('Total Tokens')
+    # plt.ylabel('Frequency')
+    # plt.title(f'Total Token Usage Distribution{title_suffix}')
+    # plt.legend(frameon=True, fancybox=True, shadow=True, loc='upper right')
+    # plt.grid(True, alpha=0.3)
+    # plt.tight_layout()
+    # chart5_path = output_dir / f'{file_prefix}token_usage_analysis.png'
+    # plt.savefig(chart5_path, dpi=300, bbox_inches='tight')
+    # plt.close()
+    # print(f"Chart 5 saved as '{chart5_path}'")
     
     print("All charts saved successfully!")
 
