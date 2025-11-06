@@ -1,0 +1,1048 @@
+{
+  "benchmark_info": {
+    "timestamp": "2025-11-05T14:29:55.829562",
+    "dataset": "got",
+    "model": "gpt-5",
+    "provider": "openai",
+    "questions_file": "gds-algo-questions-got.csv",
+    "total_questions": 12,
+    "successful_responses": 12,
+    "response_rate": 1.0
+  },
+  "raw_results": [
+    {
+      "question": "Which house has the most members? Return the name of the house and nothing else. Return all the top house names if there are ties.",
+      "timestamp": "2025-11-05T14:12:09.179446",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "REVERSE"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "REVERSE"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "None",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Which house has the most Knights? Return the name of the house and nothing else. Return all the top house names if there are ties.",
+      "timestamp": "2025-11-05T14:13:46.613067",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "REVERSE"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "NATURAL"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House",
+                "Knight"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "REVERSE"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Lannister",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Which house has the most Kings? Return the name of the house and nothing else. Return all the top house names if there are ties.",
+      "timestamp": "2025-11-05T14:16:29.016479",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House",
+                "King"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "UNDIRECTED"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House",
+                "King"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "REVERSE"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Lannister\nStark\nBaratheon",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I would like to put the Kings recorded in my database into groups, based on their involvement in all the battles. Should Robb Stark and Tommen Baratheon be in the same group? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-05T14:17:38.738585",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__louvain",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "King",
+                "Battle"
+              ],
+              "relTypes": [
+                "ATTACKER_KING",
+                "DEFENDER_KING"
+              ],
+              "includeIntermediateCommunities": false
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Yes",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I would like to put the Kings recorded in my database into groups, based on their involvement in all the battles. Should Tommen Baratheon and Balon Greyjoy be in the same group? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-05T14:18:39.294456",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__louvain",
+            "parameters": {
+              "relationshipWeightProperty": "",
+              "seedProperty": "",
+              "maxLevels": null,
+              "maxIterations": null,
+              "tolerance": null,
+              "includeIntermediateCommunities": false,
+              "consecutiveIds": null,
+              "minCommunitySize": null,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "King",
+                "Battle"
+              ],
+              "relTypes": [
+                "ATTACKER_KING",
+                "DEFENDER_KING"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__louvain",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "King",
+                "Battle"
+              ],
+              "relTypes": [
+                "ATTACKER_KING",
+                "DEFENDER_KING"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "No",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Split the battles and all the people involved into 3 separate groups with all battles and people involved across groups are well-connected. Should Battle of Moat Cailin and Battle of the Shield Islands be in the same group? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-05T14:20:29.309187",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__leiden",
+            "parameters": {
+              "maxLevels": 10,
+              "gamma": 1.0,
+              "theta": 0.01,
+              "tolerance": 0.0001,
+              "includeIntermediateCommunities": false,
+              "minCommunitySize": 1,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "Battle",
+                "Person",
+                "King",
+                "Knight"
+              ],
+              "relTypes": [
+                "ATTACKER",
+                "DEFENDER",
+                "ATTACKER_COMMANDER",
+                "DEFENDER_COMMANDER",
+                "DEFENDER_KING",
+                "ATTACKER_KING",
+                "DIED_IN"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Yes",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Which house can claim the most people as members? Return the name of the house and nothing else. Return all the top house names if there are ties.",
+      "timestamp": "2025-11-05T14:22:28.455376",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "NATURAL"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "REVERSE"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House"
+              ],
+              "orientation": "UNDIRECTED"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House",
+                "Person"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "REVERSE"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Stark",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Which house is home to the highest count of knights? Return the name of the house and nothing else. Return all the top house names if there are ties.",
+      "timestamp": "2025-11-05T14:24:42.762109",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__weakly_connected_components",
+            "parameters": {
+              "relationshipWeightProperty": "",
+              "seedProperty": "",
+              "threshold": 0,
+              "consecutiveIds": false,
+              "minComponentSize": 0,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": []
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodes": [
+                "Lannister",
+                "Stark",
+                "Greyjoy",
+                "Bolton",
+                "Baratheon",
+                "Darry",
+                "Brotherhood without Banners",
+                "Frey",
+                "Free folk",
+                "Brave Companions",
+                "Bracken",
+                "Tully",
+                "Mallister",
+                "Night's Watch",
+                "Tyrell",
+                "Blackwood",
+                "Thenns",
+                "Karstark",
+                "Giants",
+                "Mormont",
+                "Glover",
+                "None",
+                "Targaryen",
+                "Arryn",
+                "Martell",
+                "Wildling",
+                "Swyft",
+                "Santagar",
+                "Osgrey",
+                "Humble",
+                "Wylde",
+                "Wode",
+                "Fell",
+                "Brotherhood Without Banners",
+                "Webber",
+                "Waynwood",
+                "Dayne",
+                "Manderly",
+                "Farwynd of the Lonely Light",
+                "Happy Port",
+                "of Loraq",
+                "Kingswood Brotherhood",
+                "Botley",
+                "Burned Men",
+                "Velaryon",
+                "Tallhart",
+                "Blackfyre",
+                "wildlings",
+                "Kingdom of the Three Daughters",
+                "Royce of the Gates of the Moon",
+                "Nayland",
+                "Vance of Wayfarer's Rest",
+                "Rowan",
+                "Farrow",
+                "Lonmouth",
+                "Reyne",
+                "Ashford",
+                "Brax",
+                "Paege",
+                "Hollard",
+                "Tarth",
+                "Ryswell",
+                "Crakehall",
+                "Darklyn",
+                "Westerling",
+                "Weaver",
+                "Connington",
+                "Stout",
+                "Harclay",
+                "Drumm",
+                "Lannister of Lannisport",
+                "Crabb",
+                "Drowned men",
+                "Stormcrows",
+                "Antler Men",
+                "Spicer",
+                "Staunton",
+                "Stonetree",
+                "Leygood",
+                "Sparr",
+                "Fossoway of Cider Hall",
+                "Varner",
+                "Tarly",
+                "Peach",
+                "Lynderly",
+                "Ironmaker",
+                "Clegane",
+                "Costayne",
+                "Heddle",
+                "Stone Crows",
+                "Ryger",
+                "Sea watch",
+                "Second Sons",
+                "Moon Brothers",
+                "Baelish",
+                "Faceless Men",
+                "Frey of Riverrun",
+                "Stokeworth",
+                "Hightower",
+                "Band of Nine",
+                "Oakheart",
+                "Sharp",
+                "Hunt",
+                "Whent",
+                "Dalt",
+                "Charlton",
+                "Butterwell",
+                "Qorgyle",
+                "Ambrose",
+                "Alchemists' Guild",
+                "Bushy",
+                "Blacktyde",
+                "Beesbury",
+                "Bulwer",
+                "Cafferen",
+                "Smallwood",
+                "Payne",
+                "Buckler",
+                "Black Ears",
+                "Caswell",
+                "Conklyn",
+                "Greenhill",
+                "Redfort",
+                "Baratheon of Dragonstone",
+                "Deddings",
+                "Slynt",
+                "Plumm",
+                "Redwyne",
+                "Manwoody",
+                "Harlaw",
+                "Risley",
+                "Faith of the Seven",
+                "Pureborn",
+                "Codd",
+                "Willum",
+                "of Galare",
+                "R'hllor",
+                "Morrigen",
+                "Corbray",
+                "Gaunt",
+                "Goodbrother",
+                "Kingsguard",
+                "Grafton",
+                "Hornwood",
+                "Grandison",
+                "Sawyer",
+                "Uffering",
+                "Bolling",
+                "Clifton",
+                "Blackberry",
+                "Chataya's brothel",
+                "Norcross",
+                "Fossoway of New Barrel",
+                "Swann",
+                "Cupps",
+                "Penny",
+                "Penrose",
+                "Umber",
+                "Vance of Atranta",
+                "Brotherhood without banners",
+                "Royce",
+                "Tawney",
+                "Windblown",
+                "Piper",
+                "Serry",
+                "Lorch",
+                "Lefford",
+                "Strong",
+                "Roote",
+                "Hardy",
+                "Queensguard",
+                "Meadows",
+                "Dondarrion",
+                "Lothston",
+                "Yew",
+                "Mullendore",
+                "Florent",
+                "Mertyns",
+                "Boggs",
+                "Woods",
+                "Inchfield",
+                "Blackmont",
+                "Pemford",
+                "Kenning of Harlaw",
+                "Shepherd",
+                "Estermont",
+                "Wynch",
+                "Staedmon",
+                "Seaworth",
+                "City Watch of King's Landing",
+                "Cockshaw",
+                "Graceford",
+                "Stackspear",
+                "Haigh",
+                "Jast",
+                "Farring",
+                "Celtigar",
+                "of Ghazeen",
+                "Byrch",
+                "Hawick",
+                "Belmore",
+                "Broom",
+                "Brune of Brownhollow",
+                "Cassel",
+                "Rosby",
+                "Harlaw of Harridan Hill",
+                "Cuy",
+                "Caron",
+                "Cerwyn",
+                "Vaith",
+                "Vance",
+                "Shett of Gull Tower",
+                "Vypren",
+                "Marbrand",
+                "Hardyng",
+                "Allyrion",
+                "Locke",
+                "Bar Emmon",
+                "Mooton",
+                "Norridge",
+                "Hunter",
+                "Hayford",
+                "Brune of the Dyre Den",
+                "Prester",
+                "Fowler",
+                "Goodbrook",
+                "Greenfield",
+                "Gower",
+                "Blacks",
+                "Hewett",
+                "Borrell",
+                "Peake",
+                "Citadel",
+                "Wise Masters",
+                "Good Masters",
+                "Sunglass",
+                "Grimm",
+                "The Citadel",
+                "Mollen",
+                "Hoare",
+                "Rambton",
+                "Harlaw of the Tower of Glimmering",
+                "Wull",
+                "Wagstaff",
+                "Vyrwel",
+                "Lydden",
+                "Bettley",
+                "Myre",
+                "Reed",
+                "Kenning of Kayce",
+                "of Pahl",
+                "Turnberry",
+                "Blackbar",
+                "Woolfield",
+                "Fossoway",
+                "Mallery",
+                "Chyttering",
+                "Flint of Widow's Watch",
+                "Lychester",
+                "Vikary",
+                "Selmy",
+                "Volmark",
+                "Merlyn",
+                "Crane",
+                "Sarsfield",
+                "of Merreq",
+                "Chester",
+                "Jordayne",
+                "Iron Bank of Braavos",
+                "Goodbrother of Shatterstone",
+                "Toland",
+                "Baratheon of King's Landing",
+                "Yronwood",
+                "Kettleblack",
+                "Wythers",
+                "Norrey",
+                "Foote",
+                "Chelsted",
+                "Banefort",
+                "Ball",
+                "Cox",
+                "Ruttiger",
+                "Estren",
+                "Rykker",
+                "Longwaters",
+                "Thorne",
+                "Moreland",
+                "Flint",
+                "Hogg",
+                "Longthorpe",
+                "Coldwater",
+                "Leek",
+                "Farman",
+                "Harlaw of Harlaw Hall",
+                "Templeton",
+                "Wells",
+                "Toyne",
+                "Liddle",
+                "Gargalen",
+                "Mudd",
+                "Farwynd",
+                "Sunderland",
+                "Hetherspoon",
+                "Uller",
+                "Wayn",
+                "Tollett",
+                "Poole",
+                "Maesters",
+                "Blanetree",
+                "Blount",
+                "Golden Company",
+                "Company of the Cat",
+                "Suggs",
+                "Khal",
+                "Nymeros Martell",
+                "Drinkwater",
+                "Harlaw of Grey Garden",
+                "summer isles",
+                "Condon",
+                "Lannister of Casterly Rock",
+                "Moore",
+                "Trant",
+                "Yarwyck",
+                "Undying Ones",
+                "Stonehouse",
+                "Bolton of the Dreadfort",
+                "Thenn",
+                "Hasty",
+                "Cole",
+                "Graces",
+                "Tyrell of Brightwater Keep",
+                "Dayne of High Hermitage",
+                "Unsullied",
+                "Strickland",
+                "Bywater",
+                "Massey",
+                "Rhysling",
+                "Potter",
+                "Horpe",
+                "of Kandaq",
+                "of Reznak",
+                "Peckledon",
+                "Dustin",
+                "Mance Rayder",
+                "Egen",
+                "Merryweather",
+                "Errol",
+                "Thirteen",
+                "Erenford",
+                "Grell",
+                "brotherhood without banners",
+                "Three-eyed crow"
+              ],
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House",
+                "Knight"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "REVERSE"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Lannister",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Which house has produced the greatest number of kings? Return the name of the house and nothing else. Return all the top house names if there are ties.",
+      "timestamp": "2025-11-05T14:26:28.661382",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "King",
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "REVERSE"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Lannister\nStark\nBaratheon\nWildling",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "If I cluster the kings in my database by their participation in battles, should Robb Stark and Tommen Baratheon belong to the same cluster? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-05T14:27:43.422642",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__louvain",
+            "parameters": {
+              "relationshipWeightProperty": "",
+              "seedProperty": "",
+              "maxLevels": null,
+              "maxIterations": null,
+              "tolerance": null,
+              "includeIntermediateCommunities": false,
+              "consecutiveIds": false,
+              "minCommunitySize": null,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "King",
+                "Battle"
+              ],
+              "relTypes": [
+                "ATTACKER_KING",
+                "DEFENDER_KING"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__louvain",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "King",
+                "Battle"
+              ],
+              "relTypes": [
+                "ATTACKER_KING",
+                "DEFENDER_KING"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Yes",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "When organizing kings according to their involvement in battles, would Tommen Baratheon and Balon Greyjoy belong together? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-05T14:28:42.168674",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodes": [
+                "Tommen Baratheon",
+                "Balon Greyjoy"
+              ],
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "King"
+              ],
+              "relTypes": [
+                "ATTACKER_KING",
+                "DEFENDER_KING"
+              ],
+              "orientation": "UNDIRECTED"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Yes",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "If battles and the people who fought in them are organized into three interconnected communities, are Moat Cailin and the Shield Islands battles placed in the same group? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-05T14:29:53.704738",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__approximate_maximum_k_cut",
+            "parameters": {
+              "k": 3,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "Person",
+                "Battle"
+              ],
+              "relTypes": [
+                "ATTACKER_COMMANDER",
+                "DEFENDER_COMMANDER",
+                "DIED_IN"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Yes",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    }
+  ]
+}
