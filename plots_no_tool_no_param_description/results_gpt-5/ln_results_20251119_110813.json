@@ -1,0 +1,3460 @@
+{
+  "benchmark_info": {
+    "timestamp": "2025-11-19T12:27:18.716767",
+    "dataset": "ln",
+    "model": "gpt-5",
+    "provider": "openai",
+    "questions_file": "gds-algo-questions-ln.csv",
+    "total_questions": 88,
+    "successful_responses": 70,
+    "response_rate": 0.7954545454545454
+  },
+  "raw_results": [
+    {
+      "question": "Execute personalised article rank with damping factor 0.8 on Paddington and I want to know the scores for Paddington & Bayswater. Give answer in the format station:answer. Separate the stations' result with a comma.",
+      "timestamp": "2025-11-19T11:08:56.777802",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__article_rank",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "dampingFactor": 0.8,
+              "sourceNodes": [
+                "Paddington"
+              ],
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Paddington:2.351567e-01, Bayswater:3.696624e-02",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to know the number of articulation points. Reply strictly with 'points:answer'",
+      "timestamp": "2025-11-19T11:09:15.616948",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__articulation_points",
+            "parameters": {}
+          }
+        ],
+        "tool_results": [],
+        "final_result": "points:142",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run Degree Centrality with reverse orientation and get the centrality of Farringdon station. Give the answer in the form Farringdon:x.",
+      "timestamp": "2025-11-19T11:09:50.623790",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "orientation": "REVERSE"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Farringdon:6",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Call harmonic centrality and get the centrality scores for stations Westminster and Waterloo. Answer should be given as Station: score.Separate the stations' result with a comma.",
+      "timestamp": "2025-11-19T11:10:14.054715",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__harmonic_centrality",
+            "parameters": {
+              "nodes": [
+                "Westminster",
+                "Waterloo"
+              ],
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Westminster: 0.162430, Waterloo: 0.166866",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run closeness centrality with the Wasserman-Faust formula and get scores for stations Westminster and Waterloo. Answer format should be as Station: score.Separate the stations' result with a comma.",
+      "timestamp": "2025-11-19T11:10:38.184482",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__closeness_centrality",
+            "parameters": {
+              "nodes": [
+                "Westminster",
+                "Waterloo"
+              ],
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ],
+              "nodeIdentifierProperty": "name",
+              "useWassermanFaust": true
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Westminster: 0.112734, Waterloo: 0.110784",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Call betweenness centrality and get the centrality scores for Westminster and Waterloo. Answer should be given as Station: score.Separate the stations' result with a comma.",
+      "timestamp": "2025-11-19T11:11:01.225637",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__betweenness_centrality",
+            "parameters": {
+              "nodes": [
+                "Westminster",
+                "Waterloo"
+              ],
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Westminster: 27013.589157, Waterloo: 29947.939609",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Count how many triangles do stations named Hatton Cross, and Green Park participate in. Give final answer in the format station: answer. Separate answers with comma. Do not output anything else.",
+      "timestamp": "2025-11-19T11:11:25.037923",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__triangle_count",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodes": [
+                "Hatton Cross",
+                "Green Park"
+              ],
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Hatton Cross: 1, Green Park: 2",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Could you execute the pagerank algorithm with Paddington station as source node and get score for Royal Oak? Answer format should be Royal Oak:answer and nothing else.",
+      "timestamp": "2025-11-19T11:12:07.529590",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__pagerank",
+            "parameters": {
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ],
+              "nodeIdentifierProperty": "name",
+              "sourceNodes": [
+                "Paddington"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Royal Oak:3.873519e-02",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Could you run the bridges algorithm to find out the number of relationships that disconnect the graph? Give the answer as relationships:x. Do not emit anything else.",
+      "timestamp": "2025-11-19T11:12:21.996989",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__bridges",
+            "parameters": {}
+          }
+        ],
+        "tool_results": [],
+        "final_result": "relationships:0",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run eigenvector and get score for Canada water. Answer format should be Canada Water:answer and nothing else.",
+      "timestamp": "2025-11-19T11:12:51.925299",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__eigenvector_centrality",
+            "parameters": {
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ],
+              "nodeIdentifierProperty": "name",
+              "maxIterations": 100,
+              "tolerance": 1e-06
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Canada Water:5.437606e-04",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Find out how many weakly connected components algorithm exist in my graph. Reply only with wcc:answer and nothing else.",
+      "timestamp": "2025-11-19T11:13:09.040396",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__weakly_connected_components",
+            "parameters": {}
+          }
+        ],
+        "tool_results": [],
+        "final_result": "wcc:1",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Find out how many strongly connected components exist in my graph. Reply only with scc:answer and nothing else.",
+      "timestamp": "2025-11-19T11:13:29.949700",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__strongly_connected_components",
+            "parameters": {}
+          }
+        ],
+        "tool_results": [],
+        "final_result": "scc:1",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Execute k-core decomposition and obtain the core value for the Stockwell station. Reply strictly with Stockwell:answer and do not output anything else.",
+      "timestamp": "2025-11-19T11:14:01.667973",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__k_core_decomposition",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Stockwell:4",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to know the community modularity scores using community property rail. Reply only with community:score and nothing else. If the community is a number, write it as text e.g., 0 --> zero.",
+      "timestamp": "2025-11-19T11:14:18.346134",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__modularity_metric",
+            "parameters": {
+              "communityProperty": "rail"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "one:0.009984\nzero:0.009984",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to know the community conductance scores using community property rail. Reply only with community:score and nothing else. If the community is a number, write it as text e.g., 0 --> zero.",
+      "timestamp": "2025-11-19T11:14:31.326005",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__conductance",
+            "parameters": {
+              "communityProperty": "rail"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "zero:0.166417\none:0.765517",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Use louvain with one iteration (and one level) using rail as a seed property and get the community of Paddington. Reply only with Paddington:answer and nothing else.",
+      "timestamp": "2025-11-19T11:15:00.248309",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__louvain",
+            "parameters": {
+              "seedProperty": "rail",
+              "maxLevels": 1,
+              "maxIterations": 1,
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Paddington:1",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Execute the leiden algorithm for one level using rail as a seed property and get the community of Paddington. Reply only with Paddington:answer and nothing else.",
+      "timestamp": "2025-11-19T11:15:24.295077",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__leiden",
+            "parameters": {
+              "maxLevels": 1,
+              "seedProperty": "rail",
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Paddington:1",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run modularity optimization for one iteration using rail as a seed property and get the community of Redbridge. Reply only with Redbridge:answer and nothing else.",
+      "timestamp": "2025-11-19T11:15:58.476718",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__modularity_optimization",
+            "parameters": {
+              "maxIterations": 1,
+              "seedProperty": "rail",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Redbridge:0",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Call the (k-1) coloring algorithm and find out how many colours do I need to color my graph. Run 20 iterations. Reply strictly with colours:answer\"",
+      "timestamp": "2025-11-19T11:16:23.849347",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__k_1_coloring",
+            "parameters": {
+              "maxIterations": 20
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "colours:4",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run label propagation for one iteration using rail as a seed property and get the community of Kennington. Reply only with Kennington:answer and nothing else.",
+      "timestamp": "2025-11-19T11:17:04.268957",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__label_propagation",
+            "parameters": {
+              "maxIterations": 1,
+              "seedProperty": "rail",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Kennington:0",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run SLLPA for one iteration and get the community of Kennington. Reply only with Kennington:answer and nothing else. If the answer contains \"[\" or \"]\" remove them.",
+      "timestamp": "2025-11-19T11:17:37.415182",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__speaker_listener_label_propagation",
+            "parameters": {
+              "maxIterations": 1,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Kennington:161",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run node similarity and find the eight most similar station pairs using cosine similarity. Return each pair in the following format \"station1 station2: similarity\". Do not return anything else.",
+      "timestamp": "2025-11-19T11:18:22.302292",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__node_similarity",
+            "parameters": {
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "similarityMetric": "COSINE",
+              "topN": 8,
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "New Cross Gate New Cross: 1.000000\nChesham Amersham: 1.000000\nAmersham Chesham: 1.000000\nNew Cross New Cross Gate: 1.000000\nKennington Lambeth North: 0.816497\nAldgate Aldgate East: 0.816497\nLambeth North Kennington: 0.816497\nAldgate East Aldgate: 0.816497",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run node similarity and find the two most similar stations to Sloane Square from available stations Knightsbridge, Acton Town, Green Park, and Pimlico. Return results as station: similarity. Separate answers with a common. Do not write anything else.",
+      "timestamp": "2025-11-19T11:18:51.178883",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__node_similarity",
+            "parameters": {
+              "sourceNodeFilter": [
+                "Sloane Square"
+              ],
+              "targetNodeFilter": [
+                "Knightsbridge",
+                "Acton Town",
+                "Green Park",
+                "Pimlico"
+              ],
+              "topK": 2,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Pimlico: 0.333333, Knightsbridge: 0.333333",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run filtered knn and find the two most similar stations to Amersham from available stations Northwood, North Harrow, Chesham, and Pinner based on properties latitude, and longitude. Return results as station: similarity. I want to seed target nodes. Separate answers with a common. Do not write anything else.",
+      "timestamp": "2025-11-19T11:20:51.317169",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Execute the Delta-Stepping shortest path algorithm from Covent Garden using travel time as the relationship weight, with delta = 50. Response with all the paths and costs and nothing else in the example format. For example, the answer might be: [\"Covent Garden\", \"X\"]: [0.0, 2.0], [\"Covent Garden\", \"A\", \"C\"]: [0.0, 1.0, 2.0].",
+      "timestamp": "2025-11-19T11:21:27.166935",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Please run the Dijkstra shortest path algorithm from Barons Court to South Kensington. I want the answer to be in the format of the path and the costs. For example, [\"Barons Court\", \"X\", \"Y\", \"South Kensington\"]: [0.0, 3.0, 4.5, 9.9].",
+      "timestamp": "2025-11-19T11:22:15.187613",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I would like to use the Dijkstra single-source shortest path to find all paths from Arsenal, using distance as the weight. Provide the paths with costs as answers. The example format is: [\"Holloway Road\", \"X\"]: [0.0, 42.0], [\"Holloway Road\", \"B\", \"C\"]: [0.0, 9.5, 9.6].",
+      "timestamp": "2025-11-19T11:22:44.536064",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Compute the shortest path from Eastcote to Sudbury Town using A* shortest path. Format the result as path: costs, for example, [\"A\", \"B\", \"C\"]: [0.0, 98.7, 100.1].",
+      "timestamp": "2025-11-19T11:23:20.122909",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__a_star_shortest_path",
+            "parameters": {
+              "sourceNode": "Eastcote",
+              "targetNode": "Sudbury Town",
+              "nodeIdentifierProperty": "name",
+              "latitudeProperty": "latitude",
+              "longitudeProperty": "longitude",
+              "relationshipWeightProperty": "distance",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "[\"Eastcote\", \"Rayners Lane\", \"South Harrow\", \"Sudbury Hill\", \"Sudbury Town\"]: [0.0, 2.0, 5.0, 7.0, 10.0]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Find the 3 shortest paths from Bank to Waterloo using the Yen's algorithm using time as the relationship weight. Format the results as path: costs, for example, [\"A\", \"B\", \"C\"]: [0.0, 98.7, 100.1], [\"A\", \"E\", \"C\"]: [0.0, 32.5, 150.0].",
+      "timestamp": "2025-11-19T11:23:47.142566",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__yens_shortest_paths",
+            "parameters": {
+              "sourceNode": "Bank",
+              "targetNode": "Waterloo",
+              "nodeIdentifierProperty": "name",
+              "k": 3,
+              "relationshipWeightProperty": "time",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "[\"Bank\", \"Waterloo\"]: [0.0, 4.0]\n[\"Bank\", \"London Bridge\", \"Southwark\", \"Waterloo\"]: [0.0, 2.0, 4.0, 5.0]\n[\"Bank\", \"London Bridge\", \"Borough\", \"Elephant & Castle\", \"Lambeth North\", \"Waterloo\"]: [0.0, 2.0, 4.0, 5.0, 8.0, 9.0]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I would like to find the minimum weighted spanning tree rooted at Hammersmith using time as the relationship weight. I want the output to be in the format of a sequence of [node, parent, weight]. For example: [\"A\", \"B\", 2.0], [\"A\", \"C\", 3.0], [\"K\", \"L\", 9.5].",
+      "timestamp": "2025-11-19T11:25:51.208444",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__minimum_weight_spanning_tree",
+            "parameters": {
+              "sourceNode": "Hammersmith",
+              "nodeIdentifierProperty": "name",
+              "relationshipWeightProperty": "time",
+              "objective": "minimum"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Here is the minimum-weight spanning tree rooted at Hammersmith (using relationship property time) as [node, parent, weight]. Total tree weight: 660.0\n\n[\"Aldgate East\", \"Tower Hill\", 2.0],\n[\"Liverpool Street\", \"Bank\", 2.0],\n[\"Tower Hill\", \"Monument\", 2.0],\n[\"Whitechapel\", \"Aldgate East\", 2.0],\n[\"All Saints\", \"Poplar\", 2.0],\n[\"Devons Road\", \"All Saints\", 2.0],\n[\"Poplar\", \"Westferry\", 2.0],\n[\"Alperton\", \"Park Royal\", 3.0],\n[\"Park Royal\", \"North Ealing\", 2.0],\n[\"Sudbury Town\", \"Alperton\", 2.0],\n[\"Angel\", \"King's Cross St. Pancras\", 2.0],\n[\"King's Cross St. Pancras\", \"Euston\", 2.0],\n[\"Old Street\", \"Moorgate\", 1.0],\n[\"Archway\", \"Tufnell Park\", 2.0],\n[\"Highgate\", \"Archway\", 3.0],\n[\"Tufnell Park\", \"Kentish Town\", 2.0],\n[\"Arnos Grove\", \"Bounds Green\", 3.0],\n[\"Bounds Green\", \"Wood Green\", 2.0],\n[\"Southgate\", \"Arnos Grove\", 3.0],\n[\"Arsenal\", \"Finsbury Park\", 2.0],\n[\"Finsbury Park\", \"Highbury & Islington\", 2.0],\n[\"Holloway Road\", \"Arsenal\", 1.0],\n[\"Baker Street\", \"Bond Street\", 2.0],\n[\"Bond Street\", \"Green Park\", 2.0],\n[\"Edgware Road (C)\", \"Baker Street\", 3.0],\n[\"Finchley Road\", \"Swiss Cottage\", 2.0],\n[\"Great Portland Street\", \"Euston Square\", 2.0],\n[\"Marylebone\", \"Baker Street\", 1.0],\n[\"Regent's Park\", \"Oxford Circus\", 2.0],\n[\"St. John's Wood\", \"Baker Street\", 4.0],\n[\"Balham\", \"Clapham South\", 2.0],\n[\"Clapham South\", \"Clapham Common\", 2.0],\n[\"Tooting Bec\", \"Balham\", 1.0],\n[\"Bank\", \"St. Paul's\", 2.0],\n[\"London Bridge\", \"Bank\", 2.0],\n[\"Moorgate\", \"Liverpool Street\", 2.0],\n[\"Shadwell\", \"Bank\", 2.0],\n[\"St. Paul's\", \"Chancery Lane\", 2.0],\n[\"Waterloo\", \"Embankment\", 2.0],\n[\"Barbican\", \"Moorgate\", 2.0],\n[\"Farringdon\", \"Barbican\", 1.0],\n[\"Barking\", \"East Ham\", 4.0],\n[\"East Ham\", \"Upton Park\", 2.0],\n[\"Upney\", \"Barking\", 2.0],\n[\"Barkingside\", \"Newbury Park\", 2.0],\n[\"Fairlop\", \"Barkingside\", 2.0],\n[\"Newbury Park\", \"Gants Hill\", 3.0],\n[\"Barons Court\", \"Hammersmith\", 1.0],\n[\"Earl's Court\", \"West Kensington\", 1.0],\n[\"West Kensington\", \"Barons Court\", 2.0],\n[\"Bayswater\", \"Paddington\", 2.0],\n[\"Notting Hill Gate\", \"Bayswater\", 2.0],\n[\"Paddington\", \"Royal Oak\", 1.0],\n[\"Beckton\", \"Gallions Reach\", 2.0],\n[\"Gallions Reach\", \"Cyprus\", 2.0],\n[\"Beckton Park\", \"Royal Albert\", 2.0],\n[\"Cyprus\", \"Beckton Park\", 2.0],\n[\"Royal Albert\", \"Prince Regent\", 2.0],\n[\"Becontree\", \"Upney\", 2.0],\n[\"Dagenham Heathway\", \"Becontree\", 3.0],\n[\"Belsize Park\", \"Chalk Farm\", 2.0],\n[\"Chalk Farm\", \"Camden Town\", 2.0],\n[\"Hampstead\", \"Belsize Park\", 2.0],\n[\"Bethnal Green\", \"Mile End\", 2.0],\n[\"Mile End\", \"Bow Road\", 1.0],\n[\"Blackfriars\", \"Temple\", 2.0],\n[\"Mansion House\", \"Blackfriars\", 1.0],\n[\"Temple\", \"Embankment\", 2.0],\n[\"Blackhorse Road\", \"Tottenham Hale\", 2.0],\n[\"Tottenham Hale\", \"Seven Sisters\", 3.0],\n[\"Walthamstow Central\", \"Blackhorse Road\", 2.0],\n[\"Blackwall\", \"Poplar\", 2.0],\n[\"East India\", \"Blackwall\", 2.0],\n[\"Green Park\", \"Victoria\", 2.0],\n[\"Marble Arch\", \"Bond Street\", 1.0],\n[\"Oxford Circus\", \"Bond Street\", 1.0],\n[\"Borough\", \"London Bridge\", 2.0],\n[\"Elephant & Castle\", \"Borough\", 1.0],\n[\"Boston Manor\", \"Northfields\", 2.0],\n[\"Northfields\", \"South Ealing\", 1.0],\n[\"Osterley\", \"Boston Manor\", 3.0],\n[\"Wood Green\", \"Turnpike Lane\", 2.0],\n[\"Bow Church\", \"Devons Road\", 2.0],\n[\"Pudding Mill Lane\", \"Bow Church\", 2.0],\n[\"Bow Road\", \"Bromley-By-Bow\", 2.0],\n[\"Bromley-By-Bow\", \"West Ham\", 2.0],\n[\"Brent Cross\", \"Golders Green\", 3.0],\n[\"Golders Green\", \"Hampstead\", 4.0],\n[\"Hendon Central\", \"Brent Cross\", 2.0],\n[\"West Ham\", \"Canning Town\", 3.0],\n[\"Burnt Oak\", \"Colindale\", 2.0],\n[\"Colindale\", \"Hendon Central\", 3.0],\n[\"Edgware\", \"Burnt Oak\", 3.0],\n[\"Caledonian Road\", \"Holloway Road\", 2.0],\n[\"Camden Town\", \"Mornington Crescent\", 1.0],\n[\"Euston\", \"Warren Street\", 1.0],\n[\"Kentish Town\", \"Camden Town\", 2.0],\n[\"Mornington Crescent\", \"Euston\", 2.0],\n[\"Canary Wharf\", \"West India Quay\", 2.0],\n[\"Heron Quays\", \"Canary Wharf\", 2.0],\n[\"West India Quay\", \"Westferry\", 2.0],\n[\"Canada Water\", \"Rotherhithe\", 1.0],\n[\"North Greenwich\", \"Canary Wharf\", 3.0],\n[\"Cannon Street\", \"Mansion House\", 1.0],\n[\"Monument\", \"Cannon Street\", 2.0],\n[\"Canons Park\", \"Queensbury\", 2.0],\n[\"Queensbury\", \"Kingsbury\", 2.0],\n[\"Stanmore\", \"Canons Park\", 2.0],\n[\"Chancery Lane\", \"Holborn\", 1.0],\n[\"Holborn\", \"Covent Garden\", 1.0],\n[\"Charing Cross\", \"Piccadilly Circus\", 2.0],\n[\"Embankment\", \"Charing Cross\", 1.0],\n[\"Leicester Square\", \"Piccadilly Circus\", 2.0],\n[\"Piccadilly Circus\", \"Green Park\", 1.0],\n[\"Chigwell\", \"Roding Valley\", 2.0],\n[\"Grange Hill\", \"Chigwell\", 2.0],\n[\"Roding Valley\", \"Woodford\", 3.0],\n[\"Chiswick Park\", \"Turnham Green\", 2.0],\n[\"Turnham Green\", \"Hammersmith\", 2.0],\n[\"Acton Town\", \"Chiswick Park\", 2.0],\n[\"Clapham Common\", \"Clapham North\", 2.0],\n[\"Clapham North\", \"Stockwell\", 1.0],\n[\"Colliers Wood\", \"Tooting Broadway\", 2.0],\n[\"South Wimbledon\", \"Colliers Wood\", 2.0],\n[\"Tooting Broadway\", \"Tooting Bec\", 2.0],\n[\"Covent Garden\", \"Leicester Square\", 1.0],\n[\"Crossharbour & London Arena\", \"South Quay\", 2.0],\n[\"Mudchute\", \"Crossharbour & London Arena\", 2.0],\n[\"South Quay\", \"Heron Quays\", 2.0],\n[\"Custom House\", \"Royal Victoria\", 2.0],\n[\"Prince Regent\", \"Custom House\", 2.0],\n[\"Royal Victoria\", \"Canning Town\", 2.0],\n[\"Dagenham East\", \"Dagenham Heathway\", 4.0],\n[\"Elm Park\", \"Dagenham East\", 3.0],\n[\"Dollis Hill\", \"Willesden Green\", 2.0],\n[\"Neasden\", \"Dollis Hill\", 2.0],\n[\"Willesden Green\", \"Kilburn\", 2.0],\n[\"Ealing Broadway\", \"West Acton\", 3.0],\n[\"Ealing Common\", \"Acton Town\", 2.0],\n[\"West Acton\", \"North Acton\", 2.0],\n[\"North Ealing\", \"Ealing Common\", 3.0],\n[\"Gloucester Road\", \"Earl's Court\", 2.0],\n[\"High Street Kensington\", \"Earl's Court\", 3.0],\n[\"Kensington (Olympia)\", \"Earl's Court\", 2.0],\n[\"West Brompton\", \"Earl's Court\", 2.0],\n[\"Eastcote\", \"Rayners Lane\", 2.0],\n[\"Rayners Lane\", \"South Harrow\", 3.0],\n[\"Ruislip Manor\", \"Eastcote\", 2.0],\n[\"East Acton\", \"White City\", 3.0],\n[\"North Acton\", \"East Acton\", 2.0],\n[\"White City\", \"Shepherd's Bush (C)\", 3.0],\n[\"East Finchley\", \"Highgate\", 2.0],\n[\"Finchley Central\", \"East Finchley\", 4.0],\n[\"Upton Park\", \"Plaistow\", 2.0],\n[\"Canning Town\", \"East India\", 2.0],\n[\"East Putney\", \"Putney Bridge\", 2.0],\n[\"Putney Bridge\", \"Parsons Green\", 3.0],\n[\"Southfields\", \"East Putney\", 2.0],\n[\"Edgware Road (B)\", \"Marylebone\", 2.0],\n[\"Kennington\", \"Elephant & Castle\", 2.0],\n[\"Lambeth North\", \"Waterloo\", 1.0],\n[\"Hornchurch\", \"Elm Park\", 2.0],\n[\"Westminster\", \"Embankment\", 2.0],\n[\"Warren Street\", \"Goodge Street\", 2.0],\n[\"Euston Square\", \"King's Cross St. Pancras\", 2.0],\n[\"Hainault\", \"Fairlop\", 2.0],\n[\"Mill Hill East\", \"Finchley Central\", 3.0],\n[\"West Finchley\", \"Finchley Central\", 2.0],\n[\"Swiss Cottage\", \"St. John's Wood\", 1.0],\n[\"Wembley Park\", \"Preston Road\", 3.0],\n[\"West Hampstead\", \"Finchley Road\", 1.0],\n[\"Highbury & Islington\", \"King's Cross St. Pancras\", 4.0],\n[\"Manor House\", \"Finsbury Park\", 2.0],\n[\"Seven Sisters\", \"Finsbury Park\", 4.0],\n[\"Fulham Broadway\", \"West Brompton\", 1.0],\n[\"Parsons Green\", \"Fulham Broadway\", 2.0],\n[\"Gants Hill\", \"Redbridge\", 2.0],\n[\"Redbridge\", \"Wanstead\", 2.0],\n[\"South Kensington\", \"Gloucester Road\", 1.0],\n[\"Goldhawk Road\", \"Hammersmith\", 2.0],\n[\"Shepherd's Bush (H)\", \"Goldhawk Road\", 1.0],\n[\"Goodge Street\", \"Tottenham Court Road\", 1.0],\n[\"Tottenham Court Road\", \"Leicester Square\", 1.0],\n[\"Greenford\", \"Perivale\", 2.0],\n[\"Northolt\", \"Greenford\", 2.0],\n[\"Perivale\", \"Hanger Lane\", 2.0],\n[\"Hyde Park Corner\", \"Green Park\", 2.0],\n[\"Victoria\", \"Sloane Square\", 2.0],\n[\"Gunnersbury\", \"Turnham Green\", 3.0],\n[\"Kew Gardens\", \"Gunnersbury\", 3.0],\n[\"Ravenscourt Park\", \"Hammersmith\", 2.0],\n[\"Hanger Lane\", \"North Acton\", 3.0],\n[\"Harlesden\", \"Willesden Junction\", 2.0],\n[\"Stonebridge Park\", \"Harlesden\", 2.0],\n[\"Willesden Junction\", \"Kensal Green\", 3.0],\n[\"Harrow & Wealdston\", \"Kenton\", 2.0],\n[\"Kenton\", \"South Kenton\", 2.0],\n[\"Harrow-on-the-Hill\", \"West Harrow\", 2.0],\n[\"Northwick Park\", \"Harrow-on-the-Hill\", 2.0],\n[\"North Harrow\", \"Harrow-on-the-Hill\", 3.0],\n[\"West Harrow\", \"Rayners Lane\", 3.0],\n[\"Hatton Cross\", \"Hounslow West\", 4.0],\n[\"Heathrow Terminals 1, 2 & 3\", \"Hatton Cross\", 3.0],\n[\"Heathrow Terminal 4\", \"Hatton Cross\", 3.0],\n[\"Hounslow West\", \"Hounslow Central\", 2.0],\n[\"Hillingdon\", \"Ickenham\", 2.0],\n[\"Ickenham\", \"Ruislip\", 3.0],\n[\"Uxbridge\", \"Hillingdon\", 3.0],\n[\"Russell Square\", \"Holborn\", 2.0],\n[\"Holland Park\", \"Notting Hill Gate\", 2.0],\n[\"Shepherd's Bush (C)\", \"Holland Park\", 1.0],\n[\"Upminster Bridge\", \"Hornchurch\", 2.0],\n[\"Hounslow Central\", \"Hounslow East\", 2.0],\n[\"Hounslow East\", \"Osterley\", 2.0],\n[\"Knightsbridge\", \"Hyde Park Corner\", 2.0],\n[\"Ruislip\", \"Ruislip Manor\", 2.0],\n[\"Island Gardens\", \"Mudchute\", 2.0],\n[\"Cutty Sark\", \"Island Gardens\", 2.0],\n[\"Oval\", \"Kennington\", 2.0],\n[\"Kensal Green\", \"Queen's Park\", 3.0],\n[\"Queen's Park\", \"Kilburn Park\", 2.0],\n[\"South Kenton\", \"North Wembley\", 2.0],\n[\"Richmond\", \"Kew Gardens\", 3.0],\n[\"Kilburn\", \"West Hampstead\", 2.0],\n[\"Kilburn Park\", \"Maida Vale\", 2.0],\n[\"Maida Vale\", \"Warwick Avenue\", 1.0],\n[\"Kingsbury\", \"Wembley Park\", 4.0],\n[\"Ladbroke Grove\", \"Latimer Road\", 1.0],\n[\"Latimer Road\", \"Shepherd's Bush (H)\", 2.0],\n[\"Westbourne Park\", \"Ladbroke Grove\", 2.0],\n[\"Lancaster Gate\", \"Queensway\", 1.0],\n[\"Queensway\", \"Notting Hill Gate\", 2.0],\n[\"Leyton\", \"Stratford\", 2.0],\n[\"Leytonstone\", \"Leyton\", 3.0],\n[\"Stratford\", \"Pudding Mill Lane\", 2.0],\n[\"Snaresbrook\", \"Leytonstone\", 2.0],\n[\"Wanstead\", \"Leytonstone\", 2.0],\n[\"Limehouse\", \"Shadwell\", 2.0],\n[\"Westferry\", \"Limehouse\", 2.0],\n[\"Aldgate\", \"Liverpool Street\", 2.0],\n[\"Bermondsey\", \"Canada Water\", 2.0],\n[\"Southwark\", \"Waterloo\", 1.0],\n[\"Warwick Avenue\", \"Paddington\", 2.0],\n[\"Turnpike Lane\", \"Manor House\", 3.0],\n[\"Stepney Green\", \"Mile End\", 2.0],\n[\"Moor Park\", \"Northwood\", 3.0],\n[\"Northwood\", \"Northwood Hills\", 2.0],\n[\"Rickmansworth\", \"Moor Park\", 4.0],\n[\"Croxley\", \"Moor Park\", 4.0],\n[\"Morden\", \"South Wimbledon\", 4.0],\n[\"South Ealing\", \"Acton Town\", 4.0],\n[\"South Ruislip\", \"Northolt\", 3.0],\n[\"Preston Road\", \"Northwick Park\", 2.0],\n[\"Northwood Hills\", \"Pinner\", 2.0],\n[\"Pinner\", \"North Harrow\", 3.0],\n[\"North Wembley\", \"Wembley Central\", 2.0],\n[\"Wembley Central\", \"Stonebridge Park\", 3.0],\n[\"Royal Oak\", \"Westbourne Park\", 2.0],\n[\"Pimlico\", \"Victoria\", 3.0],\n[\"Vauxhall\", \"Pimlico\", 1.0],\n[\"Plaistow\", \"West Ham\", 2.0],\n[\"Stamford Brook\", \"Turnham Green\", 1.0],\n[\"South Harrow\", \"Sudbury Hill\", 2.0],\n[\"Woodford\", \"South Woodford\", 2.0],\n[\"Rotherhithe\", \"Wapping\", 1.0],\n[\"Wapping\", \"Shadwell\", 1.0],\n[\"Tower Gateway\", \"Shadwell\", 2.0],\n[\"Shoreditch\", \"Whitechapel\", 2.0],\n[\"Sloane Square\", \"South Kensington\", 2.0],\n[\"South Woodford\", \"Snaresbrook\", 2.0],\n[\"Wimbledon Park\", \"Southfields\", 3.0],\n[\"Sudbury Hill\", \"Sudbury Town\", 3.0],\n[\"Ruislip Gardens\", \"South Ruislip\", 1.0],\n[\"Brixton\", \"Stockwell\", 2.0],\n[\"St. James's Park\", \"Victoria\", 2.0],\n[\"Surrey Quays\", \"Canada Water\", 2.0],\n[\"New Cross\", \"Surrey Quays\", 4.0],\n[\"New Cross Gate\", \"Surrey Quays\", 4.0],\n[\"Upminster\", \"Upminster Bridge\", 3.0],\n[\"Woodside Park\", \"West Finchley\", 1.0],\n[\"West Ruislip\", \"Ruislip Gardens\", 3.0],\n[\"Wimbledon\", \"Wimbledon Park\", 3.0],\n[\"Buckhurst Hill\", \"Woodford\", 3.0],\n[\"Totteridge & Whetstone\", \"Woodside Park\", 3.0],\n[\"Amersham\", \"Chalfont & Latimer\", 4.0],\n[\"Chalfont & Latimer\", \"Chorleywood\", 4.0],\n[\"Chesham\", \"Chalfont & Latimer\", 8.0],\n[\"Chorleywood\", \"Rickmansworth\", 4.0],\n[\"Watford\", \"Croxley\", 3.0],\n[\"High Barnet\", \"Totteridge & Whetstone\", 3.0],\n[\"Cockfosters\", \"Oakwood\", 4.0],\n[\"Oakwood\", \"Southgate\", 3.0],\n[\"Epping\", \"Theydon Bois\", 2.0],\n[\"Theydon Bois\", \"Debden\", 3.0],\n[\"Debden\", \"Loughton\", 2.0],\n[\"Loughton\", \"Buckhurst Hill\", 3.0],\n[\"Greenwich\", \"Cutty Sark\", 2.0],\n[\"Deptford Bridge\", \"Greenwich\", 2.0],\n[\"Elverson Road\", \"Deptford Bridge\", 2.0],\n[\"Lewisham\", \"Elverson Road\", 2.0]\n\nIf you\u2019d like this exported as CSV or JSON, or filtered to a specific line/zone, let me know and I\u2019ll format it accordingly.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Find the minimum directed steiner tree from Bank to Waterloo, Southwark and Westminster. I want the output to be in the format of a sequence of [node, parent, weight]. For example: [\"A\", \"B\", 2.0], [\"A\", \"C\", 3.0], [\"K\", \"L\", 9.5].",
+      "timestamp": "2025-11-19T11:26:21.247614",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__minimum_directed_steiner_tree",
+            "parameters": {
+              "sourceNode": "Bank",
+              "targetNodes": [
+                "Waterloo",
+                "Southwark",
+                "Westminster"
+              ],
+              "nodeIdentifierProperty": "name",
+              "relationshipWeightProperty": "time"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "[\"Waterloo\", \"Bank\", 4.0], [\"Westminster\", \"Waterloo\", 2.0], [\"Southwark\", \"Waterloo\", 1.0]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Compute the prize collecting Steiner tree on my graph in the database with distance as the relationship weight and zone as the node prize. Format the results as a sequence of [node, parent, weight]. For example: [\"A\", \"B\", 2.0], [\"A\", \"C\", 3.0], [\"K\", \"L\", 9.5].",
+      "timestamp": "2025-11-19T11:28:16.910785",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__prize_collecting_steiner_tree",
+            "parameters": {
+              "relationshipWeightProperty": "distance",
+              "prizeProperty": "zone"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "[\"Aldgate East\", \"Tower Hill\", 2.0], [\"Tower Hill\", \"Monument\", 2.0], [\"Whitechapel\", \"Aldgate East\", 2.0], [\"All Saints\", \"Poplar\", 2.0], [\"Devons Road\", \"All Saints\", 2.0], [\"Poplar\", \"West India Quay\", 2.0], [\"Alperton\", \"Park Royal\", 3.0], [\"Park Royal\", \"North Ealing\", 2.0], [\"Sudbury Town\", \"Alperton\", 2.0], [\"King's Cross St. Pancras\", \"Euston\", 2.0], [\"Archway\", \"Tufnell Park\", 2.0], [\"Highgate\", \"Archway\", 3.0], [\"Tufnell Park\", \"Kentish Town\", 2.0], [\"Arnos Grove\", \"Bounds Green\", 3.0], [\"Bounds Green\", \"Wood Green\", 2.0], [\"Southgate\", \"Arnos Grove\", 3.0], [\"Arsenal\", \"Finsbury Park\", 2.0], [\"Finsbury Park\", \"Highbury & Islington\", 2.0], [\"Holloway Road\", \"Arsenal\", 1.0], [\"Finchley Road\", \"West Hampstead\", 1.0], [\"St. John's Wood\", \"Swiss Cottage\", 1.0], [\"Balham\", \"Clapham South\", 2.0], [\"Clapham South\", \"Clapham Common\", 2.0], [\"Tooting Bec\", \"Balham\", 1.0], [\"Bank\", \"St. Paul's\", 2.0], [\"London Bridge\", \"Bank\", 2.0], [\"Shadwell\", \"Whitechapel\", 2.0], [\"St. Paul's\", \"Chancery Lane\", 2.0], [\"Waterloo\", \"Southwark\", 1.0], [\"Barking\", \"East Ham\", 4.0], [\"East Ham\", \"Upton Park\", 2.0], [\"Upney\", \"Barking\", 2.0], [\"Barkingside\", \"Newbury Park\", 2.0], [\"Fairlop\", \"Barkingside\", 2.0], [\"Newbury Park\", \"Gants Hill\", 3.0], [\"Barons Court\", \"West Kensington\", 2.0], [\"Earl's Court\", \"Gloucester Road\", 2.0], [\"Hammersmith\", \"Barons Court\", 1.0], [\"West Kensington\", \"Earl's Court\", 1.0], [\"Bayswater\", \"Paddington\", 2.0], [\"Notting Hill Gate\", \"Bayswater\", 2.0], [\"Paddington\", \"Royal Oak\", 1.0], [\"Beckton\", \"Gallions Reach\", 2.0], [\"Gallions Reach\", \"Cyprus\", 2.0], [\"Beckton Park\", \"Royal Albert\", 2.0], [\"Cyprus\", \"Beckton Park\", 2.0], [\"Royal Albert\", \"Prince Regent\", 2.0], [\"Becontree\", \"Upney\", 2.0], [\"Dagenham Heathway\", \"Becontree\", 3.0], [\"Belsize Park\", \"Chalk Farm\", 2.0], [\"Chalk Farm\", \"Camden Town\", 2.0], [\"Hampstead\", \"Belsize Park\", 2.0], [\"Mile End\", \"Stepney Green\", 2.0], [\"Blackfriars\", \"Temple\", 2.0], [\"Mansion House\", \"Blackfriars\", 1.0], [\"Temple\", \"Embankment\", 2.0], [\"Blackhorse Road\", \"Tottenham Hale\", 2.0], [\"Tottenham Hale\", \"Seven Sisters\", 3.0], [\"Walthamstow Central\", \"Blackhorse Road\", 2.0], [\"Blackwall\", \"Poplar\", 2.0], [\"East India\", \"Blackwall\", 2.0], [\"Green Park\", \"Piccadilly Circus\", 1.0], [\"Boston Manor\", \"Northfields\", 2.0], [\"Northfields\", \"South Ealing\", 1.0], [\"Osterley\", \"Boston Manor\", 3.0], [\"Wood Green\", \"Turnpike Lane\", 2.0], [\"Bow Church\", \"Devons Road\", 2.0], [\"Pudding Mill Lane\", \"Bow Church\", 2.0], [\"Bow Road\", \"Mile End\", 1.0], [\"Bromley-By-Bow\", \"Bow Road\", 2.0], [\"Brent Cross\", \"Golders Green\", 3.0], [\"Golders Green\", \"Hampstead\", 4.0], [\"Hendon Central\", \"Brent Cross\", 2.0], [\"West Ham\", \"Bromley-By-Bow\", 2.0], [\"Burnt Oak\", \"Colindale\", 2.0], [\"Colindale\", \"Hendon Central\", 3.0], [\"Edgware\", \"Burnt Oak\", 3.0], [\"Camden Town\", \"Mornington Crescent\", 1.0], [\"Euston\", \"Warren Street\", 1.0], [\"Kentish Town\", \"Camden Town\", 2.0], [\"Mornington Crescent\", \"Euston\", 2.0], [\"Canary Wharf\", \"West India Quay\", 2.0], [\"Heron Quays\", \"Canary Wharf\", 2.0], [\"West India Quay\", \"Westferry\", 2.0], [\"Canada Water\", \"Rotherhithe\", 1.0], [\"Cannon Street\", \"Mansion House\", 1.0], [\"Monument\", \"Cannon Street\", 2.0], [\"Canons Park\", \"Queensbury\", 2.0], [\"Queensbury\", \"Kingsbury\", 2.0], [\"Stanmore\", \"Canons Park\", 2.0], [\"Holborn\", \"Chancery Lane\", 1.0], [\"Embankment\", \"Waterloo\", 2.0], [\"Leicester Square\", \"Covent Garden\", 1.0], [\"Piccadilly Circus\", \"Leicester Square\", 2.0], [\"Chigwell\", \"Grange Hill\", 2.0], [\"Grange Hill\", \"Hainault\", 3.0], [\"Roding Valley\", \"Chigwell\", 2.0], [\"Chiswick Park\", \"Turnham Green\", 2.0], [\"Turnham Green\", \"Hammersmith\", 2.0], [\"Acton Town\", \"Chiswick Park\", 2.0], [\"Clapham Common\", \"Clapham North\", 2.0], [\"Clapham North\", \"Stockwell\", 1.0], [\"Stockwell\", \"Vauxhall\", 3.0], [\"Colliers Wood\", \"Tooting Broadway\", 2.0], [\"South Wimbledon\", \"Colliers Wood\", 2.0], [\"Tooting Broadway\", \"Tooting Bec\", 2.0], [\"Covent Garden\", \"Holborn\", 1.0], [\"Crossharbour & London Arena\", \"South Quay\", 2.0], [\"Mudchute\", \"Crossharbour & London Arena\", 2.0], [\"South Quay\", \"Heron Quays\", 2.0], [\"Custom House\", \"Royal Victoria\", 2.0], [\"Prince Regent\", \"Custom House\", 2.0], [\"Royal Victoria\", \"Canning Town\", 2.0], [\"Dagenham East\", \"Dagenham Heathway\", 4.0], [\"Elm Park\", \"Dagenham East\", 3.0], [\"Dollis Hill\", \"Neasden\", 2.0], [\"Neasden\", \"Wembley Park\", 4.0], [\"Willesden Green\", \"Dollis Hill\", 2.0], [\"Ealing Common\", \"Acton Town\", 2.0], [\"West Acton\", \"North Acton\", 2.0], [\"North Ealing\", \"Ealing Common\", 3.0], [\"Gloucester Road\", \"South Kensington\", 1.0], [\"West Brompton\", \"Earl's Court\", 2.0], [\"Eastcote\", \"Rayners Lane\", 2.0], [\"Rayners Lane\", \"South Harrow\", 3.0], [\"Ruislip Manor\", \"Eastcote\", 2.0], [\"East Acton\", \"White City\", 3.0], [\"North Acton\", \"East Acton\", 2.0], [\"White City\", \"Shepherd's Bush (C)\", 3.0], [\"East Finchley\", \"Highgate\", 2.0], [\"Finchley Central\", \"East Finchley\", 4.0], [\"Upton Park\", \"Plaistow\", 2.0], [\"Canning Town\", \"East India\", 2.0], [\"East Putney\", \"Putney Bridge\", 2.0], [\"Putney Bridge\", \"Parsons Green\", 3.0], [\"Southfields\", \"East Putney\", 2.0], [\"Hornchurch\", \"Elm Park\", 2.0], [\"Warren Street\", \"Goodge Street\", 2.0], [\"Hainault\", \"Fairlop\", 2.0], [\"Mill Hill East\", \"Finchley Central\", 3.0], [\"West Finchley\", \"Finchley Central\", 2.0], [\"Swiss Cottage\", \"Finchley Road\", 2.0], [\"Wembley Park\", \"Preston Road\", 3.0], [\"West Hampstead\", \"Kilburn\", 2.0], [\"Highbury & Islington\", \"King's Cross St. Pancras\", 4.0], [\"Manor House\", \"Finsbury Park\", 2.0], [\"Seven Sisters\", \"Finsbury Park\", 4.0], [\"Fulham Broadway\", \"West Brompton\", 1.0], [\"Parsons Green\", \"Fulham Broadway\", 2.0], [\"Gants Hill\", \"Redbridge\", 2.0], [\"Redbridge\", \"Wanstead\", 2.0], [\"South Kensington\", \"Sloane Square\", 2.0], [\"Goldhawk Road\", \"Hammersmith\", 2.0], [\"Shepherd's Bush (H)\", \"Goldhawk Road\", 1.0], [\"Goodge Street\", \"Tottenham Court Road\", 1.0], [\"Tottenham Court Road\", \"Leicester Square\", 1.0], [\"Greenford\", \"Perivale\", 2.0], [\"Northolt\", \"Greenford\", 2.0], [\"Perivale\", \"Hanger Lane\", 2.0], [\"Victoria\", \"Green Park\", 2.0], [\"Gunnersbury\", \"Turnham Green\", 3.0], [\"Kew Gardens\", \"Gunnersbury\", 3.0], [\"Hanger Lane\", \"North Acton\", 3.0], [\"Harlesden\", \"Willesden Junction\", 2.0], [\"Stonebridge Park\", \"Harlesden\", 2.0], [\"Willesden Junction\", \"Kensal Green\", 3.0], [\"Harrow & Wealdston\", \"Kenton\", 2.0], [\"Kenton\", \"South Kenton\", 2.0], [\"Harrow-on-the-Hill\", \"West Harrow\", 2.0], [\"Northwick Park\", \"Harrow-on-the-Hill\", 2.0], [\"North Harrow\", \"Harrow-on-the-Hill\", 3.0], [\"West Harrow\", \"Rayners Lane\", 3.0], [\"Hatton Cross\", \"Hounslow West\", 4.0], [\"Heathrow Terminals 1, 2 & 3\", \"Hatton Cross\", 3.0], [\"Heathrow Terminal 4\", \"Hatton Cross\", 3.0], [\"Hounslow West\", \"Hounslow Central\", 2.0], [\"Hillingdon\", \"Ickenham\", 2.0], [\"Ickenham\", \"Ruislip\", 3.0], [\"Uxbridge\", \"Hillingdon\", 3.0], [\"Holland Park\", \"Notting Hill Gate\", 2.0], [\"Shepherd's Bush (C)\", \"Holland Park\", 1.0], [\"Upminster Bridge\", \"Hornchurch\", 2.0], [\"Hounslow Central\", \"Hounslow East\", 2.0], [\"Hounslow East\", \"Osterley\", 2.0], [\"Ruislip\", \"Ruislip Manor\", 2.0], [\"Island Gardens\", \"Mudchute\", 2.0], [\"Cutty Sark\", \"Island Gardens\", 2.0], [\"Kensal Green\", \"Queen's Park\", 3.0], [\"Queen's Park\", \"Kilburn Park\", 2.0], [\"South Kenton\", \"North Wembley\", 2.0], [\"Richmond\", \"Kew Gardens\", 3.0], [\"Kilburn\", \"Willesden Green\", 2.0], [\"Kilburn Park\", \"Maida Vale\", 2.0], [\"Maida Vale\", \"Warwick Avenue\", 1.0], [\"Kingsbury\", \"Wembley Park\", 4.0], [\"Ladbroke Grove\", \"Latimer Road\", 1.0], [\"Latimer Road\", \"Shepherd's Bush (H)\", 2.0], [\"Westbourne Park\", \"Ladbroke Grove\", 2.0], [\"Leyton\", \"Stratford\", 2.0], [\"Leytonstone\", \"Leyton\", 3.0], [\"Stratford\", \"Pudding Mill Lane\", 2.0], [\"Snaresbrook\", \"Leytonstone\", 2.0], [\"Wanstead\", \"Leytonstone\", 2.0], [\"Limehouse\", \"Shadwell\", 2.0], [\"Westferry\", \"Limehouse\", 2.0], [\"Southwark\", \"London Bridge\", 2.0], [\"Warwick Avenue\", \"Paddington\", 2.0], [\"Turnpike Lane\", \"Manor House\", 3.0], [\"Stepney Green\", \"Whitechapel\", 3.0], [\"Moor Park\", \"Northwood\", 3.0], [\"Northwood\", \"Northwood Hills\", 2.0], [\"Rickmansworth\", \"Moor Park\", 4.0], [\"Croxley\", \"Moor Park\", 4.0], [\"South Ealing\", \"Acton Town\", 4.0], [\"South Ruislip\", \"Northolt\", 3.0], [\"Preston Road\", \"Northwick Park\", 2.0], [\"Northwood Hills\", \"Pinner\", 2.0], [\"Pinner\", \"North Harrow\", 3.0], [\"North Wembley\", \"Wembley Central\", 2.0], [\"Wembley Central\", \"Stonebridge Park\", 3.0], [\"Royal Oak\", \"Westbourne Park\", 2.0], [\"Pimlico\", \"Victoria\", 3.0], [\"Vauxhall\", \"Pimlico\", 1.0], [\"Plaistow\", \"West Ham\", 2.0], [\"Stamford Brook\", \"Turnham Green\", 1.0], [\"South Harrow\", \"Sudbury Hill\", 2.0], [\"Woodford\", \"South Woodford\", 2.0], [\"Rotherhithe\", \"Wapping\", 1.0], [\"Wapping\", \"Shadwell\", 1.0], [\"Sloane Square\", \"Victoria\", 2.0], [\"South Woodford\", \"Snaresbrook\", 2.0], [\"Sudbury Hill\", \"Sudbury Town\", 3.0], [\"Ruislip Gardens\", \"South Ruislip\", 1.0], [\"Upminster\", \"Upminster Bridge\", 3.0], [\"Woodside Park\", \"West Finchley\", 1.0], [\"West Ruislip\", \"Ruislip Gardens\", 3.0], [\"Buckhurst Hill\", \"Woodford\", 3.0], [\"Totteridge & Whetstone\", \"Woodside Park\", 3.0], [\"Amersham\", \"Chalfont & Latimer\", 4.0], [\"Chalfont & Latimer\", \"Chorleywood\", 4.0], [\"Chesham\", \"Chalfont & Latimer\", 8.0], [\"Chorleywood\", \"Rickmansworth\", 4.0], [\"Watford\", \"Croxley\", 3.0], [\"High Barnet\", \"Totteridge & Whetstone\", 3.0], [\"Cockfosters\", \"Oakwood\", 4.0], [\"Oakwood\", \"Southgate\", 3.0], [\"Epping\", \"Theydon Bois\", 2.0], [\"Theydon Bois\", \"Debden\", 3.0], [\"Debden\", \"Loughton\", 2.0], [\"Loughton\", \"Buckhurst Hill\", 3.0], [\"Greenwich\", \"Cutty Sark\", 2.0], [\"Deptford Bridge\", \"Greenwich\", 2.0], [\"Elverson Road\", \"Deptford Bridge\", 2.0], [\"Lewisham\", \"Elverson Road\", 2.0]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Execute all pairs shortest paths on the entire graph using time as the relationship weight. Format the output result as a sequence of [source, target, distance]. For example, [\"A\", \"B\", 20.5], [\"A\", \"Z\", 21.0].",
+      "timestamp": "2025-11-19T11:33:22.144761",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Execute BFS on my database with source station Aldgate and max depth 4. The result data should be paths, for example: [\"A\", \"B\", \"C\"], [\"D, \"A\", \"F\"].",
+      "timestamp": "2025-11-19T11:34:25.475791",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Execute DFS on my database with source station Aldgate and max depth 4. The result data should be paths, for example: [\"A\", \"B\", \"C\"], [\"D, \"A\", \"F\"].",
+      "timestamp": "2025-11-19T11:36:30.714397",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run the Bellman-Ford algorithm from Chancery Lane using time as the weight property. The result should be formatted as path: costs, for example: [\"A\", \"X\"]: [0.0, 42.0], [\"A\", \"B\", \"C\"]: [0.0, 9.5, 9.6].",
+      "timestamp": "2025-11-19T11:36:59.131859",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Execute the longest path algorihtm to find me the longest path towards Notting Hill Gate. Format the result as path: costs, for example: [\"A\", \"B\", \"C\"]: [0.0, 9.5, 9.6].",
+      "timestamp": "2025-11-19T11:38:26.262922",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Could you help me find out what are the few quickest ways to go from Paddington to London Bridge? Format the results as path: costs, for example, [\"A\", \"B\", \"C\"]: [0.0, 98.7, 100.1], [\"A\", \"E\", \"C\"]: [0.0, 32.5, 150.0].",
+      "timestamp": "2025-11-19T11:39:42.122028",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__yens_shortest_paths",
+            "parameters": {
+              "sourceNode": "Paddington",
+              "targetNode": "London Bridge",
+              "nodeIdentifierProperty": "name",
+              "k": 3,
+              "relationshipWeightProperty": "time",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__yens_shortest_paths",
+            "parameters": {
+              "sourceNode": "Paddington",
+              "targetNode": "London Bridge",
+              "nodeIdentifierProperty": "name",
+              "k": 5,
+              "relationshipWeightProperty": "time",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__yens_shortest_paths",
+            "parameters": {
+              "sourceNode": "Paddington",
+              "targetNode": "London Bridge",
+              "nodeIdentifierProperty": "name",
+              "k": 10,
+              "relationshipWeightProperty": "time",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "[\"Paddington\", \"Edgware Road (C)\", \"Baker Street\", \"Bond Street\", \"Green Park\", \"Westminster\", \"Waterloo\", \"Southwark\", \"London Bridge\"]: [0.0, 3.0, 6.0, 8.0, 10.0, 13.0, 15.0, 16.0, 18.0],\n[\"Paddington\", \"Edgware Road (B)\", \"Marylebone\", \"Baker Street\", \"Bond Street\", \"Green Park\", \"Westminster\", \"Waterloo\", \"Southwark\", \"London Bridge\"]: [0.0, 3.0, 5.0, 6.0, 8.0, 10.0, 13.0, 15.0, 16.0, 18.0],\n[\"Paddington\", \"Edgware Road (C)\", \"Baker Street\", \"Bond Street\", \"Green Park\", \"Piccadilly Circus\", \"Charing Cross\", \"Embankment\", \"Waterloo\", \"Southwark\", \"London Bridge\"]: [0.0, 3.0, 6.0, 8.0, 10.0, 11.0, 13.0, 14.0, 16.0, 17.0, 19.0]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I would like to find out whether King's Cross St. Pancras or Angel is a more important station. My definition of a station being important is that it should lie on many shortest paths for any two stations. Tell me the station that is the answer and nothing else.",
+      "timestamp": "2025-11-19T11:40:11.768523",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__betweenness_centrality",
+            "parameters": {
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "King's Cross St. Pancras",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Is there any stop that I cannot reach from Canary Wharf? List such stops in the format of [\"A\", \"B\", \"C\"].",
+      "timestamp": "2025-11-19T11:41:03.834453",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__breadth_first_search",
+            "parameters": {
+              "sourceNode": "Canary Wharf",
+              "nodeIdentifierProperty": "name",
+              "maxDepth": 1000
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__count_nodes",
+            "parameters": {}
+          }
+        ],
+        "tool_results": [],
+        "final_result": "[]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "What are the stations that, when closed, will create more stations that one can not go from one to the other? List such stops in the format of [\"A\", \"B\", \"C\"].",
+      "timestamp": "2025-11-19T11:41:56.453401",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__count_nodes",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__articulation_points",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "[\"Whitechapel\", \"King's Cross St. Pancras\", \"Archway\", \"Highgate\", \"Tufnell Park\", \"Arnos Grove\", \"Bounds Green\", \"Southgate\", \"Finsbury Park\", \"Balham\", \"Clapham South\", \"Tooting Bec\", \"Shadwell\", \"Barking\", \"East Ham\", \"Upney\", \"Earl's Court\", \"Paddington\", \"Gallions Reach\", \"Beckton Park\", \"Cyprus\", \"Royal Albert\", \"Becontree\", \"Dagenham Heathway\", \"Belsize Park\", \"Chalk Farm\", \"Hampstead\", \"Blackhorse Road\", \"Tottenham Hale\", \"Boston Manor\", \"Northfields\", \"Osterley\", \"Wood Green\", \"Brent Cross\", \"Golders Green\", \"Hendon Central\", \"West Ham\", \"Burnt Oak\", \"Colindale\", \"Camden Town\", \"Euston\", \"Kentish Town\", \"Canary Wharf\", \"Heron Quays\", \"Canada Water\", \"Canons Park\", \"Queensbury\", \"Turnham Green\", \"Acton Town\", \"Clapham Common\", \"Clapham North\", \"Stockwell\", \"Colliers Wood\", \"South Wimbledon\", \"Tooting Broadway\", \"Crossharbour & London Arena\", \"Mudchute\", \"South Quay\", \"Custom House\", \"Prince Regent\", \"Royal Victoria\", \"Dagenham East\", \"Elm Park\", \"West Brompton\", \"Eastcote\", \"Rayners Lane\", \"Ruislip Manor\", \"North Acton\", \"East Finchley\", \"Finchley Central\", \"Upton Park\", \"Canning Town\", \"East Putney\", \"Putney Bridge\", \"Southfields\", \"Hornchurch\", \"West Finchley\", \"Wembley Park\", \"Manor House\", \"Seven Sisters\", \"Fulham Broadway\", \"Parsons Green\", \"Greenford\", \"Northolt\", \"Perivale\", \"Gunnersbury\", \"Kew Gardens\", \"Hanger Lane\", \"Harlesden\", \"Stonebridge Park\", \"Willesden Junction\", \"Kenton\", \"Harrow-on-the-Hill\", \"North Harrow\", \"Hatton Cross\", \"Hounslow West\", \"Hillingdon\", \"Ickenham\", \"Upminster Bridge\", \"Hounslow Central\", \"Hounslow East\", \"Ruislip\", \"Island Gardens\", \"Cutty Sark\", \"Kensal Green\", \"Queen's Park\", \"South Kenton\", \"Kilburn Park\", \"Maida Vale\", \"Kingsbury\", \"Leyton\", \"Leytonstone\", \"Stratford\", \"Warwick Avenue\", \"Turnpike Lane\", \"Moor Park\", \"Northwood\", \"Rickmansworth\", \"Croxley\", \"South Ealing\", \"South Ruislip\", \"Northwood Hills\", \"Pinner\", \"North Wembley\", \"Wembley Central\", \"Plaistow\", \"Woodford\", \"Wimbledon Park\", \"Ruislip Gardens\", \"Surrey Quays\", \"Woodside Park\", \"Buckhurst Hill\", \"Totteridge & Whetstone\", \"Chalfont & Latimer\", \"Chorleywood\", \"Oakwood\", \"Theydon Bois\", \"Debden\", \"Loughton\", \"Greenwich\", \"Deptford Bridge\", \"Elverson Road\"]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Which 5 stations are geographically closest to Paddington? List the station names in the format [\"A\", \"B\", \"C\"].",
+      "timestamp": "2025-11-19T11:44:45.168074",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__k_nearest_neighbors",
+            "parameters": {
+              "sourceNodeFilter": [
+                "Paddington"
+              ],
+              "topK": 5,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__k_nearest_neighbors",
+            "parameters": {
+              "sourceNodeFilter": [
+                "Paddington"
+              ],
+              "topK": 5,
+              "nodeProperties": [
+                "latitude",
+                "longitude"
+              ],
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__k_nearest_neighbors",
+            "parameters": {
+              "sourceNodeFilter": [
+                "Paddington"
+              ],
+              "topK": 5,
+              "nodeProperties": {
+                "latitude": 1.0,
+                "longitude": 1.0
+              },
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__breadth_first_search",
+            "parameters": {
+              "sourceNode": "Paddington",
+              "nodeIdentifierProperty": "name",
+              "maxDepth": 1,
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__breadth_first_search",
+            "parameters": {
+              "sourceNode": "Paddington",
+              "nodeIdentifierProperty": "name",
+              "maxDepth": 100,
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "[\"Lancaster Gate\", \"Edgware Road (C)\", \"Edgware Road (B)\", \"Bayswater\", \"Royal Oak\"]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Is it the case that I can go from any station to any other station in this transport network? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T11:45:17.668926",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__strongly_connected_components",
+            "parameters": {
+              "consecutiveIds": false,
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Yes",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Assuming that if there a connection from station A to B, there is also a connection from B to A, for all stations. Is it the case that I can go from any station to any other station in this transport network? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T11:45:38.444077",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__weakly_connected_components",
+            "parameters": {}
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Yes",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run personalised article rank (damping = 0.8) with Paddington as the seed. Return only the scores for Paddington and Bayswater. Give answer in the format station:answer. Separate the stations' result with a comma.",
+      "timestamp": "2025-11-19T11:46:15.870177",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__article_rank",
+            "parameters": {
+              "dampingFactor": 0.8,
+              "sourceNodes": [
+                "Paddington"
+              ],
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Paddington:2.351567e-01,Bayswater:3.696624e-02",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Please tell me how many articulation points there are. Reply strictly with 'points:answer'",
+      "timestamp": "2025-11-19T11:46:29.310209",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__articulation_points",
+            "parameters": {}
+          }
+        ],
+        "tool_results": [],
+        "final_result": "points:142",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Compute Degree Centrality using the reversed orientation and return the centrality value for Farringdon station. Give the answer in the form Farringdon:x.",
+      "timestamp": "2025-11-19T11:46:58.725400",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodes": [
+                "Farringdon"
+              ],
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ],
+              "orientation": "REVERSE"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Farringdon:6.0",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run harmonic centrality and provide the centrality scores for Westminster and Waterloo stations. Answer should be given as Station: score.",
+      "timestamp": "2025-11-19T11:47:26.235492",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__harmonic_centrality",
+            "parameters": {
+              "nodes": [
+                "Westminster",
+                "Waterloo"
+              ],
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Waterloo: 0.166866\nWestminster: 0.162430",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Compute closeness centrality using the Wasserman\u2013Faust formula and return the scores for Westminster and Waterloo stations. Answer format should be as Station: score.Separate the stations' result with a comma.",
+      "timestamp": "2025-11-19T11:47:47.574535",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__closeness_centrality",
+            "parameters": {
+              "nodes": [
+                "Westminster",
+                "Waterloo"
+              ],
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "nodeIdentifierProperty": "name",
+              "useWassermanFaust": true
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Westminster: 0.112734, Waterloo: 0.110784",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run betweenness centrality and provide the centrality scores for Westminster and Waterloo stations. Answer should be given as Station: score.Separate the stations' result with a comma.",
+      "timestamp": "2025-11-19T11:48:14.145777",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__betweenness_centrality",
+            "parameters": {
+              "nodes": [
+                "Westminster",
+                "Waterloo"
+              ],
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Westminster: 27013.589157, Waterloo: 29947.939609",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Count the number of triangles that the stations Hatton Cross and Green Park belong to. Give final answer in the format station: answer. Separate answers with comma. Do not output anything else.",
+      "timestamp": "2025-11-19T11:48:41.817885",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__triangle_count",
+            "parameters": {
+              "nodes": [
+                "Hatton Cross",
+                "Green Park"
+              ],
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Hatton Cross: 1, Green Park: 2",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the PageRank algorithm with Paddington station as the source node and return the score for Royal Oak. Answer format should be Royal Oak:answer and nothing else.",
+      "timestamp": "2025-11-19T11:49:26.118853",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__pagerank",
+            "parameters": {
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ],
+              "nodeIdentifierProperty": "name",
+              "sourceNodes": [
+                "Paddington"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Royal Oak:0.03873519",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the bridges (cut-edges) algorithm and report how many edges whose removal would disconnect the graph. Give the answer as relationships:x. Do not emit anything else.",
+      "timestamp": "2025-11-19T11:49:39.595842",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__bridges",
+            "parameters": {}
+          }
+        ],
+        "tool_results": [],
+        "final_result": "relationships:0",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run eigenvector centrality and return the score for Canada Water station.",
+      "timestamp": "2025-11-19T11:50:20.758308",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__eigenvector_centrality",
+            "parameters": {
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ],
+              "nodeIdentifierProperty": "name",
+              "maxIterations": 100,
+              "tolerance": 1e-06
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Eigenvector centrality score for Canada Water: 5.437606e-04\n\nDetails:\n- Computed on nodes with label UndergroundStation and relationships of type LINK\n- nodeIdentifierProperty: name\n- maxIterations: 100, tolerance: 1e-6",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Determine the number of weakly connected components in my graph. Reply only with wcc:answer and nothing else.",
+      "timestamp": "2025-11-19T11:50:42.467811",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__weakly_connected_components",
+            "parameters": {}
+          }
+        ],
+        "tool_results": [],
+        "final_result": "wcc:1",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Determine the number of strongly connected components in my graph. Reply only with scc:answer and nothing else.",
+      "timestamp": "2025-11-19T11:51:02.475390",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__strongly_connected_components",
+            "parameters": {}
+          }
+        ],
+        "tool_results": [],
+        "final_result": "scc:1",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run k-core decomposition and return the core value for Stockwell station. Reply strictly with Stockwell:answer and do not output anything else.",
+      "timestamp": "2025-11-19T11:51:30.160095",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__k_core_decomposition",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Stockwell:4",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Compute the communities\u2019 modularity scores using the rail community property. Reply only with community:score and nothing else. If the community is a number, write it as text e.g., 0 --> zero.",
+      "timestamp": "2025-11-19T11:51:50.563470",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__modularity_metric",
+            "parameters": {
+              "communityProperty": "rail"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "one:0.009984\nzero:0.009984",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Compute the communities\u2019 conductance scores using the rail community property. Reply only with community:score and nothing else. If the community is a number, write it as text e.g., 0 --> zero.",
+      "timestamp": "2025-11-19T11:52:13.076638",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__conductance",
+            "parameters": {
+              "communityProperty": "rail"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "zero:0.166417\none:0.765517",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the Louvain algorithm with one iteration and one level, using rail as the seed property, and return the community of Paddington station. Reply only with Paddington:answer and nothing else.",
+      "timestamp": "2025-11-19T11:52:49.819885",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__louvain",
+            "parameters": {
+              "seedProperty": "rail",
+              "maxLevels": 1,
+              "maxIterations": 1,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Paddington:1",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the Leiden algorithm with one level, using rail as the seed property, and return the community of Paddington station. Reply only with Paddington:answer and nothing else.",
+      "timestamp": "2025-11-19T11:53:30.459128",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__leiden",
+            "parameters": {
+              "maxLevels": 1,
+              "seedProperty": "rail",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Paddington:1",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run modularity optimization with one iteration, using rail as the seed property, and return the community of Redbridge station. Reply only with Redbridge:answer and nothing else.",
+      "timestamp": "2025-11-19T11:54:07.836199",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__modularity_optimization",
+            "parameters": {
+              "maxIterations": 1,
+              "seedProperty": "rail",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Redbridge:0",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the (k\u22121)-coloring algorithm for 20 iterations and report the number of colors required to color the graph. Reply strictly with colours:answer\"",
+      "timestamp": "2025-11-19T11:54:25.773568",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__k_1_coloring",
+            "parameters": {
+              "maxIterations": 20
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "colours:4",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run label propagation with one iteration, using rail as the seed property, and return the community of Kennington station. Reply only with Kennington:answer and nothing else.",
+      "timestamp": "2025-11-19T11:55:11.993081",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__label_propagation",
+            "parameters": {
+              "maxIterations": 1,
+              "seedProperty": "rail",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Kennington:0",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the SLLPA algorithm with one iteration and return the community of Kennington station. Reply only with Kennington:answer and nothing else. If the answer contains \"[\" or \"]\" remove them.",
+      "timestamp": "2025-11-19T11:55:45.011819",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__speaker_listener_label_propagation",
+            "parameters": {
+              "maxIterations": 1,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Kennington:161",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run node similarity with cosine similarity and return the top eight most similar station pairs. Return each pair in the following format \"station1 station2: similarity\". Do not return anything else.",
+      "timestamp": "2025-11-19T11:56:26.825955",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__node_similarity",
+            "parameters": {
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ],
+              "similarityMetric": "COSINE",
+              "topN": 8,
+              "nodeIdentifierProperty": "display_name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "New Cross Gate New Cross: 1.000000\nChesham Amersham: 1.000000\nAmersham Chesham: 1.000000\nNew Cross New Cross Gate: 1.000000\nKennington Lambeth North: 0.816497\nAldgate Aldgate East: 0.816497\nLambeth North Kennington: 0.816497\nAldgate East Aldgate: 0.816497",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run node similarity and return the two stations most similar to Sloane Square among Knightsbridge, Acton Town, Green Park, and Pimlico. Return results as station: similarity. Separate answers with a common. Do not write anything else.",
+      "timestamp": "2025-11-19T11:57:01.463965",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__node_similarity",
+            "parameters": {
+              "sourceNodeFilter": "Sloane Square",
+              "targetNodeFilter": [
+                "Knightsbridge",
+                "Acton Town",
+                "Green Park",
+                "Pimlico"
+              ],
+              "topK": 2,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Pimlico: 0.333333, Knightsbridge: 0.333333",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run filtered k-nearest neighbors using the properties latitude and longitude, and return the two stations most similar to Amersham among Northwood, North Harrow, Chesham, and Pinner. Return results as station: similarity. I want to seed target nodes. Separate answers with a common. Do not write anything else.",
+      "timestamp": "2025-11-19T11:58:46.994330",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the Delta-Stepping shortest path algorithm from Covent Garden, using travel time as the relationship weight and setting delta=50. Response with all the paths and costs and nothing else in the example format. For example, the answer might be: [\"Covent Garden\", \"X\"]: [0.0, 2.0], [\"Covent Garden\", \"A\", \"C\"]: [0.0, 1.0, 2.0].",
+      "timestamp": "2025-11-19T11:59:17.472155",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the Dijkstra shortest path algorithm from Barons Court to South Kensington. I want the answer to be in the format of the path and the costs. For example, [\"Barons Court\", \"X\", \"Y\", \"South Kensington\"]: [0.0, 3.0, 4.5, 9.9].",
+      "timestamp": "2025-11-19T12:00:00.555399",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the Dijkstra single-source shortest path algorithm from Arsenal, using distance as the weight, and return all paths. Provide the paths with costs as answers. The example format is: [\"Holloway Road\", \"X\"]: [0.0, 42.0], [\"Holloway Road\", \"B\", \"C\"]: [0.0, 9.5, 9.6].",
+      "timestamp": "2025-11-19T12:00:29.969536",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the A* shortest path algorithm to compute the path from Eastcote to Sudbury Town. Format the result as path: costs, for example, [\"A\", \"B\", \"C\"]: [0.0, 98.7, 100.1].",
+      "timestamp": "2025-11-19T12:01:07.334029",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__a_star_shortest_path",
+            "parameters": {
+              "sourceNode": "Eastcote",
+              "targetNode": "Sudbury Town",
+              "nodeIdentifierProperty": "name",
+              "latitudeProperty": "latitude",
+              "longitudeProperty": "longitude",
+              "relationshipWeightProperty": "time"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "[\"Eastcote\", \"Rayners Lane\", \"South Harrow\", \"Sudbury Hill\", \"Sudbury Town\"]: [0.0, 2.0, 5.0, 7.0, 10.0]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run Yen\u2019s algorithm with time as the relationship weight to find the 3 shortest paths from Bank to Waterloo. Format the results as path: costs, for example, [\"A\", \"B\", \"C\"]: [0.0, 98.7, 100.1], [\"A\", \"E\", \"C\"]: [0.0, 32.5, 150.0].",
+      "timestamp": "2025-11-19T12:01:45.904970",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__yens_shortest_paths",
+            "parameters": {
+              "sourceNode": "Bank",
+              "targetNode": "Waterloo",
+              "nodeIdentifierProperty": "name",
+              "k": 3,
+              "relationshipWeightProperty": "time",
+              "nodeLabels": [
+                "UndergroundStation"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "[\"Bank\", \"Waterloo\"]: [0.0, 4.0]\n[\"Bank\", \"London Bridge\", \"Southwark\", \"Waterloo\"]: [0.0, 2.0, 4.0, 5.0]\n[\"Bank\", \"London Bridge\", \"Borough\", \"Elephant & Castle\", \"Lambeth North\", \"Waterloo\"]: [0.0, 2.0, 4.0, 5.0, 8.0, 9.0]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Find the minimum weighted spanning tree rooted at Hammersmith, using time as the relationship weight. I want the output to be in the format of a sequence of [node, parent, weight]. For example: [\"A\", \"B\", 2.0], [\"A\", \"C\", 3.0], [\"K\", \"L\", 9.5].",
+      "timestamp": "2025-11-19T12:04:49.525133",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__breadth_first_search",
+            "parameters": {
+              "sourceNode": "Hammersmith",
+              "nodeIdentifierProperty": "name",
+              "maxDepth": 1,
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__minimum_weight_spanning_tree",
+            "parameters": {
+              "sourceNode": "Hammersmith",
+              "nodeIdentifierProperty": "name",
+              "relationshipWeightProperty": "time",
+              "objective": "minimum",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "[\"Aldgate East\", \"Tower Hill\", 2.0]\n[\"Liverpool Street\", \"Bank\", 2.0]\n[\"Tower Hill\", \"Monument\", 2.0]\n[\"Whitechapel\", \"Aldgate East\", 2.0]\n[\"All Saints\", \"Poplar\", 2.0]\n[\"Devons Road\", \"All Saints\", 2.0]\n[\"Poplar\", \"Westferry\", 2.0]\n[\"Alperton\", \"Park Royal\", 3.0]\n[\"Park Royal\", \"North Ealing\", 2.0]\n[\"Sudbury Town\", \"Alperton\", 2.0]\n[\"Angel\", \"King's Cross St. Pancras\", 2.0]\n[\"King's Cross St. Pancras\", \"Euston\", 2.0]\n[\"Old Street\", \"Moorgate\", 1.0]\n[\"Archway\", \"Tufnell Park\", 2.0]\n[\"Highgate\", \"Archway\", 3.0]\n[\"Tufnell Park\", \"Kentish Town\", 2.0]\n[\"Arnos Grove\", \"Bounds Green\", 3.0]\n[\"Bounds Green\", \"Wood Green\", 2.0]\n[\"Southgate\", \"Arnos Grove\", 3.0]\n[\"Arsenal\", \"Finsbury Park\", 2.0]\n[\"Finsbury Park\", \"Highbury & Islington\", 2.0]\n[\"Holloway Road\", \"Arsenal\", 1.0]\n[\"Baker Street\", \"Bond Street\", 2.0]\n[\"Bond Street\", \"Green Park\", 2.0]\n[\"Edgware Road (C)\", \"Baker Street\", 3.0]\n[\"Finchley Road\", \"Swiss Cottage\", 2.0]\n[\"Great Portland Street\", \"Euston Square\", 2.0]\n[\"Marylebone\", \"Baker Street\", 1.0]\n[\"Regent's Park\", \"Oxford Circus\", 2.0]\n[\"St. John's Wood\", \"Baker Street\", 4.0]\n[\"Balham\", \"Clapham South\", 2.0]\n[\"Clapham South\", \"Clapham Common\", 2.0]\n[\"Tooting Bec\", \"Balham\", 1.0]\n[\"Bank\", \"St. Paul's\", 2.0]\n[\"London Bridge\", \"Bank\", 2.0]\n[\"Moorgate\", \"Liverpool Street\", 2.0]\n[\"Shadwell\", \"Bank\", 2.0]\n[\"St. Paul's\", \"Chancery Lane\", 2.0]\n[\"Waterloo\", \"Embankment\", 2.0]\n[\"Barbican\", \"Moorgate\", 2.0]\n[\"Farringdon\", \"Barbican\", 1.0]\n[\"Barking\", \"East Ham\", 4.0]\n[\"East Ham\", \"Upton Park\", 2.0]\n[\"Upney\", \"Barking\", 2.0]\n[\"Barkingside\", \"Newbury Park\", 2.0]\n[\"Fairlop\", \"Barkingside\", 2.0]\n[\"Newbury Park\", \"Gants Hill\", 3.0]\n[\"Barons Court\", \"Hammersmith\", 1.0]\n[\"Earl's Court\", \"West Kensington\", 1.0]\n[\"West Kensington\", \"Barons Court\", 2.0]\n[\"Bayswater\", \"Paddington\", 2.0]\n[\"Notting Hill Gate\", \"Bayswater\", 2.0]\n[\"Paddington\", \"Royal Oak\", 1.0]\n[\"Beckton\", \"Gallions Reach\", 2.0]\n[\"Gallions Reach\", \"Cyprus\", 2.0]\n[\"Beckton Park\", \"Royal Albert\", 2.0]\n[\"Cyprus\", \"Beckton Park\", 2.0]\n[\"Royal Albert\", \"Prince Regent\", 2.0]\n[\"Becontree\", \"Upney\", 2.0]\n[\"Dagenham Heathway\", \"Becontree\", 3.0]\n[\"Belsize Park\", \"Chalk Farm\", 2.0]\n[\"Chalk Farm\", \"Camden Town\", 2.0]\n[\"Hampstead\", \"Belsize Park\", 2.0]\n[\"Bethnal Green\", \"Mile End\", 2.0]\n[\"Mile End\", \"Bow Road\", 1.0]\n[\"Blackfriars\", \"Temple\", 2.0]\n[\"Mansion House\", \"Blackfriars\", 1.0]\n[\"Temple\", \"Embankment\", 2.0]\n[\"Blackhorse Road\", \"Tottenham Hale\", 2.0]\n[\"Tottenham Hale\", \"Seven Sisters\", 3.0]\n[\"Walthamstow Central\", \"Blackhorse Road\", 2.0]\n[\"Blackwall\", \"Poplar\", 2.0]\n[\"East India\", \"Blackwall\", 2.0]\n[\"Green Park\", \"Victoria\", 2.0]\n[\"Marble Arch\", \"Bond Street\", 1.0]\n[\"Oxford Circus\", \"Bond Street\", 1.0]\n[\"Borough\", \"London Bridge\", 2.0]\n[\"Elephant & Castle\", \"Borough\", 1.0]\n[\"Boston Manor\", \"Northfields\", 2.0]\n[\"Northfields\", \"South Ealing\", 1.0]\n[\"Osterley\", \"Boston Manor\", 3.0]\n[\"Wood Green\", \"Turnpike Lane\", 2.0]\n[\"Bow Church\", \"Devons Road\", 2.0]\n[\"Pudding Mill Lane\", \"Bow Church\", 2.0]\n[\"Bow Road\", \"Bromley-By-Bow\", 2.0]\n[\"Bromley-By-Bow\", \"West Ham\", 2.0]\n[\"Brent Cross\", \"Golders Green\", 3.0]\n[\"Golders Green\", \"Hampstead\", 4.0]\n[\"Hendon Central\", \"Brent Cross\", 2.0]\n[\"West Ham\", \"Canning Town\", 3.0]\n[\"Burnt Oak\", \"Colindale\", 2.0]\n[\"Colindale\", \"Hendon Central\", 3.0]\n[\"Edgware\", \"Burnt Oak\", 3.0]\n[\"Caledonian Road\", \"Holloway Road\", 2.0]\n[\"Camden Town\", \"Mornington Crescent\", 1.0]\n[\"Euston\", \"Warren Street\", 1.0]\n[\"Kentish Town\", \"Camden Town\", 2.0]\n[\"Mornington Crescent\", \"Euston\", 2.0]\n[\"Canary Wharf\", \"West India Quay\", 2.0]\n[\"Heron Quays\", \"Canary Wharf\", 2.0]\n[\"West India Quay\", \"Westferry\", 2.0]\n[\"Canada Water\", \"Rotherhithe\", 1.0]\n[\"North Greenwich\", \"Canary Wharf\", 3.0]\n[\"Cannon Street\", \"Mansion House\", 1.0]\n[\"Monument\", \"Cannon Street\", 2.0]\n[\"Canons Park\", \"Queensbury\", 2.0]\n[\"Queensbury\", \"Kingsbury\", 2.0]\n[\"Stanmore\", \"Canons Park\", 2.0]\n[\"Chancery Lane\", \"Holborn\", 1.0]\n[\"Holborn\", \"Covent Garden\", 1.0]\n[\"Charing Cross\", \"Piccadilly Circus\", 2.0]\n[\"Embankment\", \"Charing Cross\", 1.0]\n[\"Leicester Square\", \"Piccadilly Circus\", 2.0]\n[\"Piccadilly Circus\", \"Green Park\", 1.0]\n[\"Chigwell\", \"Roding Valley\", 2.0]\n[\"Grange Hill\", \"Chigwell\", 2.0]\n[\"Roding Valley\", \"Woodford\", 3.0]\n[\"Chiswick Park\", \"Turnham Green\", 2.0]\n[\"Turnham Green\", \"Hammersmith\", 2.0]\n[\"Acton Town\", \"Chiswick Park\", 2.0]\n[\"Clapham Common\", \"Clapham North\", 2.0]\n[\"Clapham North\", \"Stockwell\", 1.0]\n[\"Stockwell\", \"Oval\", 3.0]\n[\"Colliers Wood\", \"Tooting Broadway\", 2.0]\n[\"South Wimbledon\", \"Colliers Wood\", 2.0]\n[\"Tooting Broadway\", \"Tooting Bec\", 2.0]\n[\"Covent Garden\", \"Leicester Square\", 1.0]\n[\"Crossharbour & London Arena\", \"South Quay\", 2.0]\n[\"Mudchute\", \"Crossharbour & London Arena\", 2.0]\n[\"South Quay\", \"Heron Quays\", 2.0]\n[\"Custom House\", \"Royal Victoria\", 2.0]\n[\"Prince Regent\", \"Custom House\", 2.0]\n[\"Royal Victoria\", \"Canning Town\", 2.0]\n[\"Dagenham East\", \"Dagenham Heathway\", 4.0]\n[\"Elm Park\", \"Dagenham East\", 3.0]\n[\"Dollis Hill\", \"Willesden Green\", 2.0]\n[\"Neasden\", \"Dollis Hill\", 2.0]\n[\"Willesden Green\", \"Kilburn\", 2.0]\n[\"Ealing Broadway\", \"West Acton\", 3.0]\n[\"Ealing Common\", \"Acton Town\", 2.0]\n[\"West Acton\", \"North Acton\", 2.0]\n[\"North Ealing\", \"Ealing Common\", 3.0]\n[\"Gloucester Road\", \"Earl's Court\", 2.0]\n[\"High Street Kensington\", \"Earl's Court\", 3.0]\n[\"Kensington (Olympia)\", \"Earl's Court\", 2.0]\n[\"West Brompton\", \"Earl's Court\", 2.0]\n[\"Eastcote\", \"Rayners Lane\", 2.0]\n[\"Rayners Lane\", \"South Harrow\", 3.0]\n[\"Ruislip Manor\", \"Eastcote\", 2.0]\n[\"East Acton\", \"White City\", 3.0]\n[\"North Acton\", \"East Acton\", 2.0]\n[\"White City\", \"Shepherd's Bush (C)\", 3.0]\n[\"East Finchley\", \"Highgate\", 2.0]\n[\"Finchley Central\", \"East Finchley\", 4.0]\n[\"Upton Park\", \"Plaistow\", 2.0]\n[\"Canning Town\", \"East India\", 2.0]\n[\"East Putney\", \"Putney Bridge\", 2.0]\n[\"Putney Bridge\", \"Parsons Green\", 3.0]\n[\"Southfields\", \"East Putney\", 2.0]\n[\"Edgware Road (B)\", \"Marylebone\", 2.0]\n[\"Kennington\", \"Elephant & Castle\", 2.0]\n[\"Lambeth North\", \"Waterloo\", 1.0]\n[\"Hornchurch\", \"Elm Park\", 2.0]\n[\"Westminster\", \"Embankment\", 2.0]\n[\"Warren Street\", \"Goodge Street\", 2.0]\n[\"Euston Square\", \"King's Cross St. Pancras\", 2.0]\n[\"Hainault\", \"Fairlop\", 2.0]\n[\"Mill Hill East\", \"Finchley Central\", 3.0]\n[\"West Finchley\", \"Finchley Central\", 2.0]\n[\"Swiss Cottage\", \"St. John's Wood\", 1.0]\n[\"Wembley Park\", \"Preston Road\", 3.0]\n[\"West Hampstead\", \"Finchley Road\", 1.0]\n[\"Highbury & Islington\", \"King's Cross St. Pancras\", 4.0]\n[\"Manor House\", \"Finsbury Park\", 2.0]\n[\"Seven Sisters\", \"Finsbury Park\", 4.0]\n[\"Fulham Broadway\", \"West Brompton\", 1.0]\n[\"Parsons Green\", \"Fulham Broadway\", 2.0]\n[\"Gants Hill\", \"Redbridge\", 2.0]\n[\"Redbridge\", \"Wanstead\", 2.0]\n[\"South Kensington\", \"Gloucester Road\", 1.0]\n[\"Goldhawk Road\", \"Hammersmith\", 2.0]\n[\"Shepherd's Bush (H)\", \"Goldhawk Road\", 1.0]\n[\"Goodge Street\", \"Tottenham Court Road\", 1.0]\n[\"Tottenham Court Road\", \"Leicester Square\", 1.0]\n[\"Greenford\", \"Perivale\", 2.0]\n[\"Northolt\", \"Greenford\", 2.0]\n[\"Perivale\", \"Hanger Lane\", 2.0]\n[\"Hyde Park Corner\", \"Green Park\", 2.0]\n[\"Victoria\", \"Sloane Square\", 2.0]\n[\"Gunnersbury\", \"Turnham Green\", 3.0]\n[\"Kew Gardens\", \"Gunnersbury\", 3.0]\n[\"Ravenscourt Park\", \"Hammersmith\", 2.0]\n[\"Hanger Lane\", \"North Acton\", 3.0]\n[\"Harlesden\", \"Willesden Junction\", 2.0]\n[\"Stonebridge Park\", \"Harlesden\", 2.0]\n[\"Willesden Junction\", \"Kensal Green\", 3.0]\n[\"Harrow & Wealdston\", \"Kenton\", 2.0]\n[\"Kenton\", \"South Kenton\", 2.0]\n[\"Harrow-on-the-Hill\", \"West Harrow\", 2.0]\n[\"Northwick Park\", \"Harrow-on-the-Hill\", 2.0]\n[\"North Harrow\", \"Harrow-on-the-Hill\", 3.0]\n[\"West Harrow\", \"Rayners Lane\", 3.0]\n[\"Hatton Cross\", \"Hounslow West\", 4.0]\n[\"Heathrow Terminals 1, 2 & 3\", \"Hatton Cross\", 3.0]\n[\"Heathrow Terminal 4\", \"Hatton Cross\", 3.0]\n[\"Hounslow West\", \"Hounslow Central\", 2.0]\n[\"Hillingdon\", \"Ickenham\", 2.0]\n[\"Ickenham\", \"Ruislip\", 3.0]\n[\"Uxbridge\", \"Hillingdon\", 3.0]\n[\"Russell Square\", \"Holborn\", 2.0]\n[\"Holland Park\", \"Notting Hill Gate\", 2.0]\n[\"Shepherd's Bush (C)\", \"Holland Park\", 1.0]\n[\"Upminster Bridge\", \"Hornchurch\", 2.0]\n[\"Hounslow Central\", \"Hounslow East\", 2.0]\n[\"Hounslow East\", \"Osterley\", 2.0]\n[\"Knightsbridge\", \"Hyde Park Corner\", 2.0]\n[\"Ruislip\", \"Ruislip Manor\", 2.0]\n[\"Island Gardens\", \"Mudchute\", 2.0]\n[\"Cutty Sark\", \"Island Gardens\", 2.0]\n[\"Oval\", \"Kennington\", 2.0]\n[\"Kensal Green\", \"Queen's Park\", 3.0]\n[\"Queen's Park\", \"Kilburn Park\", 2.0]\n[\"South Kenton\", \"North Wembley\", 2.0]\n[\"Richmond\", \"Kew Gardens\", 3.0]\n[\"Kilburn\", \"West Hampstead\", 2.0]\n[\"Kilburn Park\", \"Maida Vale\", 2.0]\n[\"Maida Vale\", \"Warwick Avenue\", 1.0]\n[\"Kingsbury\", \"Wembley Park\", 4.0]\n[\"Ladbroke Grove\", \"Latimer Road\", 1.0]\n[\"Latimer Road\", \"Shepherd's Bush (H)\", 2.0]\n[\"Westbourne Park\", \"Ladbroke Grove\", 2.0]\n[\"Lancaster Gate\", \"Queensway\", 1.0]\n[\"Queensway\", \"Notting Hill Gate\", 2.0]\n[\"Leyton\", \"Stratford\", 2.0]\n[\"Leytonstone\", \"Leyton\", 3.0]\n[\"Stratford\", \"Pudding Mill Lane\", 2.0]\n[\"Snaresbrook\", \"Leytonstone\", 2.0]\n[\"Wanstead\", \"Leytonstone\", 2.0]\n[\"Limehouse\", \"Shadwell\", 2.0]\n[\"Westferry\", \"Limehouse\", 2.0]\n[\"Aldgate\", \"Liverpool Street\", 2.0]\n[\"Bermondsey\", \"Canada Water\", 2.0]\n[\"Southwark\", \"Waterloo\", 1.0]\n[\"Warwick Avenue\", \"Paddington\", 2.0]\n[\"Turnpike Lane\", \"Manor House\", 3.0]\n[\"Stepney Green\", \"Mile End\", 2.0]\n[\"Moor Park\", \"Northwood\", 3.0]\n[\"Northwood\", \"Northwood Hills\", 2.0]\n[\"Rickmansworth\", \"Moor Park\", 4.0]\n[\"Croxley\", \"Moor Park\", 4.0]\n[\"Morden\", \"South Wimbledon\", 4.0]\n[\"South Ealing\", \"Acton Town\", 4.0]\n[\"South Ruislip\", \"Northolt\", 3.0]\n[\"Preston Road\", \"Northwick Park\", 2.0]\n[\"Northwood Hills\", \"Pinner\", 2.0]\n[\"Pinner\", \"North Harrow\", 3.0]\n[\"North Wembley\", \"Wembley Central\", 2.0]\n[\"Wembley Central\", \"Stonebridge Park\", 3.0]\n[\"Royal Oak\", \"Westbourne Park\", 2.0]\n[\"Pimlico\", \"Victoria\", 3.0]\n[\"Vauxhall\", \"Pimlico\", 1.0]\n[\"Plaistow\", \"West Ham\", 2.0]\n[\"Stamford Brook\", \"Turnham Green\", 1.0]\n[\"South Harrow\", \"Sudbury Hill\", 2.0]\n[\"Woodford\", \"South Woodford\", 2.0]\n[\"Rotherhithe\", \"Wapping\", 1.0]\n[\"Wapping\", \"Shadwell\", 1.0]\n[\"Tower Gateway\", \"Shadwell\", 2.0]\n[\"Shoreditch\", \"Whitechapel\", 2.0]\n[\"Sloane Square\", \"South Kensington\", 2.0]\n[\"South Woodford\", \"Snaresbrook\", 2.0]\n[\"Wimbledon Park\", \"Southfields\", 3.0]\n[\"Sudbury Hill\", \"Sudbury Town\", 3.0]\n[\"Ruislip Gardens\", \"South Ruislip\", 1.0]\n[\"Brixton\", \"Stockwell\", 2.0]\n[\"St. James's Park\", \"Victoria\", 2.0]\n[\"Surrey Quays\", \"Canada Water\", 2.0]\n[\"New Cross\", \"Surrey Quays\", 4.0]\n[\"New Cross Gate\", \"Surrey Quays\", 4.0]\n[\"Upminster\", \"Upminster Bridge\", 3.0]\n[\"Woodside Park\", \"West Finchley\", 1.0]\n[\"West Ruislip\", \"Ruislip Gardens\", 3.0]\n[\"Wimbledon\", \"Wimbledon Park\", 3.0]\n[\"Buckhurst Hill\", \"Woodford\", 3.0]\n[\"Totteridge & Whetstone\", \"Woodside Park\", 3.0]\n[\"Amersham\", \"Chalfont & Latimer\", 4.0]\n[\"Chalfont & Latimer\", \"Chorleywood\", 4.0]\n[\"Chesham\", \"Chalfont & Latimer\", 8.0]\n[\"Chorleywood\", \"Rickmansworth\", 4.0]\n[\"Watford\", \"Croxley\", 3.0]\n[\"High Barnet\", \"Totteridge & Whetstone\", 3.0]\n[\"Cockfosters\", \"Oakwood\", 4.0]\n[\"Oakwood\", \"Southgate\", 3.0]\n[\"Epping\", \"Theydon Bois\", 2.0]\n[\"Theydon Bois\", \"Debden\", 3.0]\n[\"Debden\", \"Loughton\", 2.0]\n[\"Loughton\", \"Buckhurst Hill\", 3.0]\n[\"Greenwich\", \"Cutty Sark\", 2.0]\n[\"Deptford Bridge\", \"Greenwich\", 2.0]\n[\"Elverson Road\", \"Deptford Bridge\", 2.0]\n[\"Lewisham\", \"Elverson Road\", 2.0]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Compute the minimum directed Steiner tree starting from Bank and spanning the terminals Waterloo, Southwark, and Westminster. I want the output to be in the format of a sequence of [node, parent, weight]. For example: [\"A\", \"B\", 2.0], [\"A\", \"C\", 3.0], [\"K\", \"L\", 9.5].",
+      "timestamp": "2025-11-19T12:05:53.483813",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__count_nodes",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__minimum_directed_steiner_tree",
+            "parameters": {
+              "sourceNode": "Bank",
+              "targetNodes": [
+                "Waterloo",
+                "Southwark",
+                "Westminster"
+              ],
+              "nodeIdentifierProperty": "name",
+              "relationshipWeightProperty": "time",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "[\"Waterloo\", \"Bank\", 4.0], [\"Westminster\", \"Waterloo\", 2.0], [\"Southwark\", \"Waterloo\", 1.0]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Compute the prize-collecting Steiner tree on the database graph, using distance as the relationship weight and zone as the node prize. Format the results as a sequence of [node, parent, weight]. For example: [\"A\", \"B\", 2.0], [\"A\", \"C\", 3.0], [\"K\", \"L\", 9.5].",
+      "timestamp": "2025-11-19T12:08:36.582876",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__prize_collecting_steiner_tree",
+            "parameters": {
+              "relationshipWeightProperty": "distance",
+              "prizeProperty": "zone"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "[\"Aldgate East\", \"Tower Hill\", 2.0],\n[\"Tower Hill\", \"Monument\", 2.0],\n[\"Whitechapel\", \"Aldgate East\", 2.0],\n[\"All Saints\", \"Poplar\", 2.0],\n[\"Devons Road\", \"All Saints\", 2.0],\n[\"Poplar\", \"West India Quay\", 2.0],\n[\"Alperton\", \"Park Royal\", 3.0],\n[\"Park Royal\", \"North Ealing\", 2.0],\n[\"Sudbury Town\", \"Alperton\", 2.0],\n[\"King's Cross St. Pancras\", \"Euston\", 2.0],\n[\"Archway\", \"Tufnell Park\", 2.0],\n[\"Highgate\", \"Archway\", 3.0],\n[\"Tufnell Park\", \"Kentish Town\", 2.0],\n[\"Arnos Grove\", \"Bounds Green\", 3.0],\n[\"Bounds Green\", \"Wood Green\", 2.0],\n[\"Southgate\", \"Arnos Grove\", 3.0],\n[\"Arsenal\", \"Finsbury Park\", 2.0],\n[\"Finsbury Park\", \"Highbury & Islington\", 2.0],\n[\"Holloway Road\", \"Arsenal\", 1.0],\n[\"Finchley Road\", \"West Hampstead\", 1.0],\n[\"St. John's Wood\", \"Swiss Cottage\", 1.0],\n[\"Balham\", \"Clapham South\", 2.0],\n[\"Clapham South\", \"Clapham Common\", 2.0],\n[\"Tooting Bec\", \"Balham\", 1.0],\n[\"Bank\", \"St. Paul's\", 2.0],\n[\"London Bridge\", \"Bank\", 2.0],\n[\"Shadwell\", \"Whitechapel\", 2.0],\n[\"St. Paul's\", \"Chancery Lane\", 2.0],\n[\"Waterloo\", \"Southwark\", 1.0],\n[\"Barking\", \"East Ham\", 4.0],\n[\"East Ham\", \"Upton Park\", 2.0],\n[\"Upney\", \"Barking\", 2.0],\n[\"Barkingside\", \"Newbury Park\", 2.0],\n[\"Fairlop\", \"Barkingside\", 2.0],\n[\"Newbury Park\", \"Gants Hill\", 3.0],\n[\"Barons Court\", \"West Kensington\", 2.0],\n[\"Earl's Court\", \"Gloucester Road\", 2.0],\n[\"Hammersmith\", \"Barons Court\", 1.0],\n[\"West Kensington\", \"Earl's Court\", 1.0],\n[\"Bayswater\", \"Paddington\", 2.0],\n[\"Notting Hill Gate\", \"Bayswater\", 2.0],\n[\"Paddington\", \"Royal Oak\", 1.0],\n[\"Beckton\", \"Gallions Reach\", 2.0],\n[\"Gallions Reach\", \"Cyprus\", 2.0],\n[\"Beckton Park\", \"Royal Albert\", 2.0],\n[\"Cyprus\", \"Beckton Park\", 2.0],\n[\"Royal Albert\", \"Prince Regent\", 2.0],\n[\"Becontree\", \"Upney\", 2.0],\n[\"Dagenham Heathway\", \"Becontree\", 3.0],\n[\"Belsize Park\", \"Chalk Farm\", 2.0],\n[\"Chalk Farm\", \"Camden Town\", 2.0],\n[\"Hampstead\", \"Belsize Park\", 2.0],\n[\"Mile End\", \"Stepney Green\", 2.0],\n[\"Blackfriars\", \"Temple\", 2.0],\n[\"Mansion House\", \"Blackfriars\", 1.0],\n[\"Temple\", \"Embankment\", 2.0],\n[\"Blackhorse Road\", \"Tottenham Hale\", 2.0],\n[\"Tottenham Hale\", \"Seven Sisters\", 3.0],\n[\"Walthamstow Central\", \"Blackhorse Road\", 2.0],\n[\"Blackwall\", \"Poplar\", 2.0],\n[\"East India\", \"Blackwall\", 2.0],\n[\"Green Park\", \"Piccadilly Circus\", 1.0],\n[\"Boston Manor\", \"Northfields\", 2.0],\n[\"Northfields\", \"South Ealing\", 1.0],\n[\"Osterley\", \"Boston Manor\", 3.0],\n[\"Wood Green\", \"Turnpike Lane\", 2.0],\n[\"Bow Church\", \"Devons Road\", 2.0],\n[\"Pudding Mill Lane\", \"Bow Church\", 2.0],\n[\"Bow Road\", \"Mile End\", 1.0],\n[\"Bromley-By-Bow\", \"Bow Road\", 2.0],\n[\"Brent Cross\", \"Golders Green\", 3.0],\n[\"Golders Green\", \"Hampstead\", 4.0],\n[\"Hendon Central\", \"Brent Cross\", 2.0],\n[\"West Ham\", \"Bromley-By-Bow\", 2.0],\n[\"Burnt Oak\", \"Colindale\", 2.0],\n[\"Colindale\", \"Hendon Central\", 3.0],\n[\"Edgware\", \"Burnt Oak\", 3.0],\n[\"Camden Town\", \"Mornington Crescent\", 1.0],\n[\"Euston\", \"Warren Street\", 1.0],\n[\"Kentish Town\", \"Camden Town\", 2.0],\n[\"Mornington Crescent\", \"Euston\", 2.0],\n[\"Canary Wharf\", \"West India Quay\", 2.0],\n[\"Heron Quays\", \"Canary Wharf\", 2.0],\n[\"West India Quay\", \"Westferry\", 2.0],\n[\"Canada Water\", \"Rotherhithe\", 1.0],\n[\"Cannon Street\", \"Mansion House\", 1.0],\n[\"Monument\", \"Cannon Street\", 2.0],\n[\"Canons Park\", \"Queensbury\", 2.0],\n[\"Queensbury\", \"Kingsbury\", 2.0],\n[\"Stanmore\", \"Canons Park\", 2.0],\n[\"Holborn\", \"Chancery Lane\", 1.0],\n[\"Embankment\", \"Waterloo\", 2.0],\n[\"Leicester Square\", \"Covent Garden\", 1.0],\n[\"Piccadilly Circus\", \"Leicester Square\", 2.0],\n[\"Chigwell\", \"Grange Hill\", 2.0],\n[\"Grange Hill\", \"Hainault\", 3.0],\n[\"Roding Valley\", \"Chigwell\", 2.0],\n[\"Chiswick Park\", \"Turnham Green\", 2.0],\n[\"Turnham Green\", \"Hammersmith\", 2.0],\n[\"Acton Town\", \"Chiswick Park\", 2.0],\n[\"Clapham Common\", \"Clapham North\", 2.0],\n[\"Clapham North\", \"Stockwell\", 1.0],\n[\"Stockwell\", \"Vauxhall\", 3.0],\n[\"Colliers Wood\", \"Tooting Broadway\", 2.0],\n[\"South Wimbledon\", \"Colliers Wood\", 2.0],\n[\"Tooting Broadway\", \"Tooting Bec\", 2.0],\n[\"Covent Garden\", \"Holborn\", 1.0],\n[\"Crossharbour & London Arena\", \"South Quay\", 2.0],\n[\"Mudchute\", \"Crossharbour & London Arena\", 2.0],\n[\"South Quay\", \"Heron Quays\", 2.0],\n[\"Custom House\", \"Royal Victoria\", 2.0],\n[\"Prince Regent\", \"Custom House\", 2.0],\n[\"Royal Victoria\", \"Canning Town\", 2.0],\n[\"Dagenham East\", \"Dagenham Heathway\", 4.0],\n[\"Elm Park\", \"Dagenham East\", 3.0],\n[\"Dollis Hill\", \"Neasden\", 2.0],\n[\"Neasden\", \"Wembley Park\", 4.0],\n[\"Willesden Green\", \"Dollis Hill\", 2.0],\n[\"Ealing Common\", \"Acton Town\", 2.0],\n[\"West Acton\", \"North Acton\", 2.0],\n[\"North Ealing\", \"Ealing Common\", 3.0],\n[\"Gloucester Road\", \"South Kensington\", 1.0],\n[\"West Brompton\", \"Earl's Court\", 2.0],\n[\"Eastcote\", \"Rayners Lane\", 2.0],\n[\"Rayners Lane\", \"South Harrow\", 3.0],\n[\"Ruislip Manor\", \"Eastcote\", 2.0],\n[\"East Acton\", \"White City\", 3.0],\n[\"North Acton\", \"East Acton\", 2.0],\n[\"White City\", \"Shepherd's Bush (C)\", 3.0],\n[\"East Finchley\", \"Highgate\", 2.0],\n[\"Finchley Central\", \"East Finchley\", 4.0],\n[\"Upton Park\", \"Plaistow\", 2.0],\n[\"Canning Town\", \"East India\", 2.0],\n[\"East Putney\", \"Putney Bridge\", 2.0],\n[\"Putney Bridge\", \"Parsons Green\", 3.0],\n[\"Southfields\", \"East Putney\", 2.0],\n[\"Hornchurch\", \"Elm Park\", 2.0],\n[\"Warren Street\", \"Goodge Street\", 2.0],\n[\"Hainault\", \"Fairlop\", 2.0],\n[\"Mill Hill East\", \"Finchley Central\", 3.0],\n[\"West Finchley\", \"Finchley Central\", 2.0],\n[\"Swiss Cottage\", \"Finchley Road\", 2.0],\n[\"Wembley Park\", \"Preston Road\", 3.0],\n[\"West Hampstead\", \"Kilburn\", 2.0],\n[\"Highbury & Islington\", \"King's Cross St. Pancras\", 4.0],\n[\"Manor House\", \"Finsbury Park\", 2.0],\n[\"Seven Sisters\", \"Finsbury Park\", 4.0],\n[\"Fulham Broadway\", \"West Brompton\", 1.0],\n[\"Parsons Green\", \"Fulham Broadway\", 2.0],\n[\"Gants Hill\", \"Redbridge\", 2.0],\n[\"Redbridge\", \"Wanstead\", 2.0],\n[\"South Kensington\", \"Sloane Square\", 2.0],\n[\"Goldhawk Road\", \"Hammersmith\", 2.0],\n[\"Shepherd's Bush (H)\", \"Goldhawk Road\", 1.0],\n[\"Goodge Street\", \"Tottenham Court Road\", 1.0],\n[\"Tottenham Court Road\", \"Leicester Square\", 1.0],\n[\"Greenford\", \"Perivale\", 2.0],\n[\"Northolt\", \"Greenford\", 2.0],\n[\"Perivale\", \"Hanger Lane\", 2.0],\n[\"Victoria\", \"Green Park\", 2.0],\n[\"Gunnersbury\", \"Turnham Green\", 3.0],\n[\"Kew Gardens\", \"Gunnersbury\", 3.0],\n[\"Hanger Lane\", \"North Acton\", 3.0],\n[\"Harlesden\", \"Willesden Junction\", 2.0],\n[\"Stonebridge Park\", \"Harlesden\", 2.0],\n[\"Willesden Junction\", \"Kensal Green\", 3.0],\n[\"Harrow & Wealdston\", \"Kenton\", 2.0],\n[\"Kenton\", \"South Kenton\", 2.0],\n[\"Harrow-on-the-Hill\", \"West Harrow\", 2.0],\n[\"Northwick Park\", \"Harrow-on-the-Hill\", 2.0],\n[\"North Harrow\", \"Harrow-on-the-Hill\", 3.0],\n[\"West Harrow\", \"Rayners Lane\", 3.0],\n[\"Hatton Cross\", \"Hounslow West\", 4.0],\n[\"Heathrow Terminals 1, 2 & 3\", \"Hatton Cross\", 3.0],\n[\"Heathrow Terminal 4\", \"Hatton Cross\", 3.0],\n[\"Hounslow West\", \"Hounslow Central\", 2.0],\n[\"Hillingdon\", \"Ickenham\", 2.0],\n[\"Ickenham\", \"Ruislip\", 3.0],\n[\"Uxbridge\", \"Hillingdon\", 3.0],\n[\"Holland Park\", \"Notting Hill Gate\", 2.0],\n[\"Shepherd's Bush (C)\", \"Holland Park\", 1.0],\n[\"Upminster Bridge\", \"Hornchurch\", 2.0],\n[\"Hounslow Central\", \"Hounslow East\", 2.0],\n[\"Hounslow East\", \"Osterley\", 2.0],\n[\"Ruislip\", \"Ruislip Manor\", 2.0],\n[\"Island Gardens\", \"Mudchute\", 2.0],\n[\"Cutty Sark\", \"Island Gardens\", 2.0],\n[\"Kensal Green\", \"Queen's Park\", 3.0],\n[\"Queen's Park\", \"Kilburn Park\", 2.0],\n[\"South Kenton\", \"North Wembley\", 2.0],\n[\"Richmond\", \"Kew Gardens\", 3.0],\n[\"Kilburn\", \"Willesden Green\", 2.0],\n[\"Kilburn Park\", \"Maida Vale\", 2.0],\n[\"Maida Vale\", \"Warwick Avenue\", 1.0],\n[\"Kingsbury\", \"Wembley Park\", 4.0],\n[\"Ladbroke Grove\", \"Latimer Road\", 1.0],\n[\"Latimer Road\", \"Shepherd's Bush (H)\", 2.0],\n[\"Westbourne Park\", \"Ladbroke Grove\", 2.0],\n[\"Leyton\", \"Stratford\", 2.0],\n[\"Leytonstone\", \"Leyton\", 3.0],\n[\"Stratford\", \"Pudding Mill Lane\", 2.0],\n[\"Snaresbrook\", \"Leytonstone\", 2.0],\n[\"Wanstead\", \"Leytonstone\", 2.0],\n[\"Limehouse\", \"Shadwell\", 2.0],\n[\"Westferry\", \"Limehouse\", 2.0],\n[\"Southwark\", \"London Bridge\", 2.0],\n[\"Warwick Avenue\", \"Paddington\", 2.0],\n[\"Turnpike Lane\", \"Manor House\", 3.0],\n[\"Stepney Green\", \"Whitechapel\", 3.0],\n[\"Moor Park\", \"Northwood\", 3.0],\n[\"Northwood\", \"Northwood Hills\", 2.0],\n[\"Rickmansworth\", \"Moor Park\", 4.0],\n[\"Croxley\", \"Moor Park\", 4.0],\n[\"South Ealing\", \"Acton Town\", 4.0],\n[\"South Ruislip\", \"Northolt\", 3.0],\n[\"Preston Road\", \"Northwick Park\", 2.0],\n[\"Northwood Hills\", \"Pinner\", 2.0],\n[\"Pinner\", \"North Harrow\", 3.0],\n[\"North Wembley\", \"Wembley Central\", 2.0],\n[\"Wembley Central\", \"Stonebridge Park\", 3.0],\n[\"Royal Oak\", \"Westbourne Park\", 2.0],\n[\"Pimlico\", \"Victoria\", 3.0],\n[\"Vauxhall\", \"Pimlico\", 1.0],\n[\"Plaistow\", \"West Ham\", 2.0],\n[\"Stamford Brook\", \"Turnham Green\", 1.0],\n[\"South Harrow\", \"Sudbury Hill\", 2.0],\n[\"Woodford\", \"South Woodford\", 2.0],\n[\"Rotherhithe\", \"Wapping\", 1.0],\n[\"Wapping\", \"Shadwell\", 1.0],\n[\"Sloane Square\", \"Victoria\", 2.0],\n[\"South Woodford\", \"Snaresbrook\", 2.0],\n[\"Sudbury Hill\", \"Sudbury Town\", 3.0],\n[\"Ruislip Gardens\", \"South Ruislip\", 1.0],\n[\"Upminster\", \"Upminster Bridge\", 3.0],\n[\"Woodside Park\", \"West Finchley\", 1.0],\n[\"West Ruislip\", \"Ruislip Gardens\", 3.0],\n[\"Buckhurst Hill\", \"Woodford\", 3.0],\n[\"Totteridge & Whetstone\", \"Woodside Park\", 3.0],\n[\"Amersham\", \"Chalfont & Latimer\", 4.0],\n[\"Chalfont & Latimer\", \"Chorleywood\", 4.0],\n[\"Chesham\", \"Chalfont & Latimer\", 8.0],\n[\"Chorleywood\", \"Rickmansworth\", 4.0],\n[\"Watford\", \"Croxley\", 3.0],\n[\"High Barnet\", \"Totteridge & Whetstone\", 3.0],\n[\"Cockfosters\", \"Oakwood\", 4.0],\n[\"Oakwood\", \"Southgate\", 3.0],\n[\"Epping\", \"Theydon Bois\", 2.0],\n[\"Theydon Bois\", \"Debden\", 3.0],\n[\"Debden\", \"Loughton\", 2.0],\n[\"Loughton\", \"Buckhurst Hill\", 3.0],\n[\"Greenwich\", \"Cutty Sark\", 2.0],\n[\"Deptford Bridge\", \"Greenwich\", 2.0],\n[\"Elverson Road\", \"Deptford Bridge\", 2.0],\n[\"Lewisham\", \"Elverson Road\", 2.0]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the all-pairs shortest paths algorithm on the entire graph, using time as the relationship weight. Format the output result as a sequence of [source, target, distance]. For example, [\"A\", \"B\", 20.5], [\"A\", \"Z\", 21.0].",
+      "timestamp": "2025-11-19T12:13:41.926681",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run a breadth-first search from Aldgate with a maximum depth of 4. The result data should be paths, for example: [\"A\", \"B\", \"C\"], [\"D, \"A\", \"F\"].",
+      "timestamp": "2025-11-19T12:17:38.340546",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__breadth_first_search",
+            "parameters": {
+              "sourceNode": "Aldgate",
+              "nodeIdentifierProperty": "name",
+              "maxDepth": 4,
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate",
+              "end_node": "Aldgate",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__breadth_first_search",
+            "parameters": {
+              "sourceNode": "2",
+              "nodeIdentifierProperty": "id",
+              "maxDepth": 4,
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate",
+              "end_node": "Aldgate",
+              "nodeIdentifierProperty": "display_name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Liverpool Street",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Tower Hill",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Whitechapel",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Bank",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Moorgate",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Bethnal Green",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Aldgate",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Monument",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Shadwell",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Stepney Green",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Shoreditch",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "London Bridge",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "St. Paul's",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Waterloo",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Old Street",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Barbican",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Mile End",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Cannon Street",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Limehouse",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Wapping",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Tower Gateway",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Borough",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Bermondsey",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Southwark",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Chancery Lane",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Embankment",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Kennington",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Lambeth North",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Westminster",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Angel",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Farringdon",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Bow Road",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Stratford",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Mansion House",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Westferry",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Aldgate East",
+              "end_node": "Rotherhithe",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "I used the MCP tools to run a breadth-first search with maxDepth=4. Note: the tools resolve the start \u201cAldgate\u201d to the station node whose name contains \u201cAldgate\u201d and returned Aldgate East as the start. The paths below are actual shortest paths (unweighted) from Aldgate East to nodes reached within 4 hops, formatted as requested.\n\n- [\"Aldgate East\", \"Liverpool Street\"]\n- [\"Aldgate East\", \"Tower Hill\"]\n- [\"Aldgate East\", \"Whitechapel\"]\n- [\"Aldgate East\", \"Liverpool Street\", \"Bank\"]\n- [\"Aldgate East\", \"Liverpool Street\", \"Moorgate\"]\n- [\"Aldgate East\", \"Liverpool Street\", \"Bethnal Green\"]\n- [\"Aldgate East\", \"Tower Hill\", \"Monument\"]\n- [\"Aldgate East\", \"Whitechapel\", \"Shadwell\"]\n- [\"Aldgate East\", \"Whitechapel\", \"Stepney Green\"]\n- [\"Aldgate East\", \"Whitechapel\", \"Shoreditch\"]\n- [\"Aldgate East\", \"Liverpool Street\", \"Bank\", \"London Bridge\"]\n- [\"Aldgate East\", \"Liverpool Street\", \"Bank\", \"St. Paul's\"]\n- [\"Aldgate East\", \"Liverpool Street\", \"Bank\", \"Waterloo\"]\n- [\"Aldgate East\", \"Liverpool Street\", \"Moorgate\", \"Old Street\"]\n- [\"Aldgate East\", \"Liverpool Street\", \"Moorgate\", \"Barbican\"]\n- [\"Aldgate East\", \"Whitechapel\", \"Stepney Green\", \"Mile End\"]\n- [\"Aldgate East\", \"Tower Hill\", \"Monument\", \"Cannon Street\"]\n- [\"Aldgate East\", \"Whitechapel\", \"Shadwell\", \"Limehouse\"]\n- [\"Aldgate East\", \"Whitechapel\", \"Shadwell\", \"Wapping\"]\n- [\"Aldgate East\", \"Whitechapel\", \"Shadwell\", \"Tower Gateway\"]\n- [\"Aldgate East\", \"Liverpool Street\", \"Bank\", \"London Bridge\", \"Borough\"]\n- [\"Aldgate East\", \"Liverpool Street\", \"Bank\", \"London Bridge\", \"Bermondsey\"]\n- [\"Aldgate East\", \"Liverpool Street\", \"Bank\", \"Waterloo\", \"Southwark\"]\n- [\"Aldgate East\", \"Liverpool Street\", \"Bank\", \"St. Paul's\", \"Chancery Lane\"]\n- [\"Aldgate East\", \"Liverpool Street\", \"Bank\", \"Waterloo\", \"Embankment\"]\n- [\"Aldgate East\", \"Liverpool Street\", \"Bank\", \"Waterloo\", \"Kennington\"]\n- [\"Aldgate East\", \"Liverpool Street\", \"Bank\", \"Waterloo\", \"Lambeth North\"]\n- [\"Aldgate East\", \"Liverpool Street\", \"Bank\", \"Waterloo\", \"Westminster\"]\n- [\"Aldgate East\", \"Liverpool Street\", \"Moorgate\", \"Old Street\", \"Angel\"]\n- [\"Aldgate East\", \"Liverpool Street\", \"Moorgate\", \"Barbican\", \"Farringdon\"]\n- [\"Aldgate East\", \"Whitechapel\", \"Stepney Green\", \"Mile End\", \"Bow Road\"]\n- [\"Aldgate East\", \"Whitechapel\", \"Stepney Green\", \"Mile End\", \"Stratford\"]\n- [\"Aldgate East\", \"Tower Hill\", \"Monument\", \"Cannon Street\", \"Mansion House\"]\n- [\"Aldgate East\", \"Whitechapel\", \"Shadwell\", \"Limehouse\", \"Westferry\"]\n- [\"Aldgate East\", \"Whitechapel\", \"Shadwell\", \"Wapping\", \"Rotherhithe\"]\n\nIf you intended the start node to be the station \u201cAldgate\u201d (not Aldgate East), please provide a unique identifier (e.g., its id property \"2\") or confirm the exact node, and I\u2019ll rerun using that node once exact matching is available.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run a depth-first search from Aldgate with a maximum depth of 4. The result data should be paths, for example: [\"A\", \"B\", \"C\"], [\"D, \"A\", \"F\"].",
+      "timestamp": "2025-11-19T12:19:23.064878",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the Bellman\u2013Ford single-source shortest path from Chancery Lane, using time as the edge weight. The result should be formatted as path: costs, for example: [\"A\", \"X\"]: [0.0, 42.0], [\"A\", \"B\", \"C\"]: [0.0, 9.5, 9.6].",
+      "timestamp": "2025-11-19T12:20:22.890121",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the longest path algorithm to compute the longest path leading to Notting Hill Gate. Format the result as path: costs, for example: [\"A\", \"B\", \"C\"]: [0.0, 9.5, 9.6].",
+      "timestamp": "2025-11-19T12:21:24.481104",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "What are some of the fastest options to travel from Paddington to London Bridge? Format the results as path: costs, for example, [\"A\", \"B\", \"C\"]: [0.0, 98.7, 100.1], [\"A\", \"E\", \"C\"]: [0.0, 32.5, 150.0].",
+      "timestamp": "2025-11-19T12:22:26.455868",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__yens_shortest_paths",
+            "parameters": {
+              "sourceNode": "Paddington",
+              "targetNode": "London Bridge",
+              "nodeIdentifierProperty": "name",
+              "k": 5,
+              "relationshipWeightProperty": "time",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__yens_shortest_paths",
+            "parameters": {
+              "sourceNode": "Paddington",
+              "targetNode": "London Bridge",
+              "nodeIdentifierProperty": "name",
+              "k": 10,
+              "relationshipWeightProperty": "time",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "[\"Paddington\",\"Edgware Road (C)\",\"Baker Street\",\"Bond Street\",\"Green Park\",\"Westminster\",\"Waterloo\",\"Southwark\",\"London Bridge\"]: [0.0, 3.0, 6.0, 8.0, 10.0, 13.0, 15.0, 16.0, 18.0]\n[\"Paddington\",\"Edgware Road (B)\",\"Marylebone\",\"Baker Street\",\"Bond Street\",\"Green Park\",\"Westminster\",\"Waterloo\",\"Southwark\",\"London Bridge\"]: [0.0, 3.0, 5.0, 6.0, 8.0, 10.0, 13.0, 15.0, 16.0, 18.0]\n[\"Paddington\",\"Edgware Road (C)\",\"Baker Street\",\"Bond Street\",\"Green Park\",\"Piccadilly Circus\",\"Charing Cross\",\"Embankment\",\"Waterloo\",\"Southwark\",\"London Bridge\"]: [0.0, 3.0, 6.0, 8.0, 10.0, 11.0, 13.0, 14.0, 16.0, 17.0, 19.0]\n[\"Paddington\",\"Edgware Road (C)\",\"Baker Street\",\"Bond Street\",\"Oxford Circus\",\"Piccadilly Circus\",\"Charing Cross\",\"Embankment\",\"Waterloo\",\"Southwark\",\"London Bridge\"]: [0.0, 3.0, 6.0, 8.0, 9.0, 11.0, 13.0, 14.0, 16.0, 17.0, 19.0]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Tell me whether King\u2019s Cross St. Pancras or Angel counts as the more important station, if importance means appearing on lots of shortest routes between stations. Tell me the station that is the answer and nothing else.",
+      "timestamp": "2025-11-19T12:23:10.027220",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__betweenness_centrality",
+            "parameters": {
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "King\u2019s Cross St. Pancras",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "What are the stations that can\u2019t be reached starting from Canary Wharf? List such stops in the format of [\"A\", \"B\", \"C\"].",
+      "timestamp": "2025-11-19T12:24:02.835518",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Which stations, if shut down, would leave more stations cut off from each other? List such stops in the format of [\"A\", \"B\", \"C\"].",
+      "timestamp": "2025-11-19T12:24:55.447498",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__articulation_points",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "[\"Whitechapel\",\"King's Cross St. Pancras\",\"Archway\",\"Highgate\",\"Tufnell Park\",\"Arnos Grove\",\"Bounds Green\",\"Southgate\",\"Finsbury Park\",\"Balham\",\"Clapham South\",\"Tooting Bec\",\"Shadwell\",\"Barking\",\"East Ham\",\"Upney\",\"Earl's Court\",\"Paddington\",\"Gallions Reach\",\"Beckton Park\",\"Cyprus\",\"Royal Albert\",\"Becontree\",\"Dagenham Heathway\",\"Belsize Park\",\"Chalk Farm\",\"Hampstead\",\"Blackhorse Road\",\"Tottenham Hale\",\"Boston Manor\",\"Northfields\",\"Osterley\",\"Wood Green\",\"Brent Cross\",\"Golders Green\",\"Hendon Central\",\"West Ham\",\"Burnt Oak\",\"Colindale\",\"Camden Town\",\"Euston\",\"Kentish Town\",\"Canary Wharf\",\"Heron Quays\",\"Canada Water\",\"Canons Park\",\"Queensbury\",\"Turnham Green\",\"Acton Town\",\"Clapham Common\",\"Clapham North\",\"Stockwell\",\"Colliers Wood\",\"South Wimbledon\",\"Tooting Broadway\",\"Crossharbour & London Arena\",\"Mudchute\",\"South Quay\",\"Custom House\",\"Prince Regent\",\"Royal Victoria\",\"Dagenham East\",\"Elm Park\",\"West Brompton\",\"Eastcote\",\"Rayners Lane\",\"Ruislip Manor\",\"North Acton\",\"East Finchley\",\"Finchley Central\",\"Upton Park\",\"Canning Town\",\"East Putney\",\"Putney Bridge\",\"Southfields\",\"Hornchurch\",\"West Finchley\",\"Wembley Park\",\"Manor House\",\"Seven Sisters\",\"Fulham Broadway\",\"Parsons Green\",\"Greenford\",\"Northolt\",\"Perivale\",\"Gunnersbury\",\"Kew Gardens\",\"Hanger Lane\",\"Harlesden\",\"Stonebridge Park\",\"Willesden Junction\",\"Kenton\",\"Harrow-on-the-Hill\",\"North Harrow\",\"Hatton Cross\",\"Hounslow West\",\"Hillingdon\",\"Ickenham\",\"Upminster Bridge\",\"Hounslow Central\",\"Hounslow East\",\"Ruislip\",\"Island Gardens\",\"Cutty Sark\",\"Kensal Green\",\"Queen's Park\",\"South Kenton\",\"Kilburn Park\",\"Maida Vale\",\"Kingsbury\",\"Leyton\",\"Leytonstone\",\"Stratford\",\"Warwick Avenue\",\"Turnpike Lane\",\"Moor Park\",\"Northwood\",\"Rickmansworth\",\"Croxley\",\"South Ealing\",\"South Ruislip\",\"Northwood Hills\",\"Pinner\",\"North Wembley\",\"Wembley Central\",\"Plaistow\",\"Woodford\",\"Wimbledon Park\",\"Ruislip Gardens\",\"Surrey Quays\",\"Woodside Park\",\"Buckhurst Hill\",\"Totteridge & Whetstone\",\"Chalfont & Latimer\",\"Chorleywood\",\"Oakwood\",\"Theydon Bois\",\"Debden\",\"Loughton\",\"Greenwich\",\"Deptford Bridge\",\"Elverson Road\"]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "What are the five stations located nearest to Paddington? List the station names in the format [\"A\", \"B\", \"C\"].",
+      "timestamp": "2025-11-19T12:26:19.231202",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__breadth_first_search",
+            "parameters": {
+              "sourceNode": "Paddington",
+              "nodeIdentifierProperty": "name",
+              "maxDepth": 1
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "[\"Edgware Road (C)\", \"Bayswater\", \"Edgware Road (B)\", \"Warwick Avenue\", \"Royal Oak\"]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Can I travel between every pair of stations in this transport network? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T12:26:43.049584",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__count_nodes",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__strongly_connected_components",
+            "parameters": {}
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Yes",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "If every link between two stations works both ways, can I reach any station from any other in this network?  Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T12:27:16.613594",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__weakly_connected_components",
+            "parameters": {
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Yes",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-5",
+      "provider": "openai"
+    }
+  ]
+}

@@ -1,0 +1,1317 @@
+{
+  "summary": {
+    "dataset": "got",
+    "model": "sonnet-4-5-20250929",
+    "questions_file": "gds-algo-questions-got.csv",
+    "total_questions": 12,
+    "total_runs": 23,
+    "average_score_across_questions": 0.3025109900465688,
+    "results_files_processed": 2
+  },
+  "aggregated_stats": {
+    "Which house has the most members? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "overall_score_mean": 0.14215686274509803,
+      "overall_score_min": 0.1176470588235294,
+      "overall_score_max": 0.16666666666666666,
+      "tool_f1_mean": 0.4264705882352941,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "Which house has the most Knights? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "overall_score_mean": 0.49090909090909085,
+      "overall_score_min": 0.4666666666666666,
+      "overall_score_max": 0.5151515151515151,
+      "tool_f1_mean": 0.47272727272727266,
+      "answer_score_mean": 1.0,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "Which house has the most Kings? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "overall_score_mean": 0.08333333333333333,
+      "overall_score_min": 0.041666666666666664,
+      "overall_score_max": 0.125,
+      "tool_f1_mean": 0.25,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "I would like to put the Kings recorded in my database into groups, based on their involvement in all the battles. Should Robb Stark and Tommen Baratheon be in the same group? Answer Yes or No and nothing else.": {
+      "overall_score_mean": 0.32857142857142857,
+      "overall_score_min": 0.1904761904761905,
+      "overall_score_max": 0.4666666666666666,
+      "tool_f1_mean": 0.48571428571428577,
+      "answer_score_mean": 0.5,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "I would like to put the Kings recorded in my database into groups, based on their involvement in all the battles. Should Tommen Baratheon and Balon Greyjoy be in the same group? Answer Yes or No and nothing else.": {
+      "overall_score_mean": 0.5694444444444444,
+      "overall_score_min": 0.5555555555555555,
+      "overall_score_max": 0.5833333333333334,
+      "tool_f1_mean": 0.7083333333333333,
+      "answer_score_mean": 1.0,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "Split the battles and all the people involved into 3 separate groups with all battles and people involved across groups are well-connected. Should Battle of Moat Cailin and Battle of the Shield Islands be in the same group? Answer Yes or No and nothing else.": {
+      "overall_score_mean": 0.4444444444444444,
+      "overall_score_min": 0.4444444444444444,
+      "overall_score_max": 0.4444444444444444,
+      "tool_f1_mean": 0.3333333333333333,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 1
+    },
+    "Which house can claim the most people as members? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "overall_score_mean": 0.13852813852813853,
+      "overall_score_min": 0.09523809523809525,
+      "overall_score_max": 0.1818181818181818,
+      "tool_f1_mean": 0.4155844155844156,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "Which house is home to the highest count of knights? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "overall_score_mean": 0.4755244755244755,
+      "overall_score_min": 0.4358974358974359,
+      "overall_score_max": 0.5151515151515151,
+      "tool_f1_mean": 0.42657342657342656,
+      "answer_score_mean": 1.0,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "Which house has produced the greatest number of kings? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "overall_score_mean": 0.16666666666666666,
+      "overall_score_min": 0.13333333333333333,
+      "overall_score_max": 0.19999999999999998,
+      "tool_f1_mean": 0.5,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "If I cluster the kings in my database by their participation in battles, should Robb Stark and Tommen Baratheon belong to the same cluster? Answer Yes or No and nothing else.": {
+      "overall_score_mean": 0.0492831541218638,
+      "overall_score_min": 0.04301075268817204,
+      "overall_score_max": 0.05555555555555556,
+      "tool_f1_mean": 0.1478494623655914,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "When organizing kings according to their involvement in battles, would Tommen Baratheon and Balon Greyjoy belong together? Answer Yes or No and nothing else.": {
+      "overall_score_mean": 0.28888888888888886,
+      "overall_score_min": 0.1111111111111111,
+      "overall_score_max": 0.4666666666666666,
+      "tool_f1_mean": 0.3666666666666667,
+      "answer_score_mean": 0.5,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "If battles and the people who fought in them are organized into three interconnected communities, are Moat Cailin and the Shield Islands battles placed in the same group? Answer Yes or No and nothing else.": {
+      "overall_score_mean": 0.4523809523809524,
+      "overall_score_min": 0.38095238095238093,
+      "overall_score_max": 0.5238095238095238,
+      "tool_f1_mean": 0.3571428571428572,
+      "answer_score_mean": 0.5,
+      "success_rate": 0.0,
+      "num_runs": 2
+    }
+  },
+  "detailed_evaluations": {
+    "Which house has the most members? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "runs": [
+        {
+          "overall_score": 0.1176470588235294,
+          "tool_evaluation": {
+            "precision": 0.23076923076923078,
+            "recall": 0.75,
+            "f1_score": 0.3529411764705882,
+            "missing_tools": [
+              "mcp__gds-agent__degree_centrality"
+            ],
+            "unexpected_tools": [
+              "Bash",
+              "Grep",
+              "Bash",
+              "Glob",
+              "Read",
+              "Read",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 28,
+            "duration_ms": 77266
+          },
+          "token_usage": {
+            "total_input_tokens": 130,
+            "total_output_tokens": 2257,
+            "total_cache_creation_tokens": 55622,
+            "total_cache_read_tokens": 605908,
+            "total_cost_usd": 0.43870389999999987,
+            "message_count": 15,
+            "total_tokens": 58009
+          },
+          "run_number": 1,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_173438.json"
+        },
+        {
+          "overall_score": 0.16666666666666666,
+          "tool_evaluation": {
+            "precision": 0.375,
+            "recall": 0.75,
+            "f1_score": 0.5,
+            "missing_tools": [
+              "mcp__gds-agent__degree_centrality"
+            ],
+            "unexpected_tools": [
+              "Bash",
+              "Bash",
+              "Grep",
+              "Read",
+              "Bash"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 18,
+            "duration_ms": 41976
+          },
+          "token_usage": {
+            "total_input_tokens": 70,
+            "total_output_tokens": 1396,
+            "total_cache_creation_tokens": 23392,
+            "total_cache_read_tokens": 389436,
+            "total_cost_usd": 0.237656,
+            "message_count": 10,
+            "total_tokens": 24858
+          },
+          "run_number": 2,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_175035.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "Which house has the most Knights? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "runs": [
+        {
+          "overall_score": 0.5151515151515151,
+          "tool_evaluation": {
+            "precision": 0.42857142857142855,
+            "recall": 0.75,
+            "f1_score": 0.5454545454545454,
+            "missing_tools": [
+              "mcp__gds-agent__degree_centrality"
+            ],
+            "unexpected_tools": [
+              "Bash",
+              "Bash",
+              "Grep",
+              "Bash"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 1.0,
+            "answer_matched_count": 1,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 16,
+            "duration_ms": 33323
+          },
+          "token_usage": {
+            "total_input_tokens": 70,
+            "total_output_tokens": 1208,
+            "total_cache_creation_tokens": 8588,
+            "total_cache_read_tokens": 332154,
+            "total_cost_usd": 0.15994679999999997,
+            "message_count": 9,
+            "total_tokens": 9866
+          },
+          "run_number": 1,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_173438.json"
+        },
+        {
+          "overall_score": 0.4666666666666666,
+          "tool_evaluation": {
+            "precision": 0.2727272727272727,
+            "recall": 0.75,
+            "f1_score": 0.39999999999999997,
+            "missing_tools": [
+              "mcp__gds-agent__degree_centrality"
+            ],
+            "unexpected_tools": [
+              "Bash",
+              "Bash",
+              "Bash",
+              "Read",
+              "Grep",
+              "Read",
+              "Read",
+              "Bash"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 1.0,
+            "answer_matched_count": 1,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 24,
+            "duration_ms": 52335
+          },
+          "token_usage": {
+            "total_input_tokens": 114,
+            "total_output_tokens": 1794,
+            "total_cache_creation_tokens": 11674,
+            "total_cache_read_tokens": 540114,
+            "total_cost_usd": 0.24231809999999998,
+            "message_count": 13,
+            "total_tokens": 13582
+          },
+          "run_number": 2,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_175035.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "Which house has the most Kings? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "runs": [
+        {
+          "overall_score": 0.041666666666666664,
+          "tool_evaluation": {
+            "precision": 0.07142857142857142,
+            "recall": 0.5,
+            "f1_score": 0.125,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_properties_keys",
+              "mcp__gds-agent__degree_centrality"
+            ],
+            "unexpected_tools": [
+              "Bash",
+              "Bash",
+              "Grep",
+              "Read",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Read",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "mcp__gds-agent__count_nodes",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Read",
+              "Read",
+              "Bash"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 4
+          },
+          "metadata": {
+            "num_turns": 61,
+            "duration_ms": 173188
+          },
+          "token_usage": {
+            "total_input_tokens": 204,
+            "total_output_tokens": 6225,
+            "total_cache_creation_tokens": 42252,
+            "total_cache_read_tokens": 1802820,
+            "total_cost_usd": 0.8388836,
+            "message_count": 33,
+            "total_tokens": 48681
+          },
+          "run_number": 1,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_173438.json"
+        },
+        {
+          "overall_score": 0.125,
+          "tool_evaluation": {
+            "precision": 0.25,
+            "recall": 0.75,
+            "f1_score": 0.375,
+            "missing_tools": [
+              "mcp__gds-agent__degree_centrality"
+            ],
+            "unexpected_tools": [
+              "mcp__gds-agent__get_relationship_properties_keys",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Grep",
+              "Glob",
+              "Read",
+              "Read",
+              "Bash"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 4
+          },
+          "metadata": {
+            "num_turns": 26,
+            "duration_ms": 50806
+          },
+          "token_usage": {
+            "total_input_tokens": 114,
+            "total_output_tokens": 1855,
+            "total_cache_creation_tokens": 10762,
+            "total_cache_read_tokens": 538388,
+            "total_cost_usd": 0.2390161,
+            "message_count": 14,
+            "total_tokens": 12731
+          },
+          "run_number": 2,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_175035.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "I would like to put the Kings recorded in my database into groups, based on their involvement in all the battles. Should Robb Stark and Tommen Baratheon be in the same group? Answer Yes or No and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.4666666666666666,
+          "tool_evaluation": {
+            "precision": 0.3333333333333333,
+            "recall": 0.5,
+            "f1_score": 0.4,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_properties_keys",
+              "mcp__gds-agent__leiden"
+            ],
+            "unexpected_tools": [
+              "Bash",
+              "Bash",
+              "Grep",
+              "Bash"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "leiden": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 1.0,
+            "answer_matched_count": 1,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 14,
+            "duration_ms": 35955
+          },
+          "token_usage": {
+            "total_input_tokens": 60,
+            "total_output_tokens": 1381,
+            "total_cache_creation_tokens": 8862,
+            "total_cache_read_tokens": 286042,
+            "total_cost_usd": 0.1505601,
+            "message_count": 8,
+            "total_tokens": 10303
+          },
+          "run_number": 1,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_173438.json"
+        },
+        {
+          "overall_score": 0.1904761904761905,
+          "tool_evaluation": {
+            "precision": 0.6666666666666666,
+            "recall": 0.5,
+            "f1_score": 0.5714285714285715,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_properties_keys",
+              "mcp__gds-agent__leiden"
+            ],
+            "unexpected_tools": [
+              "mcp__gds-agent__louvain"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "leiden": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 7,
+            "duration_ms": 12456
+          },
+          "token_usage": {
+            "total_input_tokens": 26,
+            "total_output_tokens": 226,
+            "total_cache_creation_tokens": 3016,
+            "total_cache_read_tokens": 135522,
+            "total_cost_usd": 0.055847400000000005,
+            "message_count": 4,
+            "total_tokens": 3268
+          },
+          "run_number": 2,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_175035.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "I would like to put the Kings recorded in my database into groups, based on their involvement in all the battles. Should Tommen Baratheon and Balon Greyjoy be in the same group? Answer Yes or No and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.5555555555555555,
+          "tool_evaluation": {
+            "precision": 0.6,
+            "recall": 0.75,
+            "f1_score": 0.6666666666666665,
+            "missing_tools": [
+              "mcp__gds-agent__leiden"
+            ],
+            "unexpected_tools": [
+              "mcp__gds-agent__get_relationship_properties_keys",
+              "mcp__gds-agent__louvain"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "leiden": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 1.0,
+            "answer_matched_count": 1,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 13,
+            "duration_ms": 15638
+          },
+          "token_usage": {
+            "total_input_tokens": 26,
+            "total_output_tokens": 400,
+            "total_cache_creation_tokens": 4464,
+            "total_cache_read_tokens": 136672,
+            "total_cost_usd": 0.0638196,
+            "message_count": 8,
+            "total_tokens": 4890
+          },
+          "run_number": 1,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_173438.json"
+        },
+        {
+          "overall_score": 0.5833333333333334,
+          "tool_evaluation": {
+            "precision": 0.75,
+            "recall": 0.75,
+            "f1_score": 0.75,
+            "missing_tools": [
+              "mcp__gds-agent__leiden"
+            ],
+            "unexpected_tools": [
+              "mcp__gds-agent__louvain"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "leiden": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 1.0,
+            "answer_matched_count": 1,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 9,
+            "duration_ms": 13967
+          },
+          "token_usage": {
+            "total_input_tokens": 36,
+            "total_output_tokens": 308,
+            "total_cache_creation_tokens": 3360,
+            "total_cache_read_tokens": 182296,
+            "total_cost_usd": 0.07201679999999999,
+            "message_count": 5,
+            "total_tokens": 3704
+          },
+          "run_number": 2,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_175035.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "Split the battles and all the people involved into 3 separate groups with all battles and people involved across groups are well-connected. Should Battle of Moat Cailin and Battle of the Shield Islands be in the same group? Answer Yes or No and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.4444444444444444,
+          "tool_evaluation": {
+            "precision": 0.21428571428571427,
+            "recall": 0.75,
+            "f1_score": 0.3333333333333333,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_properties_keys"
+            ],
+            "unexpected_tools": [
+              "mcp__gds-agent__louvain",
+              "mcp__gds-agent__modularity_optimization",
+              "Bash",
+              "Bash",
+              "Grep",
+              "LS",
+              "Read",
+              "Bash",
+              "Grep",
+              "Read",
+              "Bash"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "approximate_maximum_k_cut": {
+              "match": true,
+              "matches": [
+                "nodeLabels",
+                "nodeIdentifierProperty",
+                "k"
+              ],
+              "mismatches": [],
+              "score": 1.0
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 29,
+            "duration_ms": 102263
+          },
+          "token_usage": {
+            "total_input_tokens": 134,
+            "total_output_tokens": 2820,
+            "total_cache_creation_tokens": 17764,
+            "total_cache_read_tokens": 716948,
+            "total_cost_usd": 0.3406086,
+            "message_count": 15,
+            "total_tokens": 20718
+          },
+          "run_number": 1,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_173438.json"
+        }
+      ],
+      "num_runs": 1
+    },
+    "Which house can claim the most people as members? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "runs": [
+        {
+          "overall_score": 0.09523809523809525,
+          "tool_evaluation": {
+            "precision": 0.2,
+            "recall": 0.5,
+            "f1_score": 0.28571428571428575,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_properties_keys",
+              "mcp__gds-agent__degree_centrality"
+            ],
+            "unexpected_tools": [
+              "Bash",
+              "Bash",
+              "Bash",
+              "Glob",
+              "Glob",
+              "Grep",
+              "Read",
+              "Bash"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 41531
+          },
+          "token_usage": {
+            "total_input_tokens": 84,
+            "total_output_tokens": 1530,
+            "total_cache_creation_tokens": 10860,
+            "total_cache_read_tokens": 386730,
+            "total_cost_usd": 0.18879320000000002,
+            "message_count": 10,
+            "total_tokens": 12474
+          },
+          "run_number": 1,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_173438.json"
+        },
+        {
+          "overall_score": 0.1818181818181818,
+          "tool_evaluation": {
+            "precision": 0.42857142857142855,
+            "recall": 0.75,
+            "f1_score": 0.5454545454545454,
+            "missing_tools": [
+              "mcp__gds-agent__degree_centrality"
+            ],
+            "unexpected_tools": [
+              "Bash",
+              "Bash",
+              "Grep",
+              "Bash"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 35914
+          },
+          "token_usage": {
+            "total_input_tokens": 70,
+            "total_output_tokens": 1167,
+            "total_cache_creation_tokens": 17120,
+            "total_cache_read_tokens": 324818,
+            "total_cost_usd": 0.18956760000000003,
+            "message_count": 8,
+            "total_tokens": 18357
+          },
+          "run_number": 2,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_175035.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "Which house is home to the highest count of knights? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "runs": [
+        {
+          "overall_score": 0.4358974358974359,
+          "tool_evaluation": {
+            "precision": 0.2222222222222222,
+            "recall": 0.5,
+            "f1_score": 0.30769230769230765,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_properties_keys",
+              "mcp__gds-agent__degree_centrality"
+            ],
+            "unexpected_tools": [
+              "Bash",
+              "Bash",
+              "Grep",
+              "Glob",
+              "Read",
+              "Bash",
+              "Bash"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 1.0,
+            "answer_matched_count": 1,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 20,
+            "duration_ms": 51529
+          },
+          "token_usage": {
+            "total_input_tokens": 92,
+            "total_output_tokens": 1563,
+            "total_cache_creation_tokens": 26022,
+            "total_cache_read_tokens": 467594,
+            "total_cost_usd": 0.2739817,
+            "message_count": 11,
+            "total_tokens": 27677
+          },
+          "run_number": 1,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_173438.json"
+        },
+        {
+          "overall_score": 0.5151515151515151,
+          "tool_evaluation": {
+            "precision": 0.42857142857142855,
+            "recall": 0.75,
+            "f1_score": 0.5454545454545454,
+            "missing_tools": [
+              "mcp__gds-agent__degree_centrality"
+            ],
+            "unexpected_tools": [
+              "Bash",
+              "Bash",
+              "Grep",
+              "Bash"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 1.0,
+            "answer_matched_count": 1,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 18,
+            "duration_ms": 40057
+          },
+          "token_usage": {
+            "total_input_tokens": 54,
+            "total_output_tokens": 1167,
+            "total_cache_creation_tokens": 7538,
+            "total_cache_read_tokens": 263626,
+            "total_cost_usd": 0.1306487,
+            "message_count": 12,
+            "total_tokens": 8759
+          },
+          "run_number": 2,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_175035.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "Which house has produced the greatest number of kings? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "runs": [
+        {
+          "overall_score": 0.13333333333333333,
+          "tool_evaluation": {
+            "precision": 0.2727272727272727,
+            "recall": 0.75,
+            "f1_score": 0.39999999999999997,
+            "missing_tools": [
+              "mcp__gds-agent__degree_centrality"
+            ],
+            "unexpected_tools": [
+              "Bash",
+              "Bash",
+              "Grep",
+              "Read",
+              "Bash",
+              "Bash",
+              "Read",
+              "Bash"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 4
+          },
+          "metadata": {
+            "num_turns": 24,
+            "duration_ms": 64487
+          },
+          "token_usage": {
+            "total_input_tokens": 112,
+            "total_output_tokens": 2139,
+            "total_cache_creation_tokens": 25146,
+            "total_cache_read_tokens": 596344,
+            "total_cost_usd": 0.3234521,
+            "message_count": 13,
+            "total_tokens": 27397
+          },
+          "run_number": 1,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_173438.json"
+        },
+        {
+          "overall_score": 0.19999999999999998,
+          "tool_evaluation": {
+            "precision": 0.5,
+            "recall": 0.75,
+            "f1_score": 0.6,
+            "missing_tools": [
+              "mcp__gds-agent__degree_centrality"
+            ],
+            "unexpected_tools": [
+              "Bash",
+              "Grep",
+              "Bash"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 4
+          },
+          "metadata": {
+            "num_turns": 14,
+            "duration_ms": 29645
+          },
+          "token_usage": {
+            "total_input_tokens": 54,
+            "total_output_tokens": 977,
+            "total_cache_creation_tokens": 6942,
+            "total_cache_read_tokens": 281802,
+            "total_cost_usd": 0.13234610000000002,
+            "message_count": 8,
+            "total_tokens": 7973
+          },
+          "run_number": 2,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_175035.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "If I cluster the kings in my database by their participation in battles, should Robb Stark and Tommen Baratheon belong to the same cluster? Answer Yes or No and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.05555555555555556,
+          "tool_evaluation": {
+            "precision": 0.1,
+            "recall": 0.5,
+            "f1_score": 0.16666666666666669,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_properties_keys",
+              "mcp__gds-agent__leiden"
+            ],
+            "unexpected_tools": [
+              "Task",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Glob",
+              "Read",
+              "Read",
+              "Bash",
+              "Grep",
+              "Bash",
+              "Bash"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "leiden": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 8,
+            "duration_ms": 163433
+          },
+          "token_usage": {
+            "total_input_tokens": 24,
+            "total_output_tokens": 406,
+            "total_cache_creation_tokens": 4992,
+            "total_cache_read_tokens": 135476,
+            "total_cost_usd": 0.7098858000000002,
+            "message_count": 22,
+            "total_tokens": 5422
+          },
+          "run_number": 1,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_173438.json"
+        },
+        {
+          "overall_score": 0.04301075268817204,
+          "tool_evaluation": {
+            "precision": 0.07407407407407407,
+            "recall": 0.5,
+            "f1_score": 0.12903225806451613,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_properties_keys",
+              "mcp__gds-agent__leiden"
+            ],
+            "unexpected_tools": [
+              "mcp__gds-agent__count_nodes",
+              "Bash",
+              "Bash",
+              "Grep",
+              "Glob",
+              "Read",
+              "Bash",
+              "Bash",
+              "Read",
+              "Read",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Bash",
+              "Read",
+              "Bash"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "leiden": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 56,
+            "duration_ms": 149566
+          },
+          "token_usage": {
+            "total_input_tokens": 272,
+            "total_output_tokens": 5174,
+            "total_cache_creation_tokens": 41676,
+            "total_cache_read_tokens": 1710546,
+            "total_cost_usd": 0.8000676,
+            "message_count": 29,
+            "total_tokens": 47122
+          },
+          "run_number": 2,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_175035.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "When organizing kings according to their involvement in battles, would Tommen Baratheon and Balon Greyjoy belong together? Answer Yes or No and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.1111111111111111,
+          "tool_evaluation": {
+            "precision": 0.25,
+            "recall": 0.5,
+            "f1_score": 0.3333333333333333,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_properties_keys",
+              "mcp__gds-agent__leiden"
+            ],
+            "unexpected_tools": [
+              "Bash",
+              "Bash",
+              "Grep",
+              "Glob",
+              "Read",
+              "Bash"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "leiden": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 17,
+            "duration_ms": 47172
+          },
+          "token_usage": {
+            "total_input_tokens": 80,
+            "total_output_tokens": 1577,
+            "total_cache_creation_tokens": 24868,
+            "total_cache_read_tokens": 400472,
+            "total_cost_usd": 0.24780279999999996,
+            "message_count": 9,
+            "total_tokens": 26525
+          },
+          "run_number": 1,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_173438.json"
+        },
+        {
+          "overall_score": 0.4666666666666666,
+          "tool_evaluation": {
+            "precision": 0.3333333333333333,
+            "recall": 0.5,
+            "f1_score": 0.4,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_properties_keys",
+              "mcp__gds-agent__leiden"
+            ],
+            "unexpected_tools": [
+              "Bash",
+              "Bash",
+              "Grep",
+              "Bash"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "leiden": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 1.0,
+            "answer_matched_count": 1,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 14,
+            "duration_ms": 35336
+          },
+          "token_usage": {
+            "total_input_tokens": 56,
+            "total_output_tokens": 1331,
+            "total_cache_creation_tokens": 8588,
+            "total_cache_read_tokens": 285708,
+            "total_cost_usd": 0.14803200000000002,
+            "message_count": 8,
+            "total_tokens": 9975
+          },
+          "run_number": 2,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_175035.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "If battles and the people who fought in them are organized into three interconnected communities, are Moat Cailin and the Shield Islands battles placed in the same group? Answer Yes or No and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.5238095238095238,
+          "tool_evaluation": {
+            "precision": 0.4,
+            "recall": 1.0,
+            "f1_score": 0.5714285714285715,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__gds-agent__louvain",
+              "mcp__gds-agent__label_propagation",
+              "mcp__gds-agent__modularity_optimization",
+              "mcp__gds-agent__leiden",
+              "mcp__gds-agent__weakly_connected_components",
+              "mcp__gds-agent__louvain"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "approximate_maximum_k_cut": {
+              "match": true,
+              "matches": [
+                "nodeLabels",
+                "nodeIdentifierProperty",
+                "k"
+              ],
+              "mismatches": [],
+              "score": 1.0
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 30,
+            "duration_ms": 91628
+          },
+          "token_usage": {
+            "total_input_tokens": 102,
+            "total_output_tokens": 1392,
+            "total_cache_creation_tokens": 7642,
+            "total_cache_read_tokens": 475934,
+            "total_cost_usd": 0.19298929999999997,
+            "message_count": 20,
+            "total_tokens": 9136
+          },
+          "run_number": 1,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_173438.json"
+        },
+        {
+          "overall_score": 0.38095238095238093,
+          "tool_evaluation": {
+            "precision": 0.08333333333333333,
+            "recall": 0.5,
+            "f1_score": 0.14285714285714285,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_properties_keys",
+              "mcp__gds-agent__approximate_maximum_k_cut"
+            ],
+            "unexpected_tools": [
+              "mcp__gds-agent__louvain",
+              "mcp__gds-agent__leiden",
+              "mcp__gds-agent__label_propagation",
+              "Task",
+              "mcp__gds-agent__louvain",
+              "mcp__gds-agent__modularity_optimization",
+              "mcp__gds-agent__leiden",
+              "mcp__gds-agent__modularity_optimization",
+              "mcp__gds-agent__modularity_optimization",
+              "mcp__gds-agent__modularity_optimization",
+              "mcp__gds-agent__modularity_optimization",
+              "mcp__gds-agent__modularity_optimization",
+              "mcp__gds-agent__modularity_optimization",
+              "mcp__gds-agent__louvain",
+              "Bash",
+              "mcp__gds-agent__label_propagation",
+              "mcp__gds-agent__modularity_optimization",
+              "mcp__gds-agent__modularity_optimization",
+              "mcp__gds-agent__modularity_optimization",
+              "mcp__gds-agent__modularity_optimization"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "approximate_maximum_k_cut": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 1.0,
+            "answer_matched_count": 1,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 14,
+            "duration_ms": 181559
+          },
+          "token_usage": {
+            "total_input_tokens": 60,
+            "total_output_tokens": 940,
+            "total_cache_creation_tokens": 4780,
+            "total_cache_read_tokens": 277818,
+            "total_cost_usd": 0.5722500000000001,
+            "message_count": 26,
+            "total_tokens": 5780
+          },
+          "run_number": 2,
+          "source_file": "results_sonnet-4-5-20250929/got_results_20251119_175035.json"
+        }
+      ],
+      "num_runs": 2
+    }
+  }
+}

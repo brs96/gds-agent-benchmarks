@@ -1,0 +1,1151 @@
+{
+  "summary": {
+    "dataset": "got",
+    "model": "gpt-4o",
+    "questions_file": "gds-algo-questions-got.csv",
+    "total_questions": 12,
+    "total_runs": 23,
+    "average_score_across_questions": 0.3653669632836299,
+    "results_files_processed": 2
+  },
+  "aggregated_stats": {
+    "Which house has the most members? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "overall_score_mean": 0.2583333333333333,
+      "overall_score_min": 0.25,
+      "overall_score_max": 0.26666666666666666,
+      "tool_f1_mean": 0.775,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "Which house has the most Knights? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "overall_score_mean": 0.4206349206349206,
+      "overall_score_min": 0.38888888888888884,
+      "overall_score_max": 0.4523809523809524,
+      "tool_f1_mean": 0.7619047619047619,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "Which house has the most Kings? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "overall_score_mean": 0.4090909090909091,
+      "overall_score_min": 0.4090909090909091,
+      "overall_score_max": 0.4090909090909091,
+      "tool_f1_mean": 0.7272727272727273,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 1
+    },
+    "I would like to put the Kings recorded in my database into groups, based on their involvement in all the battles. Should Robb Stark and Tommen Baratheon be in the same group? Answer Yes or No and nothing else.": {
+      "overall_score_mean": 0.125,
+      "overall_score_min": 0.0,
+      "overall_score_max": 0.25,
+      "tool_f1_mean": 0.375,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "I would like to put the Kings recorded in my database into groups, based on their involvement in all the battles. Should Tommen Baratheon and Balon Greyjoy be in the same group? Answer Yes or No and nothing else.": {
+      "overall_score_mean": 0.3333333333333333,
+      "overall_score_min": 0.3333333333333333,
+      "overall_score_max": 0.3333333333333333,
+      "tool_f1_mean": 0.0,
+      "answer_score_mean": 1.0,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "Split the battles and all the people involved into 3 separate groups with all battles and people involved across groups are well-connected. Should Battle of Moat Cailin and Battle of the Shield Islands be in the same group? Answer Yes or No and nothing else.": {
+      "overall_score_mean": 0.7333333333333332,
+      "overall_score_min": 0.6888888888888888,
+      "overall_score_max": 0.7777777777777777,
+      "tool_f1_mean": 0.5333333333333333,
+      "answer_score_mean": 1.0,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "Which house can claim the most people as members? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "overall_score_mean": 0.4027777777777778,
+      "overall_score_min": 0.38888888888888884,
+      "overall_score_max": 0.4166666666666667,
+      "tool_f1_mean": 0.7083333333333333,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "Which house is home to the highest count of knights? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "overall_score_mean": 0.2685185185185185,
+      "overall_score_min": 0.14814814814814817,
+      "overall_score_max": 0.38888888888888884,
+      "tool_f1_mean": 0.5555555555555556,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "Which house has produced the greatest number of kings? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "overall_score_mean": 0.4128787878787879,
+      "overall_score_min": 0.4090909090909091,
+      "overall_score_max": 0.4166666666666667,
+      "tool_f1_mean": 0.7386363636363636,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "If I cluster the kings in my database by their participation in battles, should Robb Stark and Tommen Baratheon belong to the same cluster? Answer Yes or No and nothing else.": {
+      "overall_score_mean": 0.16931216931216933,
+      "overall_score_min": 0.14814814814814817,
+      "overall_score_max": 0.1904761904761905,
+      "tool_f1_mean": 0.507936507936508,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "When organizing kings according to their involvement in battles, would Tommen Baratheon and Balon Greyjoy belong together? Answer Yes or No and nothing else.": {
+      "overall_score_mean": 0.4761904761904762,
+      "overall_score_min": 0.4285714285714286,
+      "overall_score_max": 0.5238095238095238,
+      "tool_f1_mean": 0.4285714285714286,
+      "answer_score_mean": 1.0,
+      "success_rate": 0.0,
+      "num_runs": 2
+    },
+    "If battles and the people who fought in them are organized into three interconnected communities, are Moat Cailin and the Shield Islands battles placed in the same group? Answer Yes or No and nothing else.": {
+      "overall_score_mean": 0.375,
+      "overall_score_min": 0.3333333333333333,
+      "overall_score_max": 0.4166666666666667,
+      "tool_f1_mean": 0.125,
+      "answer_score_mean": 1.0,
+      "success_rate": 0.0,
+      "num_runs": 2
+    }
+  },
+  "detailed_evaluations": {
+    "Which house has the most members? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "runs": [
+        {
+          "overall_score": 0.25,
+          "tool_evaluation": {
+            "precision": 0.75,
+            "recall": 0.75,
+            "f1_score": 0.75,
+            "missing_tools": [
+              "mcp__gds-agent__get_relationship_types"
+            ],
+            "unexpected_tools": [],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "matches": [],
+              "mismatches": [
+                {
+                  "param": "nodeLabels",
+                  "expected": [
+                    "House",
+                    "Person"
+                  ],
+                  "actual": [
+                    "House"
+                  ]
+                },
+                {
+                  "param": "relTypes",
+                  "expected": [
+                    "BELONGS_TO"
+                  ],
+                  "actual": [
+                    "MEMBER_OF"
+                  ]
+                }
+              ],
+              "score": 0.0
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/got_results_20251119_190312.json"
+        },
+        {
+          "overall_score": 0.26666666666666666,
+          "tool_evaluation": {
+            "precision": 0.6666666666666666,
+            "recall": 1.0,
+            "f1_score": 0.8,
+            "missing_tools": [],
+            "unexpected_tools": [],
+            "exact_match": true
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "matches": [],
+              "mismatches": [
+                {
+                  "param": "nodeLabels",
+                  "expected": [
+                    "House",
+                    "Person"
+                  ],
+                  "actual": [
+                    "House"
+                  ]
+                },
+                {
+                  "param": "relTypes",
+                  "expected": [
+                    "BELONGS_TO"
+                  ],
+                  "actual": [
+                    "MEMBER_OF"
+                  ]
+                }
+              ],
+              "score": 0.0
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 2,
+          "source_file": "results_gpt-4o/got_results_20251119_185905.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "Which house has the most Knights? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "runs": [
+        {
+          "overall_score": 0.38888888888888884,
+          "tool_evaluation": {
+            "precision": 0.6,
+            "recall": 0.75,
+            "f1_score": 0.6666666666666665,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_properties_keys"
+            ],
+            "unexpected_tools": [
+              "mcp__gds-agent__article_rank"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "matches": [
+                "relTypes"
+              ],
+              "mismatches": [
+                {
+                  "param": "nodeLabels",
+                  "expected": [
+                    "House",
+                    "Knight"
+                  ],
+                  "actual": [
+                    "House"
+                  ]
+                }
+              ],
+              "score": 0.5
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/got_results_20251119_190312.json"
+        },
+        {
+          "overall_score": 0.4523809523809524,
+          "tool_evaluation": {
+            "precision": 1.0,
+            "recall": 0.75,
+            "f1_score": 0.8571428571428571,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_properties_keys"
+            ],
+            "unexpected_tools": [],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "matches": [
+                "relTypes"
+              ],
+              "mismatches": [
+                {
+                  "param": "nodeLabels",
+                  "expected": [
+                    "House",
+                    "Knight"
+                  ],
+                  "actual": [
+                    "House"
+                  ]
+                }
+              ],
+              "score": 0.5
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 2,
+          "source_file": "results_gpt-4o/got_results_20251119_185905.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "Which house has the most Kings? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "runs": [
+        {
+          "overall_score": 0.4090909090909091,
+          "tool_evaluation": {
+            "precision": 0.5714285714285714,
+            "recall": 1.0,
+            "f1_score": 0.7272727272727273,
+            "missing_tools": [],
+            "unexpected_tools": [],
+            "exact_match": true
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "matches": [
+                "relTypes"
+              ],
+              "mismatches": [
+                {
+                  "param": "nodeLabels",
+                  "expected": [
+                    "House",
+                    "King"
+                  ],
+                  "actual": [
+                    "House"
+                  ]
+                }
+              ],
+              "score": 0.5
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 4
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/got_results_20251119_185905.json"
+        }
+      ],
+      "num_runs": 1
+    },
+    "I would like to put the Kings recorded in my database into groups, based on their involvement in all the battles. Should Robb Stark and Tommen Baratheon be in the same group? Answer Yes or No and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.25,
+          "tool_evaluation": {
+            "precision": 0.75,
+            "recall": 0.75,
+            "f1_score": 0.75,
+            "missing_tools": [
+              "mcp__gds-agent__leiden"
+            ],
+            "unexpected_tools": [
+              "mcp__gds-agent__label_propagation"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "leiden": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/got_results_20251119_190312.json"
+        },
+        {
+          "overall_score": 0.0,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_labels",
+              "mcp__gds-agent__get_relationship_types",
+              "mcp__gds-agent__get_node_properties_keys",
+              "mcp__gds-agent__leiden"
+            ],
+            "unexpected_tools": [
+              "mcp__gds-agent__node_similarity"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "leiden": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 2,
+          "source_file": "results_gpt-4o/got_results_20251119_185905.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "I would like to put the Kings recorded in my database into groups, based on their involvement in all the battles. Should Tommen Baratheon and Balon Greyjoy be in the same group? Answer Yes or No and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.3333333333333333,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_labels",
+              "mcp__gds-agent__get_relationship_types",
+              "mcp__gds-agent__get_node_properties_keys",
+              "mcp__gds-agent__leiden"
+            ],
+            "unexpected_tools": [
+              "mcp__gds-agent__node_similarity"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "leiden": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 1.0,
+            "answer_matched_count": 1,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/got_results_20251119_190312.json"
+        },
+        {
+          "overall_score": 0.3333333333333333,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_labels",
+              "mcp__gds-agent__get_relationship_types",
+              "mcp__gds-agent__get_node_properties_keys",
+              "mcp__gds-agent__leiden"
+            ],
+            "unexpected_tools": [
+              "mcp__gds-agent__k_core_decomposition",
+              "mcp__gds-agent__strongly_connected_components"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "leiden": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 1.0,
+            "answer_matched_count": 1,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 2,
+          "source_file": "results_gpt-4o/got_results_20251119_185905.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "Split the battles and all the people involved into 3 separate groups with all battles and people involved across groups are well-connected. Should Battle of Moat Cailin and Battle of the Shield Islands be in the same group? Answer Yes or No and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.6888888888888888,
+          "tool_evaluation": {
+            "precision": 1.0,
+            "recall": 0.25,
+            "f1_score": 0.4,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_labels",
+              "mcp__gds-agent__get_relationship_types",
+              "mcp__gds-agent__get_node_properties_keys"
+            ],
+            "unexpected_tools": [],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "approximate_maximum_k_cut": {
+              "match": false,
+              "matches": [
+                "nodeLabels",
+                "k"
+              ],
+              "mismatches": [
+                {
+                  "param": "nodeIdentifierProperty",
+                  "expected": "name",
+                  "actual": "id"
+                }
+              ],
+              "score": 0.6666666666666666
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 1.0,
+            "answer_matched_count": 1,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/got_results_20251119_190312.json"
+        },
+        {
+          "overall_score": 0.7777777777777777,
+          "tool_evaluation": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1_score": 0.6666666666666666,
+            "missing_tools": [
+              "mcp__gds-agent__get_relationship_types",
+              "mcp__gds-agent__get_node_properties_keys"
+            ],
+            "unexpected_tools": [],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "approximate_maximum_k_cut": {
+              "match": false,
+              "matches": [
+                "nodeLabels",
+                "k"
+              ],
+              "mismatches": [
+                {
+                  "param": "nodeIdentifierProperty",
+                  "expected": "name",
+                  "actual": null
+                }
+              ],
+              "score": 0.6666666666666666
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 1.0,
+            "answer_matched_count": 1,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 2,
+          "source_file": "results_gpt-4o/got_results_20251119_185905.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "Which house can claim the most people as members? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "runs": [
+        {
+          "overall_score": 0.38888888888888884,
+          "tool_evaluation": {
+            "precision": 0.6,
+            "recall": 0.75,
+            "f1_score": 0.6666666666666665,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_properties_keys"
+            ],
+            "unexpected_tools": [
+              "mcp__gds-agent__count_nodes"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "matches": [
+                "relTypes"
+              ],
+              "mismatches": [
+                {
+                  "param": "nodeLabels",
+                  "expected": [
+                    "House",
+                    "Person"
+                  ],
+                  "actual": [
+                    "House"
+                  ]
+                }
+              ],
+              "score": 0.5
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/got_results_20251119_190312.json"
+        },
+        {
+          "overall_score": 0.4166666666666667,
+          "tool_evaluation": {
+            "precision": 0.75,
+            "recall": 0.75,
+            "f1_score": 0.75,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_properties_keys"
+            ],
+            "unexpected_tools": [],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "matches": [
+                "relTypes"
+              ],
+              "mismatches": [
+                {
+                  "param": "nodeLabels",
+                  "expected": [
+                    "House",
+                    "Person"
+                  ],
+                  "actual": [
+                    "House"
+                  ]
+                }
+              ],
+              "score": 0.5
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 2,
+          "source_file": "results_gpt-4o/got_results_20251119_185905.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "Which house is home to the highest count of knights? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "runs": [
+        {
+          "overall_score": 0.38888888888888884,
+          "tool_evaluation": {
+            "precision": 0.5,
+            "recall": 1.0,
+            "f1_score": 0.6666666666666666,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__gds-agent__get_relationship_properties_keys"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "matches": [
+                "relTypes"
+              ],
+              "mismatches": [
+                {
+                  "param": "nodeLabels",
+                  "expected": [
+                    "House",
+                    "Knight"
+                  ],
+                  "actual": [
+                    "House"
+                  ]
+                }
+              ],
+              "score": 0.5
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/got_results_20251119_190312.json"
+        },
+        {
+          "overall_score": 0.14814814814814817,
+          "tool_evaluation": {
+            "precision": 0.4,
+            "recall": 0.5,
+            "f1_score": 0.4444444444444445,
+            "missing_tools": [
+              "mcp__gds-agent__get_relationship_types",
+              "mcp__gds-agent__get_node_properties_keys"
+            ],
+            "unexpected_tools": [],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "matches": [],
+              "mismatches": [
+                {
+                  "param": "nodeLabels",
+                  "expected": [
+                    "House",
+                    "Knight"
+                  ],
+                  "actual": [
+                    "House"
+                  ]
+                },
+                {
+                  "param": "relTypes",
+                  "expected": [
+                    "BELONGS_TO"
+                  ],
+                  "actual": null
+                }
+              ],
+              "score": 0.0
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 2,
+          "source_file": "results_gpt-4o/got_results_20251119_185905.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "Which house has produced the greatest number of kings? Return the name of the house and nothing else. Return all the top house names if there are ties.": {
+      "runs": [
+        {
+          "overall_score": 0.4166666666666667,
+          "tool_evaluation": {
+            "precision": 0.75,
+            "recall": 0.75,
+            "f1_score": 0.75,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_properties_keys"
+            ],
+            "unexpected_tools": [],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "matches": [
+                "relTypes"
+              ],
+              "mismatches": [
+                {
+                  "param": "nodeLabels",
+                  "expected": [
+                    "House",
+                    "King"
+                  ],
+                  "actual": [
+                    "House"
+                  ]
+                }
+              ],
+              "score": 0.5
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 4
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/got_results_20251119_190312.json"
+        },
+        {
+          "overall_score": 0.4090909090909091,
+          "tool_evaluation": {
+            "precision": 0.5714285714285714,
+            "recall": 1.0,
+            "f1_score": 0.7272727272727273,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__gds-agent__get_relationship_properties_keys"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "degree_centrality": {
+              "match": false,
+              "matches": [
+                "relTypes"
+              ],
+              "mismatches": [
+                {
+                  "param": "nodeLabels",
+                  "expected": [
+                    "House",
+                    "King"
+                  ],
+                  "actual": [
+                    "House"
+                  ]
+                }
+              ],
+              "score": 0.5
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 4
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 2,
+          "source_file": "results_gpt-4o/got_results_20251119_185905.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "If I cluster the kings in my database by their participation in battles, should Robb Stark and Tommen Baratheon belong to the same cluster? Answer Yes or No and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.1904761904761905,
+          "tool_evaluation": {
+            "precision": 0.6666666666666666,
+            "recall": 0.5,
+            "f1_score": 0.5714285714285715,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_properties_keys",
+              "mcp__gds-agent__leiden"
+            ],
+            "unexpected_tools": [
+              "mcp__gds-agent__k_means_clustering"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "leiden": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/got_results_20251119_190312.json"
+        },
+        {
+          "overall_score": 0.14814814814814817,
+          "tool_evaluation": {
+            "precision": 0.4,
+            "recall": 0.5,
+            "f1_score": 0.4444444444444445,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_properties_keys",
+              "mcp__gds-agent__leiden"
+            ],
+            "unexpected_tools": [
+              "mcp__gds-agent__k_means_clustering",
+              "mcp__gds-agent__breadth_first_search",
+              "mcp__gds-agent__breadth_first_search"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "leiden": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 2,
+          "source_file": "results_gpt-4o/got_results_20251119_185905.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "When organizing kings according to their involvement in battles, would Tommen Baratheon and Balon Greyjoy belong together? Answer Yes or No and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.4285714285714286,
+          "tool_evaluation": {
+            "precision": 0.3333333333333333,
+            "recall": 0.25,
+            "f1_score": 0.28571428571428575,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_labels",
+              "mcp__gds-agent__get_node_properties_keys",
+              "mcp__gds-agent__leiden"
+            ],
+            "unexpected_tools": [
+              "mcp__gds-agent__degree_centrality",
+              "mcp__gds-agent__k_means_clustering"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "leiden": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 1.0,
+            "answer_matched_count": 1,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/got_results_20251119_190312.json"
+        },
+        {
+          "overall_score": 0.5238095238095238,
+          "tool_evaluation": {
+            "precision": 0.6666666666666666,
+            "recall": 0.5,
+            "f1_score": 0.5714285714285715,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_properties_keys",
+              "mcp__gds-agent__leiden"
+            ],
+            "unexpected_tools": [
+              "mcp__gds-agent__node_similarity"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "leiden": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 1.0,
+            "answer_matched_count": 1,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 2,
+          "source_file": "results_gpt-4o/got_results_20251119_185905.json"
+        }
+      ],
+      "num_runs": 2
+    },
+    "If battles and the people who fought in them are organized into three interconnected communities, are Moat Cailin and the Shield Islands battles placed in the same group? Answer Yes or No and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.4166666666666667,
+          "tool_evaluation": {
+            "precision": 0.25,
+            "recall": 0.25,
+            "f1_score": 0.25,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_labels",
+              "mcp__gds-agent__get_relationship_types",
+              "mcp__gds-agent__approximate_maximum_k_cut"
+            ],
+            "unexpected_tools": [
+              "mcp__gds-agent__louvain",
+              "mcp__gds-agent__weakly_connected_components",
+              "mcp__gds-agent__harmonic_centrality"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "approximate_maximum_k_cut": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 1.0,
+            "answer_matched_count": 1,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/got_results_20251119_190312.json"
+        },
+        {
+          "overall_score": 0.3333333333333333,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "missing_tools": [
+              "mcp__gds-agent__get_node_labels",
+              "mcp__gds-agent__get_relationship_types",
+              "mcp__gds-agent__get_node_properties_keys",
+              "mcp__gds-agent__approximate_maximum_k_cut"
+            ],
+            "unexpected_tools": [
+              "mcp__gds-agent__louvain"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {
+            "approximate_maximum_k_cut": {
+              "match": false,
+              "reason": "Tool not called"
+            }
+          },
+          "answer_evaluation": {
+            "answer_match_score": 1.0,
+            "answer_matched_count": 1,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 2,
+          "source_file": "results_gpt-4o/got_results_20251119_185905.json"
+        }
+      ],
+      "num_runs": 2
+    }
+  }
+}

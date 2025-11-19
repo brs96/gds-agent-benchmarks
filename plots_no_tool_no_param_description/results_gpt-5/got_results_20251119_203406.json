@@ -1,0 +1,696 @@
+{
+  "benchmark_info": {
+    "timestamp": "2025-11-19T20:51:34.487531",
+    "dataset": "got",
+    "model": "gpt-5",
+    "provider": "openai",
+    "questions_file": "gds-algo-questions-got.csv",
+    "total_questions": 12,
+    "successful_responses": 8,
+    "response_rate": 0.6666666666666666
+  },
+  "raw_results": [
+    {
+      "question": "Which house has the most members? Return the name of the house and nothing else. Return all the top house names if there are ties.",
+      "timestamp": "2025-11-19T20:36:29.117005",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodes": [],
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "REVERSE"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "UNDIRECTED"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "RELATED_TO"
+              ],
+              "orientation": "UNDIRECTED"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House",
+                "Person"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "UNDIRECTED"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Stark",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Which house has the most Knights? Return the name of the house and nothing else. Return all the top house names if there are ties.",
+      "timestamp": "2025-11-19T20:38:50.585913",
+      "response_data": null,
+      "success": false,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Which house has the most Kings? Return the name of the house and nothing else. Return all the top house names if there are ties.",
+      "timestamp": "2025-11-19T20:40:12.401205",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "INCOMING"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "REVERSE"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "RELATED_TO"
+              ],
+              "orientation": "REVERSE"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "King"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "NATURAL"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Baratheon",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I would like to put the Kings recorded in my database into groups, based on their involvement in all the battles. Should Robb Stark and Tommen Baratheon be in the same group? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T20:41:02.000095",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__louvain",
+            "parameters": {
+              "relationshipWeightProperty": "",
+              "seedProperty": "",
+              "maxLevels": 10,
+              "maxIterations": 50,
+              "tolerance": 0.0001,
+              "includeIntermediateCommunities": false,
+              "consecutiveIds": false,
+              "minCommunitySize": 1,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "King",
+                "Battle"
+              ],
+              "relTypes": [
+                "ATTACKER_KING",
+                "DEFENDER_KING"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__louvain",
+            "parameters": {
+              "maxLevels": 10,
+              "maxIterations": 50,
+              "tolerance": 0.0001,
+              "includeIntermediateCommunities": false,
+              "consecutiveIds": false,
+              "minCommunitySize": 1,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "King",
+                "Battle"
+              ],
+              "relTypes": [
+                "ATTACKER_KING",
+                "DEFENDER_KING"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Yes",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "I would like to put the Kings recorded in my database into groups, based on their involvement in all the battles. Should Tommen Baratheon and Balon Greyjoy be in the same group? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T20:42:12.087387",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__node_similarity",
+            "parameters": {
+              "sourceNodeFilter": [
+                "Tommen Baratheon"
+              ],
+              "targetNodeFilter": [
+                "Balon Greyjoy"
+              ],
+              "similarityCutoff": 0,
+              "topK": 1,
+              "similarityMetric": "JACCARD",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "King"
+              ],
+              "relTypes": [
+                "ATTACKER_KING",
+                "DEFENDER_KING"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "King"
+              ],
+              "relTypes": [
+                "ATTACKER_KING",
+                "DEFENDER_KING"
+              ],
+              "orientation": "UNDIRECTED"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__node_similarity",
+            "parameters": {
+              "sourceNodeFilter": [
+                "Tommen Baratheon"
+              ],
+              "targetNodeFilter": [
+                "Balon Greyjoy"
+              ],
+              "similarityCutoff": 0,
+              "topK": 1,
+              "similarityMetric": "JACCARD",
+              "nodeIdentifierProperty": "name",
+              "relTypes": [
+                "ATTACKER_KING",
+                "DEFENDER_KING"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodes": [
+                "Tommen Baratheon",
+                "Balon Greyjoy"
+              ],
+              "nodeIdentifierProperty": "name",
+              "relTypes": [
+                "ATTACKER_KING",
+                "DEFENDER_KING"
+              ],
+              "orientation": "UNDIRECTED"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "No",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Split the battles and all the people involved into 3 separate groups with all battles and people involved across groups are well-connected. Should Battle of Moat Cailin and Battle of the Shield Islands be in the same group? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T20:43:54.698261",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__leiden",
+            "parameters": {
+              "nodeLabels": [
+                "Battle",
+                "Person"
+              ],
+              "relTypes": [
+                "ATTACKER_COMMANDER",
+                "DEFENDER_COMMANDER",
+                "ATTACKER_KING",
+                "DEFENDER_KING",
+                "DIED_IN"
+              ],
+              "includeIntermediateCommunities": false
+            }
+          },
+          {
+            "name": "mcp__gds-agent__leiden",
+            "parameters": {
+              "nodeLabels": [
+                "Battle",
+                "Person"
+              ],
+              "relTypes": [
+                "ATTACKER_COMMANDER",
+                "DEFENDER_COMMANDER",
+                "ATTACKER_KING",
+                "DEFENDER_KING",
+                "DIED_IN"
+              ],
+              "gamma": 0.1,
+              "includeIntermediateCommunities": false
+            }
+          },
+          {
+            "name": "mcp__gds-agent__weakly_connected_components",
+            "parameters": {
+              "nodeLabels": [
+                "Battle",
+                "Person"
+              ],
+              "relTypes": [
+                "ATTACKER_COMMANDER",
+                "DEFENDER_COMMANDER",
+                "ATTACKER_KING",
+                "DEFENDER_KING",
+                "DIED_IN"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__approximate_maximum_k_cut",
+            "parameters": {
+              "k": 3,
+              "nodeLabels": [
+                "Battle",
+                "Person"
+              ],
+              "relTypes": [
+                "ATTACKER_COMMANDER",
+                "DEFENDER_COMMANDER",
+                "ATTACKER_KING",
+                "DEFENDER_KING",
+                "DIED_IN"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__approximate_maximum_k_cut",
+            "parameters": {
+              "k": 3,
+              "nodeLabels": [
+                "Battle",
+                "Person"
+              ],
+              "relTypes": [
+                "ATTACKER_COMMANDER",
+                "DEFENDER_COMMANDER",
+                "ATTACKER_KING",
+                "DEFENDER_KING",
+                "DIED_IN"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Yes",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Which house can claim the most people as members? Return the name of the house and nothing else. Return all the top house names if there are ties.",
+      "timestamp": "2025-11-19T20:45:39.745518",
+      "response_data": null,
+      "success": false,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Which house is home to the highest count of knights? Return the name of the house and nothing else. Return all the top house names if there are ties.",
+      "timestamp": "2025-11-19T20:47:00.868986",
+      "response_data": null,
+      "success": false,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "Which house has produced the greatest number of kings? Return the name of the house and nothing else. Return all the top house names if there are ties.",
+      "timestamp": "2025-11-19T20:48:53.939309",
+      "response_data": null,
+      "success": false,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "If I cluster the kings in my database by their participation in battles, should Robb Stark and Tommen Baratheon belong to the same cluster? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T20:49:41.245961",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__louvain",
+            "parameters": {
+              "relationshipWeightProperty": "",
+              "seedProperty": "",
+              "maxLevels": 10,
+              "maxIterations": 50,
+              "tolerance": 0.0001,
+              "includeIntermediateCommunities": false,
+              "consecutiveIds": false,
+              "minCommunitySize": 1,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "King",
+                "Battle"
+              ],
+              "relTypes": [
+                "ATTACKER_KING",
+                "DEFENDER_KING"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__louvain",
+            "parameters": {
+              "maxLevels": 10,
+              "maxIterations": 50,
+              "tolerance": 0.0001,
+              "includeIntermediateCommunities": false,
+              "consecutiveIds": false,
+              "minCommunitySize": 1,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "King",
+                "Battle"
+              ],
+              "relTypes": [
+                "ATTACKER_KING",
+                "DEFENDER_KING"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Yes",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "When organizing kings according to their involvement in battles, would Tommen Baratheon and Balon Greyjoy belong together? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T20:50:17.788485",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodes": [
+                "Tommen Baratheon",
+                "Balon Greyjoy"
+              ],
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "King"
+              ],
+              "relTypes": [
+                "ATTACKER_KING",
+                "DEFENDER_KING"
+              ],
+              "orientation": "UNDIRECTED"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Yes",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    },
+    {
+      "question": "If battles and the people who fought in them are organized into three interconnected communities, are Moat Cailin and the Shield Islands battles placed in the same group? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T20:51:32.373517",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__louvain",
+            "parameters": {
+              "relationshipWeightProperty": "",
+              "seedProperty": "",
+              "maxLevels": null,
+              "maxIterations": null,
+              "tolerance": null,
+              "includeIntermediateCommunities": false,
+              "consecutiveIds": false,
+              "minCommunitySize": null,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "Battle",
+                "Person"
+              ],
+              "relTypes": [
+                "ATTACKER_COMMANDER",
+                "DEFENDER_COMMANDER",
+                "DIED_IN"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__louvain",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "Battle",
+                "Person"
+              ],
+              "relTypes": [
+                "ATTACKER_COMMANDER",
+                "DEFENDER_COMMANDER",
+                "DIED_IN"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Yes",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-5",
+      "provider": "openai"
+    }
+  ]
+}

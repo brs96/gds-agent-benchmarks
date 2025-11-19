@@ -1,0 +1,565 @@
+{
+  "benchmark_info": {
+    "timestamp": "2025-11-19T19:08:48.848970",
+    "dataset": "got",
+    "model": "gpt-4o",
+    "provider": "openai",
+    "questions_file": "gds-algo-questions-got.csv",
+    "total_questions": 12,
+    "successful_responses": 11,
+    "response_rate": 0.9166666666666666
+  },
+  "raw_results": [
+    {
+      "question": "Which house has the most members? Return the name of the house and nothing else. Return all the top house names if there are ties.",
+      "timestamp": "2025-11-19T19:03:30.298967",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeLabels": [
+                "House"
+              ],
+              "orientation": "IN",
+              "relTypes": [
+                "MEMBER_OF"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeLabels": [
+                "House"
+              ],
+              "orientation": "REVERSE",
+              "relTypes": [
+                "MEMBER_OF"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "No house has members in the database, as all the scores are zero.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Which house has the most Knights? Return the name of the house and nothing else. Return all the top house names if there are ties.",
+      "timestamp": "2025-11-19T19:03:47.354448",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "INCOMING"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "NATURAL"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__article_rank",
+            "parameters": {
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "The house with the most Knights is tied among many houses.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Which house has the most Kings? Return the name of the house and nothing else. Return all the top house names if there are ties.",
+      "timestamp": "2025-11-19T19:06:01.520956",
+      "response_data": null,
+      "success": false,
+      "dataset": "got",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "I would like to put the Kings recorded in my database into groups, based on their involvement in all the battles. Should Robb Stark and Tommen Baratheon be in the same group? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T19:06:16.825603",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__label_propagation",
+            "parameters": {
+              "nodeLabels": [
+                "King"
+              ],
+              "relTypes": [
+                "ATTACKER_KING",
+                "DEFENDER_KING"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "No",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "I would like to put the Kings recorded in my database into groups, based on their involvement in all the battles. Should Tommen Baratheon and Balon Greyjoy be in the same group? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T19:06:27.234734",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__node_similarity",
+            "parameters": {
+              "sourceNodeFilter": [
+                "King"
+              ],
+              "targetNodeFilter": [
+                "King"
+              ],
+              "similarityMetric": "JACCARD",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "King",
+                "Battle"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "No",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Split the battles and all the people involved into 3 separate groups with all battles and people involved across groups are well-connected. Should Battle of Moat Cailin and Battle of the Shield Islands be in the same group? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T19:06:46.555919",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__approximate_maximum_k_cut",
+            "parameters": {
+              "k": 3,
+              "nodeLabels": [
+                "Battle",
+                "Person"
+              ],
+              "nodeIdentifierProperty": "id"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "No",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Which house can claim the most people as members? Return the name of the house and nothing else. Return all the top house names if there are ties.",
+      "timestamp": "2025-11-19T19:07:06.281197",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__count_nodes",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "INCOMING"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "REVERSE"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "I'm unable to determine which house can claim the most people as members due to a technical issue with retrieving the degree centrality scores. The query returned zero values for all scores, which may indicate a problem with the relationship or the query itself. You might want to ensure that the relationships are correctly established or check if the \"BELONGS_TO\" relationship accurately represents membership in a house.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Which house is home to the highest count of knights? Return the name of the house and nothing else. Return all the top house names if there are ties.",
+      "timestamp": "2025-11-19T19:07:26.483504",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "INCOMING"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "NATURAL"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "UNDIRECTED"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeLabels": [
+                "Knight"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "UNDIRECTED"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "No house is home to any knights according to the current database. All houses have a count of 0 knights associated with them.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Which house has produced the greatest number of kings? Return the name of the house and nothing else. Return all the top house names if there are ties.",
+      "timestamp": "2025-11-19T19:07:49.211576",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "INCOMING"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeLabels": [
+                "House"
+              ],
+              "relTypes": [
+                "BELONGS_TO"
+              ],
+              "orientation": "REVERSE"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Unfortunately, I was unable to determine which house has produced the greatest number of kings from the available data. It seems like the specified relationships and operations did not yield the necessary results. If you have any more questions or another way to approach this, let me know!",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "If I cluster the kings in my database by their participation in battles, should Robb Stark and Tommen Baratheon belong to the same cluster? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T19:08:05.735853",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__k_means_clustering",
+            "parameters": {
+              "nodeProperty": "participation_vector",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "King"
+              ],
+              "relTypes": [
+                "ATTACKER_KING",
+                "DEFENDER_KING"
+              ],
+              "k": 2
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Error: Unable to execute the clustering procedure due to a configuration issue in the database.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "When organizing kings according to their involvement in battles, would Tommen Baratheon and Balon Greyjoy belong together? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T19:08:27.307915",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodes": [
+                "Tommen Baratheon",
+                "Balon Greyjoy"
+              ],
+              "orientation": "UNDIRECTED",
+              "nodeIdentifierProperty": "name",
+              "relTypes": [
+                "ATTACKER_KING",
+                "DEFENDER_KING"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__k_means_clustering",
+            "parameters": {
+              "nodeProperty": "degree",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "King"
+              ],
+              "k": 2
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "No",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "If battles and the people who fought in them are organized into three interconnected communities, are Moat Cailin and the Shield Islands battles placed in the same group? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T19:08:46.730177",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__louvain",
+            "parameters": {
+              "nodeLabels": [
+                "Battle",
+                "Person"
+              ],
+              "relTypes": [
+                "FOUGHT_IN",
+                "CONNECTED_TO"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__weakly_connected_components",
+            "parameters": {
+              "nodeLabels": [
+                "Battle",
+                "Person"
+              ],
+              "relTypes": [
+                "FOUGHT_IN",
+                "CONNECTED_TO"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__harmonic_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "Battle"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "No",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "got",
+      "model": "gpt-4o",
+      "provider": "openai"
+    }
+  ]
+}

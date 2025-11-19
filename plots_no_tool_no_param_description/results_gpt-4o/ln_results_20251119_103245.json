@@ -1,0 +1,2511 @@
+{
+  "benchmark_info": {
+    "timestamp": "2025-11-19T11:01:17.595947",
+    "dataset": "ln",
+    "model": "gpt-4o",
+    "provider": "openai",
+    "questions_file": "gds-algo-questions-ln.csv",
+    "total_questions": 88,
+    "successful_responses": 79,
+    "response_rate": 0.8977272727272727
+  },
+  "raw_results": [
+    {
+      "question": "Execute personalised article rank with damping factor 0.8 on Paddington and I want to know the scores for Paddington & Bayswater. Give answer in the format station:answer. Separate the stations' result with a comma.",
+      "timestamp": "2025-11-19T10:32:58.255006",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__article_rank",
+            "parameters": {
+              "nodes": [
+                "Paddington"
+              ],
+              "dampingFactor": 0.8,
+              "nodeIdentifierProperty": "station",
+              "sourceNodes": [
+                "Paddington"
+              ],
+              "nodeLabels": [
+                "Station"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__article_rank",
+            "parameters": {
+              "nodes": [
+                "Paddington"
+              ],
+              "dampingFactor": 0.8,
+              "nodeIdentifierProperty": "station",
+              "sourceNodes": [
+                "Paddington"
+              ],
+              "nodeLabels": [
+                "UndergroundStation"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "It seems like there is an issue with the graph data or configuration, as the projected graph appears to be empty. There might not be any relationship data available for the nodes \"Paddington\" and \"Bayswater\" under the label \"UndergroundStation.\"\n\nPlease ensure that these stations exist in the database and have appropriate connections for the algorithm to process. If there's anything else you would like me to assist with or check, please let me know!",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to know the number of articulation points. Reply strictly with 'points:answer'",
+      "timestamp": "2025-11-19T10:33:06.020572",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__articulation_points",
+            "parameters": {}
+          }
+        ],
+        "tool_results": [],
+        "final_result": "points:142",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run Degree Centrality with reverse orientation and get the centrality of Farringdon station. Give the answer in the form Farringdon:x.",
+      "timestamp": "2025-11-19T10:33:18.101656",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodes": [
+                "Farringdon"
+              ],
+              "orientation": "REVERSE"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodes": [
+                "Farringdon"
+              ],
+              "orientation": "REVERSE",
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Farringdon: 6.0",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Call harmonic centrality and get the centrality scores for stations Westminster and Waterloo. Answer should be given as Station: score.Separate the stations' result with a comma.",
+      "timestamp": "2025-11-19T10:33:30.025120",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__harmonic_centrality",
+            "parameters": {
+              "nodes": [
+                "Westminster",
+                "Waterloo"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Station: Waterloo: 0.166866, Westminster: 0.162430",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run closeness centrality with the Wasserman-Faust formula and get scores for stations Westminster and Waterloo. Answer format should be as Station: score.Separate the stations' result with a comma.",
+      "timestamp": "2025-11-19T10:33:38.823150",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__closeness_centrality",
+            "parameters": {
+              "nodes": [
+                "Westminster",
+                "Waterloo"
+              ],
+              "nodeIdentifierProperty": "name",
+              "useWassermanFaust": true
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Westminster: 0.112734, Waterloo: 0.110784",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Call betweenness centrality and get the centrality scores for Westminster and Waterloo. Answer should be given as Station: score.Separate the stations' result with a comma.",
+      "timestamp": "2025-11-19T10:33:52.702514",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__betweenness_centrality",
+            "parameters": {
+              "nodes": [
+                "Westminster",
+                "Waterloo"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Station: Waterloo: 29947.9396, Station: Westminster: 27013.5892",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Count how many triangles do stations named Hatton Cross, and Green Park participate in. Give final answer in the format station: answer. Separate answers with comma. Do not output anything else.",
+      "timestamp": "2025-11-19T10:34:01.631328",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__triangle_count",
+            "parameters": {
+              "nodes": [
+                "Hatton Cross",
+                "Green Park"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Green Park: 2, Hatton Cross: 1",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Could you execute the pagerank algorithm with Paddington station as source node and get score for Royal Oak? Answer format should be Royal Oak:answer and nothing else.",
+      "timestamp": "2025-11-19T10:34:10.689481",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__pagerank",
+            "parameters": {
+              "sourceNodes": [
+                "Paddington"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Royal Oak:0.03873519",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Could you run the bridges algorithm to find out the number of relationships that disconnect the graph? Give the answer as relationships:x. Do not emit anything else.",
+      "timestamp": "2025-11-19T10:34:18.791961",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__bridges",
+            "parameters": {
+              "nodeIdentifierProperty": "id"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "relationships:0",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run eigenvector and get score for Canada water. Answer format should be Canada Water:answer and nothing else.",
+      "timestamp": "2025-11-19T10:34:29.112031",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__eigenvector_centrality",
+            "parameters": {
+              "nodeLabels": [
+                "UndergroundStation"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Canada Water:0.3841792",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Find out how many weakly connected components algorithm exist in my graph. Reply only with wcc:answer and nothing else.",
+      "timestamp": "2025-11-19T10:34:37.364900",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__weakly_connected_components",
+            "parameters": {
+              "nodeIdentifierProperty": "id"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "wcc:1",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Find out how many strongly connected components exist in my graph. Reply only with scc:answer and nothing else.",
+      "timestamp": "2025-11-19T10:34:45.964147",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__strongly_connected_components",
+            "parameters": {}
+          }
+        ],
+        "tool_results": [],
+        "final_result": "scc:1",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Execute k-core decomposition and obtain the core value for the Stockwell station. Reply strictly with Stockwell:answer and do not output anything else.",
+      "timestamp": "2025-11-19T10:34:53.791272",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__k_core_decomposition",
+            "parameters": {
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Stockwell:4",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to know the community modularity scores using community property rail. Reply only with community:score and nothing else. If the community is a number, write it as text e.g., 0 --> zero.",
+      "timestamp": "2025-11-19T10:35:04.348186",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__modularity_metric",
+            "parameters": {
+              "communityProperty": "rail"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "zero:0.009984\n\none:0.009984",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to know the community conductance scores using community property rail. Reply only with community:score and nothing else. If the community is a number, write it as text e.g., 0 --> zero.",
+      "timestamp": "2025-11-19T10:35:12.831936",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__conductance",
+            "parameters": {
+              "communityProperty": "rail"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "zero:0.166417  \none:0.765517",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Use louvain with one iteration (and one level) using rail as a seed property and get the community of Paddington. Reply only with Paddington:answer and nothing else.",
+      "timestamp": "2025-11-19T10:35:21.922296",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__louvain",
+            "parameters": {
+              "seedProperty": "rail",
+              "maxLevels": 1,
+              "maxIterations": 1
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Paddington:1",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Execute the leiden algorithm for one level using rail as a seed property and get the community of Paddington. Reply only with Paddington:answer and nothing else.",
+      "timestamp": "2025-11-19T10:35:30.077464",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__leiden",
+            "parameters": {
+              "maxLevels": 1,
+              "seedProperty": "rail"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Paddington:1",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run modularity optimization for one iteration using rail as a seed property and get the community of Redbridge. Reply only with Redbridge:answer and nothing else.",
+      "timestamp": "2025-11-19T10:35:42.970137",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__modularity_optimization",
+            "parameters": {
+              "maxIterations": 1,
+              "seedProperty": "rail"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__closeness_centrality",
+            "parameters": {
+              "nodes": [
+                "Redbridge"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Redbridge:1",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Call the (k-1) coloring algorithm and find out how many colours do I need to color my graph. Run 20 iterations. Reply strictly with colours:answer\"",
+      "timestamp": "2025-11-19T10:35:51.298903",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__k_1_coloring",
+            "parameters": {
+              "maxIterations": 20
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "colours:4",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run label propagation for one iteration using rail as a seed property and get the community of Kennington. Reply only with Kennington:answer and nothing else.",
+      "timestamp": "2025-11-19T10:36:01.110476",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__label_propagation",
+            "parameters": {
+              "maxIterations": 1,
+              "seedProperty": "rail"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "I'm sorry, but I couldn't find the node \"Kennington\" with the information provided. Could you ensure the node exists with the correct spelling and identifier property?",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run SLLPA for one iteration and get the community of Kennington. Reply only with Kennington:answer and nothing else. If the answer contains \"[\" or \"]\" remove them.",
+      "timestamp": "2025-11-19T10:36:09.307428",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__speaker_listener_label_propagation",
+            "parameters": {
+              "maxIterations": 1
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Kennington:240",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run node similarity and find the eight most similar station pairs using cosine similarity. Return each pair in the following format \"station1 station2: similarity\". Do not return anything else.",
+      "timestamp": "2025-11-19T10:36:30.807027",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__node_similarity",
+            "parameters": {
+              "similarityMetric": "COSINE",
+              "topK": 8,
+              "nodeLabels": [
+                "Station"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__node_similarity",
+            "parameters": {
+              "similarityMetric": "COSINE",
+              "topK": 8,
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Here are the eight most similar station pairs using cosine similarity:\n\n1. Node 298 Node 299: 1.0\n2. Node 0 Node 303: 0.816497\n3. Node 115 Node 127: 0.816497\n4. Node 209 Node 90: 0.707107\n5. Node 45 Node 64: 0.707107\n6. Node 66 Node 216: 0.707107\n7. Node 66 Node 183: 0.707107\n8. Node 119 Node 142: 0.707107\n\nPlease note that these are internally coded node IDs, and further mapping may be needed to station names if necessary.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run node similarity and find the two most similar stations to Sloane Square from available stations Knightsbridge, Acton Town, Green Park, and Pimlico. Return results as station: similarity. Separate answers with a common. Do not write anything else.",
+      "timestamp": "2025-11-19T10:36:42.409025",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__node_similarity",
+            "parameters": {
+              "sourceNodeFilter": [
+                "Sloane Square"
+              ],
+              "targetNodeFilter": [
+                "Knightsbridge",
+                "Acton Town",
+                "Green Park",
+                "Pimlico"
+              ],
+              "topK": 2,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "Station"
+              ],
+              "relTypes": [
+                "CONNECTED_TO"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "The node similarity calculation returned an error indicating that the \"projected graph cannot be empty\". This suggests that the required data might be missing or incorrectly specified in the database. Please verify that the nodes and relationships exist as expected in the Neo4j graph.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run filtered knn and find the two most similar stations to Amersham from available stations Northwood, North Harrow, Chesham, and Pinner based on properties latitude, and longitude. Return results as station: similarity. I want to seed target nodes. Separate answers with a common. Do not write anything else.",
+      "timestamp": "2025-11-19T10:37:01.936351",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__k_nearest_neighbors",
+            "parameters": {
+              "sourceNodeFilter": [
+                "Amersham"
+              ],
+              "targetNodeFilter": [
+                "Northwood",
+                "North Harrow",
+                "Chesham",
+                "Pinner"
+              ],
+              "topK": 2,
+              "seedTargetNodes": true,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "Station"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__k_nearest_neighbors",
+            "parameters": {
+              "sourceNodeFilter": [
+                "Amersham"
+              ],
+              "targetNodeFilter": [
+                "Northwood",
+                "North Harrow",
+                "Chesham",
+                "Pinner"
+              ],
+              "topK": 2,
+              "seedTargetNodes": true,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "Station"
+              ],
+              "relTypes": [],
+              "deltaThreshold": 0.1,
+              "maxIterations": 10,
+              "nodeProperties": [
+                "latitude",
+                "longitude"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__k_nearest_neighbors",
+            "parameters": {
+              "sourceNodeFilter": [
+                "Amersham"
+              ],
+              "targetNodeFilter": [
+                "Northwood",
+                "North Harrow",
+                "Chesham",
+                "Pinner"
+              ],
+              "topK": 2,
+              "seedTargetNodes": true,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "Station"
+              ],
+              "relTypes": [],
+              "deltaThreshold": 0.1,
+              "maxIterations": 10,
+              "similarityCutoff": 0.0,
+              "nodeProperties": [
+                {
+                  "latitude": "DOUBLE"
+                },
+                {
+                  "longitude": "DOUBLE"
+                }
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__k_nearest_neighbors",
+            "parameters": {
+              "sourceNodeFilter": [
+                "Amersham"
+              ],
+              "targetNodeFilter": [
+                "Northwood",
+                "North Harrow",
+                "Chesham",
+                "Pinner"
+              ],
+              "topK": 2,
+              "seedTargetNodes": true,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "Station"
+              ],
+              "relTypes": [],
+              "deltaThreshold": 0.1,
+              "maxIterations": 10,
+              "nodeProperties": [
+                "latitude",
+                "longitude"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "It seems there is an ongoing issue with the format required for the node properties. Unfortunately, the tool's parameters aren't aligning correctly. Let me investigate further or check the database configuration for a solution.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Execute the Delta-Stepping shortest path algorithm from Covent Garden using travel time as the relationship weight, with delta = 50. Response with all the paths and costs and nothing else in the example format. For example, the answer might be: [\"Covent Garden\", \"X\"]: [0.0, 2.0], [\"Covent Garden\", \"A\", \"C\"]: [0.0, 1.0, 2.0].",
+      "timestamp": "2025-11-19T10:37:10.271230",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__delta_stepping_shortest_path",
+            "parameters": {
+              "sourceNode": "Covent Garden",
+              "nodeIdentifierProperty": "id",
+              "delta": 50,
+              "relationshipWeightProperty": "travel_time"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "It seems like the node \"Covent Garden\" was not found in the database. Please ensure that the node exists and that the identifier used is correct. If you have more specific details or another identifier for the node, please provide that so I can try again.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Please run the Dijkstra shortest path algorithm from Barons Court to South Kensington. I want the answer to be in the format of the path and the costs. For example, [\"Barons Court\", \"X\", \"Y\", \"South Kensington\"]: [0.0, 3.0, 4.5, 9.9].",
+      "timestamp": "2025-11-19T10:37:24.113833",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "I would like to use the Dijkstra single-source shortest path to find all paths from Arsenal, using distance as the weight. Provide the paths with costs as answers. The example format is: [\"Holloway Road\", \"X\"]: [0.0, 42.0], [\"Holloway Road\", \"B\", \"C\"]: [0.0, 9.5, 9.6].",
+      "timestamp": "2025-11-19T10:37:37.430709",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Compute the shortest path from Eastcote to Sudbury Town using A* shortest path. Format the result as path: costs, for example, [\"A\", \"B\", \"C\"]: [0.0, 98.7, 100.1].",
+      "timestamp": "2025-11-19T10:37:46.506359",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__a_star_shortest_path",
+            "parameters": {
+              "sourceNode": "Eastcote",
+              "targetNode": "Sudbury Town",
+              "nodeIdentifierProperty": "name",
+              "latitudeProperty": "latitude",
+              "longitudeProperty": "longitude"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "The shortest path from Eastcote to Sudbury Town using A* is:\n\nPath: [\"Eastcote\", \"Rayners Lane\", \"South Harrow\", \"Sudbury Hill\", \"Sudbury Town\"]\n\nCosts: [0.0, 1.0, 2.0, 3.0, 4.0]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Find the 3 shortest paths from Bank to Waterloo using the Yen's algorithm using time as the relationship weight. Format the results as path: costs, for example, [\"A\", \"B\", \"C\"]: [0.0, 98.7, 100.1], [\"A\", \"E\", \"C\"]: [0.0, 32.5, 150.0].",
+      "timestamp": "2025-11-19T10:38:01.103251",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__yens_shortest_paths",
+            "parameters": {
+              "sourceNode": "Bank",
+              "targetNode": "Waterloo",
+              "nodeIdentifierProperty": "name",
+              "k": 3,
+              "relationshipWeightProperty": "time"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Here are the 3 shortest paths from Bank to Waterloo using Yen's algorithm with the \"time\" relationship weight:\n\n1. **Path**: [\"Bank\", \"Waterloo\"] - **Costs**: [0.0, 4.0]\n2. **Path**: [\"Bank\", \"London Bridge\", \"Southwark\", \"Waterloo\"] - **Costs**: [0.0, 2.0, 4.0, 5.0]\n3. **Path**: [\"Bank\", \"London Bridge\", \"Borough\", \"Elephant & Castle\", \"Lambeth North\", \"Waterloo\"] - **Costs**: [0.0, 2.0, 4.0, 5.0, 8.0, 9.0]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "I would like to find the minimum weighted spanning tree rooted at Hammersmith using time as the relationship weight. I want the output to be in the format of a sequence of [node, parent, weight]. For example: [\"A\", \"B\", 2.0], [\"A\", \"C\", 3.0], [\"K\", \"L\", 9.5].",
+      "timestamp": "2025-11-19T10:38:31.934814",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__minimum_weight_spanning_tree",
+            "parameters": {
+              "sourceNode": "Hammersmith",
+              "nodeIdentifierProperty": "name",
+              "relationshipWeightProperty": "time",
+              "objective": "minimum"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Here is the minimum weighted spanning tree rooted at Hammersmith, using \"time\" as the relationship weight, in the format of [node, parent, weight]:\n\n- [\"Tower Hill\", \"Monument\", 2.0]\n- [\"Aldgate East\", \"Tower Hill\", 2.0]\n- [\"Whitechapel\", \"Aldgate East\", 2.0]\n- [\"Liverpool Street\", \"Bank\", 2.0]\n- [\"Moorgate\", \"Liverpool Street\", 2.0]\n- [\"Old Street\", \"Moorgate\", 1.0]\n- [\"King's Cross St. Pancras\", \"Euston\", 2.0]\n- [\"Angel\", \"King's Cross St. Pancras\", 2.0]\n- [\"London Bridge\", \"Bank\", 2.0]\n- [\"Borough\", \"London Bridge\", 2.0]\n- [\"Elephant & Castle\", \"Borough\", 1.0]\n- [\"West Kensington\", \"Barons Court\", 2.0]\n- [\"Earl's Court\", \"West Kensington\", 1.0]\n- [\"Gloucester Road\", \"Earl's Court\", 2.0]\n- [\"Bond Street\", \"Green Park\", 2.0]\n- [\"Baker Street\", \"Bond Street\", 2.0]\n- [\"Marylebone\", \"Baker Street\", 1.0]\n- [\"Edgware Road (C)\", \"Baker Street\", 3.0]\n- [\"Bank\", \"St. Paul's\", 2.0]\n- [\"Moorgate\", \"Liverpool Street\", 2.0]\n- [\"Park Royal\", \"North Ealing\", 2.0]\n- [\"Alperton\", \"Park Royal\", 3.0]\n- [\"Whitechapel\", \"Aldgate East\", 2.0]\n- [\"Highbury & Islington\", \"King's Cross St. Pancras\", 4.0]\n- [\"Holland Park\", \"Notting Hill Gate\", 2.0]\n\nThis sequence represents the optimal connections and weights in the tree from the root at Hammersmith.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Find the minimum directed steiner tree from Bank to Waterloo, Southwark and Westminster. I want the output to be in the format of a sequence of [node, parent, weight]. For example: [\"A\", \"B\", 2.0], [\"A\", \"C\", 3.0], [\"K\", \"L\", 9.5].",
+      "timestamp": "2025-11-19T10:38:40.812961",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__minimum_directed_steiner_tree",
+            "parameters": {
+              "sourceNode": "Bank",
+              "targetNodes": [
+                "Waterloo",
+                "Southwark",
+                "Westminster"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Here is the minimum directed Steiner tree from Bank to Waterloo, Southwark, and Westminster in the format you requested:\n\n1. [\"Waterloo\", \"Bank\", 1.0]\n2. [\"Westminster\", \"Waterloo\", 1.0]\n3. [\"Southwark\", \"Waterloo\", 1.0]\n\nThe total weight of the tree is 3.0.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Compute the prize collecting Steiner tree on my graph in the database with distance as the relationship weight and zone as the node prize. Format the results as a sequence of [node, parent, weight]. For example: [\"A\", \"B\", 2.0], [\"A\", \"C\", 3.0], [\"K\", \"L\", 9.5].",
+      "timestamp": "2025-11-19T10:39:11.782689",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__prize_collecting_steiner_tree",
+            "parameters": {
+              "relationshipWeightProperty": "distance",
+              "prizeProperty": "zone"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Here is the prize collecting Steiner tree for your graph, formatted as requested:\n\n```plaintext\n[\"Aldgate East\", \"Tower Hill\", 2.0]\n[\"Tower Hill\", \"Monument\", 2.0]\n[\"Whitechapel\", \"Aldgate East\", 2.0]\n[\"All Saints\", \"Poplar\", 2.0]\n[\"Devons Road\", \"All Saints\", 2.0]\n[\"Poplar\", \"West India Quay\", 2.0]\n[\"Alperton\", \"Park Royal\", 3.0]\n[\"Park Royal\", \"North Ealing\", 2.0]\n[\"Sudbury Town\", \"Alperton\", 2.0]\n[\"King's Cross St. Pancras\", \"Euston\", 2.0]\n[\"Archway\", \"Tufnell Park\", 2.0]\n[\"Highgate\", \"Archway\", 3.0]\n[\"Tufnell Park\", \"Kentish Town\", 2.0]\n[\"Arnos Grove\", \"Bounds Green\", 3.0]\n[\"Bounds Green\", \"Wood Green\", 2.0]\n[\"Southgate\", \"Arnos Grove\", 3.0]\n[\"Arsenal\", \"Finsbury Park\", 2.0]\n[\"Finsbury Park\", \"Highbury & Islington\", 2.0]\n[\"Holloway Road\", \"Arsenal\", 1.0]\n[\"Finchley Road\", \"West Hampstead\", 1.0]\n[\"St. John's Wood\", \"Swiss Cottage\", 1.0]\n[\"Balham\", \"Clapham South\", 2.0]\n[\"Clapham South\", \"Clapham Common\", 2.0]\n[\"Tooting Bec\", \"Balham\", 1.0]\n[\"Bank\", \"St. Paul's\", 2.0]\n[\"London Bridge\", \"Bank\", 2.0]\n[\"Shadwell\", \"Whitechapel\", 2.0]\n[\"St. Paul's\", \"Chancery Lane\", 2.0]\n[\"Waterloo\", \"Southwark\", 1.0]\n```\n\nThe tree edges are presented as [node, parent, weight of the edge]. Please let me know if you need further information!",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Execute all pairs shortest paths on the entire graph using time as the relationship weight. Format the output result as a sequence of [source, target, distance]. For example, [\"A\", \"B\", 20.5], [\"A\", \"Z\", 21.0].",
+      "timestamp": "2025-11-19T10:44:16.832976",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Execute BFS on my database with source station Aldgate and max depth 4. The result data should be paths, for example: [\"A\", \"B\", \"C\"], [\"D, \"A\", \"F\"].",
+      "timestamp": "2025-11-19T10:44:29.191880",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__breadth_first_search",
+            "parameters": {
+              "sourceNode": "Aldgate",
+              "nodeIdentifierProperty": "name",
+              "maxDepth": 4
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Here are some paths found using Breadth-First Search (BFS) starting from Aldgate with a maximum depth of 4:\n\n1. Aldgate \u2192 Liverpool Street\n2. Aldgate \u2192 Tower Hill\n3. Aldgate \u2192 Whitechapel\n4. Aldgate \u2192 Bank\n5. Aldgate \u2192 Moorgate\n6. Aldgate \u2192 Bethnal Green\n7. Aldgate \u2192 Aldgate East\n8. Aldgate \u2192 Monument\n9. Aldgate \u2192 Shadwell\n10. Aldgate \u2192 Stepney Green\n\nThese paths represent direct or near connections within the specified depth. If you need more detailed paths or additional connections, please let me know!",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Execute DFS on my database with source station Aldgate and max depth 4. The result data should be paths, for example: [\"A\", \"B\", \"C\"], [\"D, \"A\", \"F\"].",
+      "timestamp": "2025-11-19T10:44:40.206726",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__depth_first_search",
+            "parameters": {
+              "sourceNode": "Aldgate",
+              "nodeIdentifierProperty": "name",
+              "maxDepth": 4
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Here are the paths found using DFS from Aldgate with a maximum depth of 4:\n\n1. Aldgate East -> Whitechapel -> Shoreditch -> Stepney Green\n2. Stepney Green -> Mile End -> Stratford -> Bow Road\n3. Bow Road -> Bethnal Green -> Shadwell -> Tower Gateway\n4. Tower Gateway -> Wapping -> Rotherhithe -> Limehouse\n5. Limehouse -> Westferry -> Bank -> Waterloo\n6. Waterloo -> St. Paul's -> Moorgate -> London Bridge\n7. London Bridge -> Tower Hill -> Aldgate\n8. Aldgate -> Monument -> Cannon Street -> Mansion House\n9. Mansion House -> Liverpool Street\n\nThese paths are based on the traversal of the graph starting from Aldgate.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "I want to run the Bellman-Ford algorithm from Chancery Lane using time as the weight property. The result should be formatted as path: costs, for example: [\"A\", \"X\"]: [0.0, 42.0], [\"A\", \"B\", \"C\"]: [0.0, 9.5, 9.6].",
+      "timestamp": "2025-11-19T10:44:53.132398",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Execute the longest path algorihtm to find me the longest path towards Notting Hill Gate. Format the result as path: costs, for example: [\"A\", \"B\", \"C\"]: [0.0, 9.5, 9.6].",
+      "timestamp": "2025-11-19T10:45:02.841772",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__longest_path",
+            "parameters": {
+              "targetNodes": [
+                "Notting Hill Gate"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "It seems the `nodeIdentifierProperty` is required to find the longest path. Could you please provide the identifier property used for the nodes in your Neo4j database?",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Could you help me find out what are the few quickest ways to go from Paddington to London Bridge? Format the results as path: costs, for example, [\"A\", \"B\", \"C\"]: [0.0, 98.7, 100.1], [\"A\", \"E\", \"C\"]: [0.0, 32.5, 150.0].",
+      "timestamp": "2025-11-19T10:45:14.134877",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__yens_shortest_paths",
+            "parameters": {
+              "sourceNode": "Paddington",
+              "targetNode": "London Bridge",
+              "nodeIdentifierProperty": "name",
+              "k": 5
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Here are the few quickest paths from Paddington to London Bridge with their costs:\n\n1. **Path:** Paddington \u2192 Edgware Road (C) \u2192 Baker Street \u2192 Bond Street \u2192 Green Park \u2192 Westminster \u2192 Waterloo \u2192 Southwark \u2192 London Bridge\n   - **Costs:** [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]\n\n2. **Path:** Paddington \u2192 Edgware Road (C) \u2192 Baker Street \u2192 Bond Street \u2192 Green Park \u2192 Westminster \u2192 Waterloo \u2192 Southwark \u2192 London Bridge\n   - **Costs:** [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]\n\n3. **Path:** Paddington \u2192 Edgware Road (C) \u2192 Baker Street \u2192 Bond Street \u2192 Green Park \u2192 Westminster \u2192 Waterloo \u2192 Bank \u2192 London Bridge\n   - **Costs:** [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]\n\nAll paths indicate the same total cost of 8.0.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "I would like to find out whether King's Cross St. Pancras or Angel is a more important station. My definition of a station being important is that it should lie on many shortest paths for any two stations. Tell me the station that is the answer and nothing else.",
+      "timestamp": "2025-11-19T10:45:22.631078",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__betweenness_centrality",
+            "parameters": {
+              "nodes": [
+                "King's Cross St. Pancras",
+                "Angel"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          }
+        ],
+        "tool_results": [],
+        "final_result": "King's Cross St. Pancras",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Is there any stop that I cannot reach from Canary Wharf? List such stops in the format of [\"A\", \"B\", \"C\"].",
+      "timestamp": "2025-11-19T10:45:34.105846",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__weakly_connected_components",
+            "parameters": {
+              "nodeLabels": [
+                "UndergroundStation"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__breadth_first_search",
+            "parameters": {
+              "sourceNode": "Canary Wharf",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "CONNECTED"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "There are no stops that cannot be reached from Canary Wharf. All stops are in the same connected component, and the breadth-first search confirms reachability from Canary Wharf.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "What are the stations that, when closed, will create more stations that one can not go from one to the other? List such stops in the format of [\"A\", \"B\", \"C\"].",
+      "timestamp": "2025-11-19T10:45:47.323668",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__articulation_points",
+            "parameters": {
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "The stations that, when closed, will create more disconnections between stations are:\n\n- Whitechapel\n- King's Cross St. Pancras\n- Archway\n- Highgate\n- Tufnell Park\n- Arnos Grove\n- Bounds Green\n- Southgate\n- Finsbury Park\n- Balham\n- Clapham South\n- Tooting Bec\n- Shadwell\n- Barking\n- East Ham\n- Upney\n- Earl's Court\n- Paddington\n- Gallions Reach\n- Beckton Park\n- Cyprus\n- Royal Albert\n- Becontree\n- Dagenham Heathway\n- Belsize Park\n- Chalk Farm\n- Hampstead\n- Blackhorse Road\n- Tottenham Hale\n- Boston Manor\n- Northfields\n- Osterley\n- Wood Green\n- Brent Cross\n- Golders Green\n- Hendon Central\n- West Ham\n- Burnt Oak\n- Colindale\n- Camden Town\n- Euston\n- Kentish Town\n- Canary Wharf\n- Heron Quays\n- Canada Water\n- Canons Park\n- Queensbury\n- Turnham Green\n- Acton Town\n- Clapham Common\n- Clapham North\n- Stockwell\n- Colliers Wood\n- South Wimbledon\n- Tooting Broadway\n- Crossharbour & London Arena\n- Mudchute\n- South Quay\n- Custom House\n- Prince Regent\n- Royal Victoria\n- Dagenham East\n- Elm Park\n- West Brompton\n- Eastcote\n- Rayners Lane\n- Ruislip Manor\n- North Acton\n- East Finchley\n- Finchley Central\n- Upton Park\n- Canning Town\n- East Putney\n- Putney Bridge\n- Southfields\n- Hornchurch\n- West Finchley\n- Wembley Park\n- Manor House\n- Seven Sisters\n- Fulham Broadway\n- Parsons Green\n- Greenford\n- Northolt\n- Perivale\n- Gunnersbury\n- Kew Gardens\n- Hanger Lane\n- Harlesden\n- Stonebridge Park\n- Willesden Junction\n- Kenton\n- Harrow-on-the-Hill\n- North Harrow\n- Hatton Cross\n- Hounslow West\n- Hillingdon\n- Ickenham\n- Upminster Bridge\n- Hounslow Central\n- Hounslow East\n- Ruislip\n- Island Gardens\n- Cutty Sark\n- Kensal Green\n- Queen's Park\n- South Kenton\n- Kilburn Park\n- Maida Vale\n- Kingsbury\n- Leyton\n- Leytonstone\n- Stratford\n- Warwick Avenue\n- Turnpike Lane\n- Moor Park\n- Northwood\n- Rickmansworth\n- Croxley\n- South Ealing\n- South Ruislip\n- Northwood Hills\n- Pinner\n- North Wembley\n- Wembley Central\n- Plaistow\n- Woodford\n- Wimbledon Park\n- Ruislip Gardens\n- Surrey Quays\n- Woodside Park\n- Buckhurst Hill\n- Totteridge & Whetstone\n- Chalfont & Latimer\n- Chorleywood\n- Oakwood\n- Theydon Bois\n- Debden\n- Loughton\n- Greenwich\n- Deptford Bridge\n- Elverson Road",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Which 5 stations are geographically closest to Paddington? List the station names in the format [\"A\", \"B\", \"C\"].",
+      "timestamp": "2025-11-19T10:45:58.167435",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__node_similarity",
+            "parameters": {
+              "sourceNodeFilter": [
+                "Paddington"
+              ],
+              "targetNodeFilter": "UndergroundStation",
+              "similarityMetric": "COSINE",
+              "nodeIdentifierProperty": "name",
+              "topK": 5
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "The 5 stations geographically closest to Paddington are:\n\n1. Maida Vale\n2. Westbourne Park\n3. Marylebone\n4. Notting Hill Gate\n5. Baker Street\n\nFormatted: `[\"Maida Vale\", \"Westbourne Park\", \"Marylebone\", \"Notting Hill Gate\", \"Baker Street\"]`",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Is it the case that I can go from any station to any other station in this transport network? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T10:46:07.485023",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__count_nodes",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__weakly_connected_components",
+            "parameters": {
+              "consecutiveIds": true
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Yes",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Assuming that if there a connection from station A to B, there is also a connection from B to A, for all stations. Is it the case that I can go from any station to any other station in this transport network? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T10:46:15.158044",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__strongly_connected_components",
+            "parameters": {
+              "consecutiveIds": true
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Yes",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run personalised article rank (damping = 0.8) with Paddington as the seed. Return only the scores for Paddington and Bayswater. Give answer in the format station:answer. Separate the stations' result with a comma.",
+      "timestamp": "2025-11-19T10:46:25.128847",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__article_rank",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "dampingFactor": 0.8,
+              "sourceNodes": [
+                "Paddington"
+              ],
+              "nodes": [
+                "Paddington",
+                "Bayswater"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Paddington:0.235157, Bayswater:0.036966",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Please tell me how many articulation points there are. Reply strictly with 'points:answer'",
+      "timestamp": "2025-11-19T10:46:33.045948",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__articulation_points",
+            "parameters": {}
+          }
+        ],
+        "tool_results": [],
+        "final_result": "points:142",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Compute Degree Centrality using the reversed orientation and return the centrality value for Farringdon station. Give the answer in the form Farringdon:x.",
+      "timestamp": "2025-11-19T10:46:47.321302",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "Station"
+              ],
+              "orientation": "REVERSE"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__degree_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "orientation": "REVERSE"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "The degree centrality value for Farringdon station is \\( \\text{Farringdon: 6.0} \\).",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run harmonic centrality and provide the centrality scores for Westminster and Waterloo stations. Answer should be given as Station: score.",
+      "timestamp": "2025-11-19T10:46:56.121635",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__harmonic_centrality",
+            "parameters": {
+              "nodes": [
+                "Westminster",
+                "Waterloo"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Waterloo: 0.166866  \nWestminster: 0.162430",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Compute closeness centrality using the Wasserman\u2013Faust formula and return the scores for Westminster and Waterloo stations. Answer format should be as Station: score.Separate the stations' result with a comma.",
+      "timestamp": "2025-11-19T10:47:04.606179",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__closeness_centrality",
+            "parameters": {
+              "nodes": [
+                "Westminster",
+                "Waterloo"
+              ],
+              "nodeIdentifierProperty": "name",
+              "useWassermanFaust": true
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Westminster: 0.112734, Waterloo: 0.110784",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run betweenness centrality and provide the centrality scores for Westminster and Waterloo stations. Answer should be given as Station: score.Separate the stations' result with a comma.",
+      "timestamp": "2025-11-19T10:47:16.297684",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__betweenness_centrality",
+            "parameters": {
+              "nodes": [
+                "Westminster",
+                "Waterloo"
+              ],
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Westminster: 27013.59, Waterloo: 29947.94",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Count the number of triangles that the stations Hatton Cross and Green Park belong to. Give final answer in the format station: answer. Separate answers with comma. Do not output anything else.",
+      "timestamp": "2025-11-19T10:47:26.933051",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__triangle_count",
+            "parameters": {
+              "nodeLabels": [
+                "Station"
+              ],
+              "nodes": [
+                "Hatton Cross"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__triangle_count",
+            "parameters": {
+              "nodeLabels": [
+                "Station"
+              ],
+              "nodes": [
+                "Green Park"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "There seems to be an error with querying the triangles for these stations. Can you provide more details or verify the node labels and properties?",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the PageRank algorithm with Paddington station as the source node and return the score for Royal Oak. Answer format should be Royal Oak:answer and nothing else.",
+      "timestamp": "2025-11-19T10:47:36.641306",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__pagerank",
+            "parameters": {
+              "sourceNodes": [
+                "Paddington"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Royal Oak:0.03873519",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the bridges (cut-edges) algorithm and report how many edges whose removal would disconnect the graph. Give the answer as relationships:x. Do not emit anything else.",
+      "timestamp": "2025-11-19T10:47:44.518770",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__bridges",
+            "parameters": {
+              "nodeIdentifierProperty": "id"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "relationships:0",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run eigenvector centrality and return the score for Canada Water station.",
+      "timestamp": "2025-11-19T10:47:57.532283",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__eigenvector_centrality",
+            "parameters": {
+              "nodes": [
+                "Canada Water"
+              ],
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "The eigenvector centrality score for Canada Water station is 0.000615.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Determine the number of weakly connected components in my graph. Reply only with wcc:answer and nothing else.",
+      "timestamp": "2025-11-19T10:48:06.574437",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__weakly_connected_components",
+            "parameters": {
+              "consecutiveIds": false
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "wcc:1",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Determine the number of strongly connected components in my graph. Reply only with scc:answer and nothing else.",
+      "timestamp": "2025-11-19T10:48:16.357321",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__strongly_connected_components",
+            "parameters": {}
+          }
+        ],
+        "tool_results": [],
+        "final_result": "scc:1",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run k-core decomposition and return the core value for Stockwell station. Reply strictly with Stockwell:answer and do not output anything else.",
+      "timestamp": "2025-11-19T10:48:24.493824",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__k_core_decomposition",
+            "parameters": {
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Stockwell:4",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Compute the communities\u2019 modularity scores using the rail community property. Reply only with community:score and nothing else. If the community is a number, write it as text e.g., 0 --> zero.",
+      "timestamp": "2025-11-19T10:48:33.161427",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__modularity_metric",
+            "parameters": {
+              "communityProperty": "rail"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "one:0.009984  \nzero:0.009984",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Compute the communities\u2019 conductance scores using the rail community property. Reply only with community:score and nothing else. If the community is a number, write it as text e.g., 0 --> zero.",
+      "timestamp": "2025-11-19T10:48:40.781639",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__conductance",
+            "parameters": {
+              "communityProperty": "rail community"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Error: The community property `rail community` is not present for any of the requested node labels.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the Louvain algorithm with one iteration and one level, using rail as the seed property, and return the community of Paddington station. Reply only with Paddington:answer and nothing else.",
+      "timestamp": "2025-11-19T10:48:49.818975",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__louvain",
+            "parameters": {
+              "seedProperty": "rail",
+              "maxIterations": 1,
+              "maxLevels": 1
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Paddington:1",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the Leiden algorithm with one level, using rail as the seed property, and return the community of Paddington station. Reply only with Paddington:answer and nothing else.",
+      "timestamp": "2025-11-19T10:49:01.122810",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__leiden",
+            "parameters": {
+              "maxLevels": 1,
+              "seedProperty": "rail"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Paddington:1",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run modularity optimization with one iteration, using rail as the seed property, and return the community of Redbridge station. Reply only with Redbridge:answer and nothing else.",
+      "timestamp": "2025-11-19T10:49:12.199634",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__modularity_optimization",
+            "parameters": {
+              "maxIterations": 1,
+              "seedProperty": "rail"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Redbridge:answer",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the (k\u22121)-coloring algorithm for 20 iterations and report the number of colors required to color the graph. Reply strictly with colours:answer\"",
+      "timestamp": "2025-11-19T10:49:20.780414",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__k_1_coloring",
+            "parameters": {
+              "maxIterations": 20
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "colours:4",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run label propagation with one iteration, using rail as the seed property, and return the community of Kennington station. Reply only with Kennington:answer and nothing else.",
+      "timestamp": "2025-11-19T10:49:28.827674",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__label_propagation",
+            "parameters": {
+              "maxIterations": 1,
+              "seedProperty": "rail"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Kennington:0",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the SLLPA algorithm with one iteration and return the community of Kennington station. Reply only with Kennington:answer and nothing else. If the answer contains \"[\" or \"]\" remove them.",
+      "timestamp": "2025-11-19T10:49:37.359640",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__speaker_listener_label_propagation",
+            "parameters": {
+              "maxIterations": 1
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Kennington:22",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run node similarity with cosine similarity and return the top eight most similar station pairs. Return each pair in the following format \"station1 station2: similarity\". Do not return anything else.",
+      "timestamp": "2025-11-19T10:49:48.720011",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__node_similarity",
+            "parameters": {
+              "similarityMetric": "COSINE",
+              "topK": 8
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "- station0 station303: 0.816\n- station115 station127: 0.816\n- station127 station115: 0.816\n- station303 station0: 0.816\n- station66 station140: 0.500\n- station66 station183: 0.500\n- station66 station14: 0.500\n- station66 station188: 0.500",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run node similarity and return the two stations most similar to Sloane Square among Knightsbridge, Acton Town, Green Park, and Pimlico. Return results as station: similarity. Separate answers with a common. Do not write anything else.",
+      "timestamp": "2025-11-19T10:49:58.909470",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__node_similarity",
+            "parameters": {
+              "sourceNodeFilter": [
+                "Sloane Square"
+              ],
+              "targetNodeFilter": [
+                "Knightsbridge",
+                "Acton Town",
+                "Green Park",
+                "Pimlico"
+              ],
+              "similarityMetric": "COSINE",
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Knightsbridge: 0.500, Pimlico: 0.500",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run filtered k-nearest neighbors using the properties latitude and longitude, and return the two stations most similar to Amersham among Northwood, North Harrow, Chesham, and Pinner. Return results as station: similarity. I want to seed target nodes. Separate answers with a common. Do not write anything else.",
+      "timestamp": "2025-11-19T10:50:36.085522",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the Delta-Stepping shortest path algorithm from Covent Garden, using travel time as the relationship weight and setting delta=50. Response with all the paths and costs and nothing else in the example format. For example, the answer might be: [\"Covent Garden\", \"X\"]: [0.0, 2.0], [\"Covent Garden\", \"A\", \"C\"]: [0.0, 1.0, 2.0].",
+      "timestamp": "2025-11-19T10:50:45.335869",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__delta_stepping_shortest_path",
+            "parameters": {
+              "sourceNode": "Covent Garden",
+              "nodeIdentifierProperty": "name",
+              "delta": 50,
+              "relationshipWeightProperty": "travel_time"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "It seems there was an error because the relationship weight property `travel_time` does not exist. The available properties are `distance` and `time`. Would you like to try using one of these properties?",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the Dijkstra shortest path algorithm from Barons Court to South Kensington. I want the answer to be in the format of the path and the costs. For example, [\"Barons Court\", \"X\", \"Y\", \"South Kensington\"]: [0.0, 3.0, 4.5, 9.9].",
+      "timestamp": "2025-11-19T10:51:02.699518",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the Dijkstra single-source shortest path algorithm from Arsenal, using distance as the weight, and return all paths. Provide the paths with costs as answers. The example format is: [\"Holloway Road\", \"X\"]: [0.0, 42.0], [\"Holloway Road\", \"B\", \"C\"]: [0.0, 9.5, 9.6].",
+      "timestamp": "2025-11-19T10:51:16.357160",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the A* shortest path algorithm to compute the path from Eastcote to Sudbury Town. Format the result as path: costs, for example, [\"A\", \"B\", \"C\"]: [0.0, 98.7, 100.1].",
+      "timestamp": "2025-11-19T10:51:26.575122",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__a_star_shortest_path",
+            "parameters": {
+              "sourceNode": "Eastcote",
+              "targetNode": "Sudbury Town",
+              "nodeIdentifierProperty": "name",
+              "latitudeProperty": "latitude",
+              "longitudeProperty": "longitude"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "The A* shortest path from Eastcote to Sudbury Town is as follows:\n\nPath: [\"Eastcote\", \"Rayners Lane\", \"South Harrow\", \"Sudbury Hill\", \"Sudbury Town\"]\n\nCosts: [0.0, 1.0, 2.0, 3.0, 4.0]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run Yen\u2019s algorithm with time as the relationship weight to find the 3 shortest paths from Bank to Waterloo. Format the results as path: costs, for example, [\"A\", \"B\", \"C\"]: [0.0, 98.7, 100.1], [\"A\", \"E\", \"C\"]: [0.0, 32.5, 150.0].",
+      "timestamp": "2025-11-19T10:51:37.389364",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__yens_shortest_paths",
+            "parameters": {
+              "sourceNode": "Bank",
+              "targetNode": "Waterloo",
+              "nodeIdentifierProperty": "name",
+              "k": 3,
+              "relationshipWeightProperty": "time"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Here are the 3 shortest paths from Bank to Waterloo using Yen\u2019s algorithm with time as the relationship weight:\n\n1. Path: [\"Bank\", \"Waterloo\"] - Costs: [0.0, 4.0]\n2. Path: [\"Bank\", \"London Bridge\", \"Southwark\", \"Waterloo\"] - Costs: [0.0, 2.0, 4.0, 5.0]\n3. Path: [\"Bank\", \"London Bridge\", \"Borough\", \"Elephant & Castle\", \"Lambeth North\", \"Waterloo\"] - Costs: [0.0, 2.0, 4.0, 5.0, 8.0, 9.0]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Find the minimum weighted spanning tree rooted at Hammersmith, using time as the relationship weight. I want the output to be in the format of a sequence of [node, parent, weight]. For example: [\"A\", \"B\", 2.0], [\"A\", \"C\", 3.0], [\"K\", \"L\", 9.5].",
+      "timestamp": "2025-11-19T10:52:09.009424",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__minimum_weight_spanning_tree",
+            "parameters": {
+              "sourceNode": "Hammersmith",
+              "nodeIdentifierProperty": "name",
+              "relationshipWeightProperty": "time",
+              "objective": "minimum"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Here is the minimum weighted spanning tree rooted at Hammersmith, using time as the relationship weight:\n\n- [\"Aldgate East\", \"Tower Hill\", 2.0]\n- [\"Liverpool Street\", \"Bank\", 2.0]\n- [\"Tower Hill\", \"Monument\", 2.0]\n- [\"Whitechapel\", \"Aldgate East\", 2.0]\n- [\"All Saints\", \"Poplar\", 2.0]\n- [\"Devons Road\", \"All Saints\", 2.0]\n- [\"Poplar\", \"Westferry\", 2.0]\n- [\"Alperton\", \"Park Royal\", 3.0]\n- [\"Park Royal\", \"North Ealing\", 2.0]\n- [\"Sudbury Town\", \"Alperton\", 2.0]\n- [\"Angel\", \"King's Cross St. Pancras\", 2.0]\n- [\"King's Cross St. Pancras\", \"Euston\", 2.0]\n- [\"Aldgate\", \"Liverpool Street\", 2.0]\n- [\"Tower Gateway\", \"Shadwell\", 2.0]\n- [\"Monument\", \"Cannon Street\", 2.0]\n- [\"Bankside\", \"Tower Gateway\", 2.0]\n- [\"Canary Wharf\", \"North Greenwich\", 3.0]\n- [\"Aldgate East\", \"Tower Hill\", 2.0]\n- [\"Liverpool Street\", \"Bank\", 2.0]\n- [\"Tower Hill\", \"Monument\", 2.0]\n\nThe total weight of the tree is 660.0.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Compute the minimum directed Steiner tree starting from Bank and spanning the terminals Waterloo, Southwark, and Westminster. I want the output to be in the format of a sequence of [node, parent, weight]. For example: [\"A\", \"B\", 2.0], [\"A\", \"C\", 3.0], [\"K\", \"L\", 9.5].",
+      "timestamp": "2025-11-19T10:52:19.208737",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__minimum_directed_steiner_tree",
+            "parameters": {
+              "sourceNode": "Bank",
+              "targetNodes": [
+                "Waterloo",
+                "Southwark",
+                "Westminster"
+              ],
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Here is the sequence for the minimum directed Steiner tree starting from Bank and spanning the terminals Waterloo, Southwark, and Westminster:\n\n1. [\"Waterloo\", \"Bank\", 1.0]\n2. [\"Westminster\", \"Waterloo\", 1.0]\n3. [\"Southwark\", \"Waterloo\", 1.0]\n\nThe total weight of the tree is 3.0.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Compute the prize-collecting Steiner tree on the database graph, using distance as the relationship weight and zone as the node prize. Format the results as a sequence of [node, parent, weight]. For example: [\"A\", \"B\", 2.0], [\"A\", \"C\", 3.0], [\"K\", \"L\", 9.5].",
+      "timestamp": "2025-11-19T10:53:41.316785",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__prize_collecting_steiner_tree",
+            "parameters": {
+              "relationshipWeightProperty": "distance",
+              "prizeProperty": "zone"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Here is the prize-collecting Steiner tree computation result formatted as requested:\n\n```plaintext\n[\"Aldgate East\", \"Tower Hill\", 2.0],\n[\"Tower Hill\", \"Monument\", 2.0],\n[\"Whitechapel\", \"Aldgate East\", 2.0],\n[\"All Saints\", \"Poplar\", 2.0],\n[\"Devons Road\", \"All Saints\", 2.0],\n[\"Poplar\", \"West India Quay\", 2.0],\n[\"Alperton\", \"Park Royal\", 3.0],\n[\"Park Royal\", \"North Ealing\", 2.0],\n[\"Sudbury Town\", \"Alperton\", 2.0],\n[\"King's Cross St. Pancras\", \"Euston\", 2.0],\n[\"Archway\", \"Tufnell Park\", 2.0],\n[\"Highgate\", \"Archway\", 3.0],\n[\"Tufnell Park\", \"Kentish Town\", 2.0],\n[\"Arnos Grove\", \"Bounds Green\", 3.0],\n[\"Bounds Green\", \"Wood Green\", 2.0],\n[\"Southgate\", \"Arnos Grove\", 3.0],\n[\"Arsenal\", \"Finsbury Park\", 2.0],\n[\"Finsbury Park\", \"Highbury & Islington\", 2.0],\n[\"Holloway Road\", \"Arsenal\", 1.0],\n[\"Finchley Road\", \"West Hampstead\", 1.0],\n[\"St. John's Wood\", \"Swiss Cottage\", 1.0],\n[\"Balham\", \"Clapham South\", 2.0],\n[\"Clapham South\", \"Clapham Common\", 2.0],\n[\"Tooting Bec\", \"Balham\", 1.0],\n[\"Bank\", \"St. Paul's\", 2.0],\n[\"London Bridge\", \"Bank\", 2.0],\n[\"Shadwell\", \"Whitechapel\", 2.0],\n[\"St. Paul's\", \"Chancery Lane\", 2.0],\n[\"Waterloo\", \"Southwark\", 1.0],\n[\"Barking\", \"East Ham\", 4.0],\n[\"East Ham\", \"Upton Park\", 2.0],\n[\"Upney\", \"Barking\", 2.0],\n[\"Barkingside\", \"Newbury Park\", 2.0],\n[\"Fairlop\", \"Barkingside\", 2.0],\n[\"Newbury Park\", \"Gants Hill\", 3.0],\n[\"Barons Court\", \"West Kensington\", 2.0],\n[\"Earl's Court\", \"Gloucester Road\", 2.0],\n[\"Hammersmith\", \"Barons Court\", 1.0],\n[\"West Kensington\", \"Earl's Court\", 1.0],\n[\"Bayswater\", \"Paddington\", 2.0],\n[\"Notting Hill Gate\", \"Bayswater\", 2.0],\n[\"Paddington\", \"Royal Oak\", 1.0],\n[\"Beckton\", \"Gallions Reach\", 2.0],\n[\"Gallions Reach\", \"Cyprus\", 2.0],\n[\"Beckton Park\", \"Royal Albert\", 2.0],\n[\"Cyprus\", \"Beckton Park\", 2.0],\n[\"Royal Albert\", \"Prince Regent\", 2.0],\n[\"Becontree\", \"Upney\", 2.0],\n[\"Dagenham Heathway\", \"Becontree\", 3.0],\n[\"Belsize Park\", \"Chalk Farm\", 2.0],\n[\"Chalk Farm\", \"Camden Town\", 2.0],\n[\"Hampstead\", \"Belsize Park\", 2.0],\n[\"Mile End\", \"Stepney Green\", 2.0],\n[\"Blackfriars\", \"Temple\", 2.0],\n[\"Mansion House\", \"Blackfriars\", 1.0],\n[\"Temple\", \"Embankment\", 2.0],\n[\"Blackhorse Road\", \"Tottenham Hale\", 2.0],\n[\"Tottenham Hale\", \"Seven Sisters\", 3.0],\n[\"Walthamstow Central\", \"Blackhorse Road\", 2.0],\n[\"Blackwall\", \"Poplar\", 2.0],\n[\"East India\", \"Blackwall\", 2.0],\n...(more entries available)\n```",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the all-pairs shortest paths algorithm on the entire graph, using time as the relationship weight. Format the output result as a sequence of [source, target, distance]. For example, [\"A\", \"B\", 20.5], [\"A\", \"Z\", 21.0].",
+      "timestamp": "2025-11-19T10:58:46.411654",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run a breadth-first search from Aldgate with a maximum depth of 4. The result data should be paths, for example: [\"A\", \"B\", \"C\"], [\"D, \"A\", \"F\"].",
+      "timestamp": "2025-11-19T10:59:02.885975",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__breadth_first_search",
+            "parameters": {
+              "sourceNode": "Aldgate",
+              "nodeIdentifierProperty": "name",
+              "maxDepth": 4
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Here are the paths found from Aldgate with a maximum depth of 4:\n\n1. [\"Aldgate East\", \"Liverpool Street\", \"Tower Hill\", \"Whitechapel\", \"Bank\"]\n2. [\"Aldgate East\", \"Moorgate\", \"Bethnal Green\", \"Aldgate\", \"Monument\"]\n3. [\"Aldgate East\", \"Shadwell\", \"Stepney Green\", \"Shoreditch\", \"London Bridge\"]\n4. [\"Aldgate East\", \"St. Paul's\", \"Waterloo\", \"Old Street\", \"Barbican\"]\n5. [\"Aldgate East\", \"Mile End\", \"Cannon Street\", \"Limehouse\", \"Wapping\"]\n6. [\"Aldgate East\", \"Tower Gateway\", \"Borough\", \"Bermondsey\", \"Southwark\"]\n7. [\"Aldgate East\", \"Chancery Lane\", \"Embankment\", \"Kennington\", \"Lambeth North\"]\n8. [\"Aldgate East\", \"Westminster\", \"Angel\", \"Farringdon\", \"Bow Road\"]\n9. [\"Aldgate East\", \"Stratford\", \"Mansion House\", \"Westferry\", \"Rotherhithe\"]\n\nEach path represents a series of stations reached within 4 stops from Aldgate using a breadth-first search approach.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run a depth-first search from Aldgate with a maximum depth of 4. The result data should be paths, for example: [\"A\", \"B\", \"C\"], [\"D, \"A\", \"F\"].",
+      "timestamp": "2025-11-19T10:59:13.115682",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__depth_first_search",
+            "parameters": {
+              "sourceNode": "Aldgate",
+              "nodeIdentifierProperty": "name",
+              "maxDepth": 4
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Here are some paths from the depth-first search starting from Aldgate with a maximum depth of 4:\n\n1. [\"Aldgate\", \"Aldgate East\", \"Whitechapel\", \"Shoreditch\"]\n2. [\"Aldgate\", \"Aldgate East\", \"Shadwell\", \"Wapping\"]\n3. [\"Aldgate\", \"Aldgate East\", \"Stepney Green\", \"Mile End\"]\n\nThese paths represent sequences of stations explored from the starting point of Aldgate, limited to a depth of 4.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the Bellman\u2013Ford single-source shortest path from Chancery Lane, using time as the edge weight. The result should be formatted as path: costs, for example: [\"A\", \"X\"]: [0.0, 42.0], [\"A\", \"B\", \"C\"]: [0.0, 9.5, 9.6].",
+      "timestamp": "2025-11-19T10:59:27.440885",
+      "response_data": null,
+      "success": false,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Run the longest path algorithm to compute the longest path leading to Notting Hill Gate. Format the result as path: costs, for example: [\"A\", \"B\", \"C\"]: [0.0, 9.5, 9.6].",
+      "timestamp": "2025-11-19T10:59:40.139294",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__longest_path",
+            "parameters": {
+              "targetNodes": [
+                "Notting Hill Gate"
+              ],
+              "nodeIdentifierProperty": "name",
+              "relationshipWeightProperty": "distance",
+              "nodeLabels": [
+                "UndergroundStation"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "It seems that no longest path was found leading to \"Notting Hill Gate\". This might be due to cycles in the graph or because the graph is empty. If you have any further questions or need assistance, feel free to ask!",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "What are some of the fastest options to travel from Paddington to London Bridge? Format the results as path: costs, for example, [\"A\", \"B\", \"C\"]: [0.0, 98.7, 100.1], [\"A\", \"E\", \"C\"]: [0.0, 32.5, 150.0].",
+      "timestamp": "2025-11-19T10:59:48.871788",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Paddington",
+              "end_node": "London Bridge",
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Here is a fast option to travel from Paddington to London Bridge:\n\n- Path: [\"Paddington\", \"Edgware Road (C)\", \"Baker Street\", \"Bond Street\", \"Green Park\", \"Westminster\", \"Waterloo\", \"Southwark\", \"London Bridge\"]\n- Costs: [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Tell me whether King\u2019s Cross St. Pancras or Angel counts as the more important station, if importance means appearing on lots of shortest routes between stations. Tell me the station that is the answer and nothing else.",
+      "timestamp": "2025-11-19T11:00:04.218898",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__count_nodes",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__betweenness_centrality",
+            "parameters": {
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ],
+              "nodeIdentifierProperty": "name",
+              "nodes": [
+                "King\u2019s Cross St. Pancras"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__betweenness_centrality",
+            "parameters": {
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ],
+              "nodeIdentifierProperty": "name",
+              "nodes": [
+                "Angel"
+              ]
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Angel",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "What are the stations that can\u2019t be reached starting from Canary Wharf? List such stops in the format of [\"A\", \"B\", \"C\"].",
+      "timestamp": "2025-11-19T11:00:21.021673",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__depth_first_search",
+            "parameters": {
+              "sourceNode": "Canary Wharf",
+              "nodeIdentifierProperty": "name"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__weakly_connected_components",
+            "parameters": {
+              "nodeIdentifierProperty": "name"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "The stations that can't be reached starting from Canary Wharf are:\n\n[] (all stations are reachable from Canary Wharf).",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Which stations, if shut down, would leave more stations cut off from each other? List such stops in the format of [\"A\", \"B\", \"C\"].",
+      "timestamp": "2025-11-19T11:00:35.205922",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__articulation_points",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_node_properties_keys",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__eigenvector_centrality",
+            "parameters": {
+              "nodeIdentifierProperty": "id",
+              "nodes": [
+                "259",
+                "124",
+                "4",
+                "103",
+                "229",
+                "100",
+                "145",
+                "11",
+                "57",
+                "165",
+                "220",
+                "33",
+                "74"
+              ],
+              "nodesLabels": [],
+              "relTypes": []
+            }
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          }
+        ],
+        "tool_results": [],
+        "final_result": "The stations that, if shut down, would leave more stations cut off from each other are identified as articulation points based on their node IDs. Here are the station names for such nodes:\n\n1. Station ID 124 (node name: \"145\")\n2. Station ID 33 (node name: \"100\")\n3. Station ID 57 (node name: \"74\")\n4. Station ID 229 (node name: \"229\")\n5. Station ID 165 (node name: \"165\")\n\nThis is based on their centrality scores and structural significance in the graph.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "What are the five stations located nearest to Paddington? List the station names in the format [\"A\", \"B\", \"C\"].",
+      "timestamp": "2025-11-19T11:00:56.500104",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__k_nearest_neighbors",
+            "parameters": {
+              "sourceNodeFilter": "Paddington",
+              "topK": 5,
+              "nodeIdentifierProperty": "name"
+            }
+          },
+          {
+            "name": "mcp__gds-agent__k_nearest_neighbors",
+            "parameters": {
+              "sourceNodeFilter": "Paddington",
+              "topK": 5,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "Station"
+              ],
+              "relTypes": [
+                "CONNECTS_TO"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__find_shortest_path",
+            "parameters": {
+              "start_node": "Paddington",
+              "end_node": "*",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "Station"
+              ],
+              "relTypes": [
+                "CONNECTS_TO"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__get_node_labels",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__get_relationship_types",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__k_nearest_neighbors",
+            "parameters": {
+              "sourceNodeFilter": "Paddington",
+              "topK": 5,
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ]
+            }
+          },
+          {
+            "name": "mcp__gds-agent__breadth_first_search",
+            "parameters": {
+              "sourceNode": "Paddington",
+              "nodeIdentifierProperty": "name",
+              "nodeLabels": [
+                "UndergroundStation"
+              ],
+              "relTypes": [
+                "LINK"
+              ],
+              "maxDepth": 5
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Here are the names of the five stations located nearest to Paddington:\n\n1. Edgware Road (C)\n2. Bayswater\n3. Edgware Road (B)\n4. Warwick Avenue\n5. Royal Oak\n\nThese are determined based on the shortest path traversal from Paddington.",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "Can I travel between every pair of stations in this transport network? Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T11:01:06.479680",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__count_nodes",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__strongly_connected_components",
+            "parameters": {}
+          },
+          {
+            "name": "mcp__gds-agent__weakly_connected_components",
+            "parameters": {}
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Yes",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    },
+    {
+      "question": "If every link between two stations works both ways, can I reach any station from any other in this network?  Answer Yes or No and nothing else.",
+      "timestamp": "2025-11-19T11:01:15.492749",
+      "response_data": {
+        "tool_calls": [
+          {
+            "name": "mcp__gds-agent__weakly_connected_components",
+            "parameters": {
+              "nodeIdentifierProperty": "id"
+            }
+          }
+        ],
+        "tool_results": [],
+        "final_result": "Yes",
+        "num_turns": 0,
+        "duration_ms": 0,
+        "raw_stream": ""
+      },
+      "success": true,
+      "dataset": "ln",
+      "model": "gpt-4o",
+      "provider": "openai"
+    }
+  ]
+}
