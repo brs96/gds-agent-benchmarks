@@ -5,11 +5,11 @@
 The MCP server of GDS agent is at: https://github.com/neo4j-contrib/gds-agent
 
 Preparations:
-1. Download a `gds_agent-0.3.0-py3-none-any.whl` wheel file which contains implementation of the MCP server.
-2. Start a Neo4j database with the London underground map loaded.
-3. Set your NEO4J configuration in `benchmark_gds_agent.py`
+1. Download a `gds_agent-0.5.1-py3-none-any.whl` wheel file which contains implementation of the MCP server.
+2. Start a Neo4j database with the either LN or GoT dataset loaded.
+3. Set your NEO4J configuration, e.g `NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD` in `benchmark_gds_agent.py`
 
 Running benchamrks:
-1. Run `python benchmark_gds_agent.py` to produce answers for the set of questions.
-2. Run `python evaluate_benchmark.py` to use the produced answers and evaluate them.
-3. Run `python analyze_benchmark_stats.py` to calculate any further summary statistics and plots.
+1. Run `python benchmark_gds_agent.py $dataset --model $model` to produce answers for the set of questions.
+2. Run `python evaluate_benchmark.py $dataset --model $model` to use the produced answers and evaluate them.
+3. Run `python analyze_benchmark_stats.py $dataset --model $model` to calculate any further summary statistics and plots.
