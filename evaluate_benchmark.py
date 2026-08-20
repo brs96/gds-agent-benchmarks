@@ -13,6 +13,22 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+WORKFLOW_TOOLS = {
+    "mcp__gds-agent__project_graph_cypher",
+    "mcp__gds-agent__list_graphs",
+    "mcp__gds-agent__drop_graph",
+    "mcp__gds-agent__list_sessions",
+    "mcp__gds-agent__create_session",
+    "mcp__gds-agent__delete_session",
+}
+
+TOOL_EQUIVALENTS = {
+    "mcp__gds-agent__count_nodes": {
+        "mcp__gds-agent__count_nodes",
+        "mcp__gds-agent__get_graph_info",
+    },
+}
+
 
 class BenchmarkEvaluator:
     def __init__(self, dataset: str = "ln", model: str = "sonnet-4-20250514"):
@@ -189,20 +205,44 @@ class BenchmarkEvaluator:
         
     def evaluate_tool_calls(self, expected_tools: List[str], actual_tools: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Evaluate if the correct tools were called."""
+        def matches(expected_name: str, actual_name: str) -> bool:
+            return actual_name in TOOL_EQUIVALENTS.get(
+                expected_name, {expected_name}
+            )
+
         actual_tool_names = [tool['name'] for tool in actual_tools]
-        
-        missing_tools = [tool for tool in expected_tools if tool not in actual_tool_names]
-        unexpected_tools = [tool for tool in actual_tool_names if tool not in expected_tools]
+        scored_actual_tool_names = [
+            name
+            for name in actual_tool_names
+            if name not in WORKFLOW_TOOLS
+            or any(matches(expected, name) for expected in expected_tools)
+        ]
+
+        missing_tools = [
+            expected
+            for expected in expected_tools
+            if not any(
+                matches(expected, actual) for actual in scored_actual_tool_names
+            )
+        ]
+        unexpected_tools = [
+            actual
+            for actual in scored_actual_tool_names
+            if not any(matches(expected, actual) for expected in expected_tools)
+        ]
         
         if len(expected_tools) == 0:
-            precision = 1.0 if len(actual_tool_names) == 0 else 0.0
+            precision = 1.0 if len(scored_actual_tool_names) == 0 else 0.0
             recall = 1.0
         else:
-            unique_correct_tools = len(set(expected_tools).intersection(set(actual_tool_names)))
+            unique_correct_tools = sum(
+                any(matches(expected, actual) for actual in scored_actual_tool_names)
+                for expected in set(expected_tools)
+            )
             
             recall = unique_correct_tools / len(set(expected_tools))
             
-            total_actual_calls = len(actual_tool_names)
+            total_actual_calls = len(scored_actual_tool_names)
             precision = unique_correct_tools / total_actual_calls if total_actual_calls > 0 else 1.0
         
         f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
@@ -213,6 +253,9 @@ class BenchmarkEvaluator:
             'f1_score': f1_score,
             'missing_tools': missing_tools,
             'unexpected_tools': unexpected_tools,
+            'workflow_tools': [
+                name for name in actual_tool_names if name in WORKFLOW_TOOLS
+            ],
             'exact_match': len(missing_tools) == 0 and len(unexpected_tools) == 0
         }
     
@@ -243,11 +286,24 @@ class BenchmarkEvaluator:
                 continue
                 
             actual_params = matching_tools[0].get('parameters', {})
+            ignored_parameters = []
+            parameters_to_score = expected_tool_params
+            if "graphName" in actual_params:
+                ignored_parameters = [
+                    key
+                    for key in ("nodeLabels", "relTypes")
+                    if key in expected_tool_params
+                ]
+                parameters_to_score = {
+                    key: value
+                    for key, value in expected_tool_params.items()
+                    if key not in ignored_parameters
+                }
             
             matches = []
             mismatches = []
             
-            for param_key, expected_value in expected_tool_params.items():
+            for param_key, expected_value in parameters_to_score.items():
                 actual_value = actual_params.get(param_key)
 
                 # Handle range constraints like "<=5"
@@ -281,7 +337,8 @@ class BenchmarkEvaluator:
                 'match': len(mismatches) == 0,
                 'matches': matches,
                 'mismatches': mismatches,
-                'score': len(matches) / len(expected_tool_params) if expected_tool_params else 1.0
+                'ignored_parameters': ignored_parameters,
+                'score': len(matches) / len(parameters_to_score) if parameters_to_score else 1.0
             }
             
         return parameter_scores

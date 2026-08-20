@@ -12,6 +12,7 @@ import csv
 import asyncio
 from agents import Agent, Runner
 from agents.mcp import MCPServerStdio
+from dotenv import load_dotenv
 import time
 
 
@@ -25,12 +26,22 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+DEFAULT_GDS_AGENT_PACKAGE = "gds-agent==1.0.1"
+DEFAULT_SKILL_FILE = (
+    Path(__file__).parent
+    / "skills"
+    / "neo4j-graph-data-scientist"
+    / "SKILL.md"
+)
+
 
 class GDSBenchmark:
     def __init__(self, 
                  dataset: str = "ln",
                  model: str = "sonnet-4-20250514",
-                 results_file: str = None):
+                 results_file: str = None,
+                 gds_agent_package: str = DEFAULT_GDS_AGENT_PACKAGE,
+                 skill_file: Path = DEFAULT_SKILL_FILE):
         # Map dataset names to question files
         dataset_files = {
             "ln": "gds-algo-questions-ln.csv",
@@ -44,6 +55,9 @@ class GDSBenchmark:
         self.model = model
         self.provider = self._detect_provider(model)
         self.questions_file = Path(dataset_files[dataset])
+        self.gds_agent_package = gds_agent_package
+        self.skill_file = Path(skill_file)
+        self.skill_instructions = self._load_skill()
         
         if results_file is None:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -53,6 +67,47 @@ class GDSBenchmark:
             
         self.results = []
         self.mcp_server = None  # For reusable MCP server
+
+    def _load_skill(self) -> str:
+        """Load the GDS agent skill used as instructions by every model."""
+        if not self.skill_file.exists():
+            raise ValueError(f"GDS skill file not found: {self.skill_file}")
+        return self.skill_file.read_text(encoding="utf-8")
+
+    def _mcp_environment(self) -> Dict[str, str]:
+        """Build the MCP environment for plugin or Aura session mode."""
+        required = ["NEO4J_URI", "NEO4J_USERNAME", "NEO4J_PASSWORD"]
+        missing = [name for name in required if not os.environ.get(name)]
+        if missing:
+            raise ValueError(
+                f"Missing required environment variables: {', '.join(missing)}"
+            )
+
+        aura_credentials = ["AURA_API_CLIENT_ID", "AURA_API_CLIENT_SECRET"]
+        configured_aura_credentials = [
+            name for name in aura_credentials if os.environ.get(name)
+        ]
+        if configured_aura_credentials and len(configured_aura_credentials) != 2:
+            raise ValueError(
+                "AURA_API_CLIENT_ID and AURA_API_CLIENT_SECRET must be set together"
+            )
+
+        optional = [
+            "NEO4J_DATABASE",
+            *aura_credentials,
+            "AURA_API_PROJECT_ID",
+            "SESSION_MEMORY_GB",
+            "SESSION_TTL_HOURS",
+        ]
+        names = required + optional
+        return {name: os.environ[name] for name in names if os.environ.get(name)}
+
+    def _mcp_params(self) -> Dict[str, Any]:
+        return {
+            "command": "uvx",
+            "args": ["--from", self.gds_agent_package, "gds-agent"],
+            "env": self._mcp_environment(),
+        }
 
     def _detect_provider(self, model: str) -> str:
         """Detect the provider based on model name."""
@@ -75,23 +130,10 @@ class GDSBenchmark:
                 
             logger.debug("Starting fresh MCP server for GPT models...")
             try:
-                # Check if wheel file exists
-                wheel_path = "./gds_agent-0.5.1-py3-none-any.whl"
-                if not Path(wheel_path).exists():
-                    raise Exception(f"Wheel file not found: {wheel_path}")
-                
                 logger.debug("Creating MCP server instance...")
                 self.mcp_server = MCPServerStdio(
                     name="gds",
-                    params={
-                        "command": "uvx",
-                        "args": ["--isolated", wheel_path],
-                        "env": {
-                            "NEO4J_URI": "bolt://localhost:7687",
-                            "NEO4J_USERNAME": "neo4j",
-                            "NEO4J_PASSWORD": "12345678",
-                        }
-                    },
+                    params=self._mcp_params(),
                     client_session_timeout_seconds=600
                 )
                 logger.debug("Starting MCP server connection...")
@@ -198,21 +240,13 @@ class GDSBenchmark:
     def create_mcp_config(self) -> Path:
         config = {
             "mcpServers": {
-                "gds-agent": {
-                    "command": "uvx",
-                    "args": ["--from", "./gds_agent-0.5.1-py3-none-any.whl", "gds-agent"],
-                    "env": {
-                        "NEO4J_URI": "bolt://localhost:7687",
-                        "NEO4J_USERNAME": "neo4j", 
-                        "NEO4J_PASSWORD": "",
-                    }
-                }
+                "gds-agent": self._mcp_params()
             }
         }
         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
             json.dump(config, f, indent=2)
-            logger.debug(f"Created MCP config: {config}")
-            return Path(f.name)
+        logger.debug(f"Created MCP config at {f.name}")
+        return Path(f.name)
 
 
     def send_question_to_claude_subprocess(self, config_file: Path, question: str) -> Optional[dict]:
@@ -224,21 +258,16 @@ class GDSBenchmark:
             cmd = [
                 "claude", f"--model", f"claude-{self.model}", "-p", "--verbose", "--output-format", "stream-json",
                 "--mcp-config", str(config_file), 
+                "--strict-mcp-config",
+                "--append-system-prompt", self.skill_instructions,
                 "--dangerously-skip-permissions",
                 "--allowedTools", "mcp__*"  # Allow all MCP tools
             ]
             
-            logger.debug(f"Running command: {' '.join(cmd)}")
+            logger.debug(f"Running Claude model: claude-{self.model}")
             logger.debug(f"Input: {formatted_prompt}")
             logger.debug(f"Config file exists: {config_file.exists()}")
             logger.debug(f"Config file path: {config_file}")
-            
-            try:
-                with open(config_file, 'r') as f:
-                    config_contents = f.read()
-                    logger.debug(f"Config file contents: {config_contents}")
-            except Exception as e:
-                logger.error(f"Could not read config file: {e}")
             
             logger.info("Starting subprocess call...")
             result = subprocess.run(cmd, input=f"{formatted_prompt}\n", 
@@ -344,7 +373,11 @@ class GDSBenchmark:
             
             agent = Agent(
                 name="GPT-NEO4J-GDS",
-                instructions="You are a helpful assistant that uses the GDS (Graph Data Science) MCP tools to answer questions about Neo4j graph databases.",
+                instructions=(
+                    "You are a helpful assistant that uses the GDS (Graph Data Science) "
+                    "MCP tools to answer questions about Neo4j graph databases.\n\n"
+                    f"{self.skill_instructions}"
+                ),
                 mcp_servers=[self.mcp_server],
                 model=self.model,
             )
@@ -527,6 +560,8 @@ class GDSBenchmark:
                 "dataset": self.dataset,
                 "model": self.model,
                 "provider": self.provider,
+                "gds_agent_package": self.gds_agent_package,
+                "skill_file": str(self.skill_file),
                 "questions_file": str(self.questions_file),
                 "total_questions": total_questions,
                 "successful_responses": successful_responses,
@@ -596,8 +631,25 @@ def main():
         default="sonnet-4-20250514",
         help="Model to use (default: sonnet-4-20250514). Examples: sonnet-4-20250514, gpt-4o"
     )
+
+    parser.add_argument(
+        "--gds-agent-package",
+        default=DEFAULT_GDS_AGENT_PACKAGE,
+        help=(
+            "Package passed to uvx (default: gds-agent==1.0.1). "
+            "May also be a path to a wheel."
+        )
+    )
+
+    parser.add_argument(
+        "--skill-file",
+        type=Path,
+        default=DEFAULT_SKILL_FILE,
+        help="Path to the neo4j-graph-data-scientist SKILL.md file"
+    )
     
     args = parser.parse_args()
+    load_dotenv()
     
     print("GDS Agent Benchmarking Tool")
     print("="*40)
@@ -605,16 +657,15 @@ def main():
     print(f"Model: {args.model}")
     
     try:
-        benchmark = GDSBenchmark(dataset=args.dataset, model=args.model)
+        benchmark = GDSBenchmark(
+            dataset=args.dataset,
+            model=args.model,
+            gds_agent_package=args.gds_agent_package,
+            skill_file=args.skill_file,
+        )
         print(f"Provider: {benchmark.provider.upper()}")
     except ValueError as e:
         print(f"❌ {e}")
-        sys.exit(1)
-    
-    # Check if wheel file exists
-    if not Path("gds_agent-0.5.1-py3-none-any.whl").exists():
-        print("❌ GDS agent wheel file not found")
-        print("Please ensure 'gds_agent-0.5.1-py3-none-any.whl' is in the current directory")
         sys.exit(1)
     
     # Check if questions file exists
@@ -623,6 +674,8 @@ def main():
         sys.exit(1)
     
     print(f"Questions file: {benchmark.questions_file}")
+    print(f"GDS agent package: {benchmark.gds_agent_package}")
+    print(f"Skill file: {benchmark.skill_file}")
     print(f"Results file: {benchmark.results_file}")
     print("\nStarting benchmark...")
     
