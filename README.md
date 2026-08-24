@@ -11,5 +11,6 @@ Preparations:
 
 Running benchamrks:
 1. Run `python benchmark_gds_agent.py $dataset --model $model` to produce answers for the set of questions.
+   Add `--with-cypher-mcp` to also start the read-only [`mcp-neo4j-cypher`](https://github.com/neo4j-contrib/mcp-neo4j) server next to gds-agent (same pairing as the gds-agent MCP config). Default is gds-agent only.
 2. Run `python evaluate_benchmark.py $dataset --model $model` to use the produced answers and evaluate them.
 3. Run `python analyze_benchmark_stats.py $dataset --model $model` to calculate any further summary statistics and plots.

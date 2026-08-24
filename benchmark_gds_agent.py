@@ -10,6 +10,8 @@ import tempfile
 import os
 import csv
 import asyncio
+from contextlib import AsyncExitStack
+from dotenv import load_dotenv
 from agents import Agent, Runner
 from agents.mcp import MCPServerStdio
 import time
@@ -25,12 +27,30 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Same package/version as gds-agent's recommended pairing (mcp.json / README).
+DEFAULT_GDS_AGENT_PACKAGE = "gds-agent"
+DEFAULT_SKILL_FILE = (
+    Path(__file__).parent
+    / "skills"
+    / "neo4j-graph-data-scientist"
+    / "SKILL.md"
+)
+CYPHER_MCP_PACKAGE = "mcp-neo4j-cypher@0.6.0"
+CYPHER_TOOL_NAMES = {
+    "read_neo4j_cypher",
+    "write_neo4j_cypher",
+    "get_neo4j_schema",
+}
+
 
 class GDSBenchmark:
     def __init__(self, 
                  dataset: str = "ln",
                  model: str = "sonnet-4-20250514",
-                 results_file: str = None):
+                 results_file: str = None,
+                 with_cypher_mcp: bool = False,
+                 gds_agent_package: str = DEFAULT_GDS_AGENT_PACKAGE,
+                 skill_file: Path = DEFAULT_SKILL_FILE):
         # Map dataset names to question files
         dataset_files = {
             "ln": "gds-algo-questions-ln.csv",
@@ -51,8 +71,11 @@ class GDSBenchmark:
         else:
             self.results_file = Path(results_file)
             
+        self.with_cypher_mcp = with_cypher_mcp
+        self.gds_agent_package = gds_agent_package
+        self.skill_file = Path(skill_file)
+        self.skill_instructions = self._load_skill()
         self.results = []
-        self.mcp_server = None  # For reusable MCP server
 
     def _detect_provider(self, model: str) -> str:
         """Detect the provider based on model name."""
@@ -65,66 +88,45 @@ class GDSBenchmark:
         
         raise ValueError(f"Unknown model: {model}")
 
-    async def start_mcp_server(self):
-        """Start fresh MCP server for GPT models."""
-        if self.provider == 'openai':
-            # Ensure any existing server is stopped first
-            if self.mcp_server is not None:
-                logger.debug("Stopping existing MCP server before starting new one")
-                await self.stop_mcp_server()
-                
-            logger.debug("Starting fresh MCP server for GPT models...")
-            try:
-                # Check if wheel file exists
-                wheel_path = "./gds_agent-0.5.1-py3-none-any.whl"
-                if not Path(wheel_path).exists():
-                    raise Exception(f"Wheel file not found: {wheel_path}")
-                
-                logger.debug("Creating MCP server instance...")
-                self.mcp_server = MCPServerStdio(
-                    name="gds",
-                    params={
-                        "command": "uvx",
-                        "args": ["--isolated", wheel_path],
-                        "env": {
-                            "NEO4J_URI": "bolt://localhost:7687",
-                            "NEO4J_USERNAME": "neo4j",
-                            "NEO4J_PASSWORD": "12345678",
-                        }
-                    },
-                    client_session_timeout_seconds=600
-                )
-                logger.debug("Starting MCP server connection...")
-                # Start the server process
-                await self.mcp_server.__aenter__()
-                
-                # Wait for server to be ready with proper polling
-                logger.debug("Waiting for MCP server to be ready...")
-                await self._wait_for_server_ready(timeout=60.0)
-                logger.info("MCP server started and ready")
-            except asyncio.TimeoutError:
-                logger.error("MCP server initialization timed out after 60 seconds")
-                self.mcp_server = None
-                raise Exception("Failed to initialize MCP server: timeout")
-            except Exception as e:
-                logger.error(f"Error initializing MCP server: {e}")
-                self.mcp_server = None
-                raise
+    def _load_skill(self) -> str:
+        """Load the GDS agent skill used as instructions by every model."""
+        if not self.skill_file.exists():
+            raise ValueError(f"GDS skill file not found: {self.skill_file}")
+        return self.skill_file.read_text(encoding="utf-8")
 
-    async def stop_mcp_server(self):
-        """Stop MCP server for GPT models."""
-        if self.mcp_server is not None:
-            logger.debug("Stopping MCP server...")
-            try:
-                await self.mcp_server.__aexit__(None, None, None)
-                logger.debug("MCP server stopped successfully")
-            except Exception as e:
-                logger.warning(f"Error stopping MCP server: {e}")
-            finally:
-                # Always clear the reference
-                self.mcp_server = None
+    def _mcp_environment(self) -> Dict[str, str]:
+        """Build the MCP environment from environment variables."""
+        required = ["NEO4J_URI", "NEO4J_USERNAME", "NEO4J_PASSWORD"]
+        missing = [name for name in required if not os.environ.get(name)]
+        if missing:
+            raise ValueError(
+                f"Missing required environment variables: {', '.join(missing)}"
+            )
+        optional = ["NEO4J_DATABASE"]
+        names = required + optional
+        return {name: os.environ[name] for name in names if os.environ.get(name)}
 
-    async def _wait_for_server_ready(self, timeout: float = 60.0):
+    def _gds_mcp_params(self) -> dict:
+        return {
+            "command": "uvx",
+            "args": ["--from", self.gds_agent_package, "gds-agent"],
+            "env": self._mcp_environment(),
+        }
+
+    def _cypher_mcp_params(self) -> dict:
+        """Stdio params for the read-only neo4j-cypher MCP server."""
+        return {
+            "command": "uvx",
+            "args": [CYPHER_MCP_PACKAGE, "--transport", "stdio"],
+            "env": {
+                **self._mcp_environment(),
+                "NEO4J_READ_ONLY": "true",
+                "NEO4J_RESPONSE_TOKEN_LIMIT": "20000",
+            },
+        }
+
+
+    async def _wait_for_server_ready(self, server, timeout: float = 60.0):
         """Wait for MCP server to be ready by testing actual functionality."""
         start_time = asyncio.get_event_loop().time()
         retry_delay = 2.0
@@ -135,7 +137,7 @@ class GDSBenchmark:
             try:
                 # Test if we can list tools from the server
                 logger.debug("Attempting to list tools...")
-                tools = await asyncio.wait_for(self.mcp_server.list_tools(), timeout=10.0)
+                tools = await asyncio.wait_for(server.list_tools(), timeout=10.0)
                 if tools and len(tools) > 0:
                     logger.info(f"MCP server ready! Found {len(tools)} tools: {[t.name if hasattr(t, 'name') else str(t) for t in tools[:3]]}")
                     return
@@ -198,17 +200,11 @@ class GDSBenchmark:
     def create_mcp_config(self) -> Path:
         config = {
             "mcpServers": {
-                "gds-agent": {
-                    "command": "uvx",
-                    "args": ["--from", "./gds_agent-0.5.1-py3-none-any.whl", "gds-agent"],
-                    "env": {
-                        "NEO4J_URI": "bolt://localhost:7687",
-                        "NEO4J_USERNAME": "neo4j", 
-                        "NEO4J_PASSWORD": "",
-                    }
-                }
+                "gds-agent": self._gds_mcp_params(),
             }
         }
+        if self.with_cypher_mcp:
+            config["mcpServers"]["neo4j-cypher"] = self._cypher_mcp_params()
         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
             json.dump(config, f, indent=2)
             logger.debug(f"Created MCP config: {config}")
@@ -224,6 +220,7 @@ class GDSBenchmark:
             cmd = [
                 "claude", f"--model", f"claude-{self.model}", "-p", "--verbose", "--output-format", "stream-json",
                 "--mcp-config", str(config_file), 
+                "--append-system-prompt", self.skill_instructions,
                 "--dangerously-skip-permissions",
                 "--allowedTools", "mcp__*"  # Allow all MCP tools
             ]
@@ -332,20 +329,24 @@ class GDSBenchmark:
             
         return parsed_data
 
-    async def _send_question_to_openai_async(self, config_file: Path, question: str) -> Optional[dict]:
+    async def _send_question_to_openai_async(self, config_file: Path, question: str, gds_server: MCPServerStdio, cypher_server: Optional[MCPServerStdio] = None) -> Optional[dict]:
         try:
             logger.debug(f"Starting OpenAI async request for: {question[:50]}")
-            
-            # Ensure we have a running MCP server
-            if self.mcp_server is None:
-                raise Exception("MCP server not initialized. Call start_mcp_server() first.")
-            
+
             formatted_prompt = f"You MUST use the available MCP tools to query the actual Neo4j database to answer this question. Do not rely on output from previous questions. Do not provide a hypothetical answer. Question: {question}"
+
+            mcp_servers = [gds_server]
+            if cypher_server is not None:
+                mcp_servers.append(cypher_server)
             
             agent = Agent(
                 name="GPT-NEO4J-GDS",
-                instructions="You are a helpful assistant that uses the GDS (Graph Data Science) MCP tools to answer questions about Neo4j graph databases.",
-                mcp_servers=[self.mcp_server],
+                instructions=(
+                    "You are a helpful assistant that uses the GDS (Graph Data Science) "
+                    "MCP tools to answer questions about Neo4j graph databases.\n\n"
+                    f"{self.skill_instructions}"
+                ),
+                mcp_servers=mcp_servers,
                 model=self.model,
             )
             
@@ -373,8 +374,9 @@ class GDSBenchmark:
                         except (json.JSONDecodeError, TypeError):
                             parsed_args = output.arguments
                         
+                        prefix = "mcp__neo4j-cypher__" if output.name in CYPHER_TOOL_NAMES else "mcp__gds-agent__"
                         response_data["tool_calls"].append({
-                            "name": "mcp__gds-agent__" + output.name,
+                            "name": prefix + output.name,
                             "parameters": parsed_args,
                         })
                     elif output.type == "message":
@@ -417,51 +419,54 @@ class GDSBenchmark:
     async def _run_benchmark_openai(self, questions: List[str]) -> List[Dict[str, Any]]:
         """Run benchmark for OpenAI models with fresh MCP server for each question."""
         results = []
-        
+
         for i, question in enumerate(questions, 1):
             time.sleep(2)
             logger.info(f"Processing question {i}/{len(questions)}: {question[:50]}...")
-            
+            logger.debug(f"Starting fresh MCP server for question {i}")
+
             try:
-                # Start fresh MCP server for this question
-                logger.debug(f"Starting fresh MCP server for question {i}")
-                await self.start_mcp_server()
-                
-                response = await self._send_question_to_openai_async(None, question)
+                async with AsyncExitStack() as stack:
+                    gds_server = await stack.enter_async_context(
+                        MCPServerStdio(name="gds", params=self._gds_mcp_params(), client_session_timeout_seconds=600)
+                    )
+                    await self._wait_for_server_ready(gds_server, timeout=60.0)
+                    logger.info("GDS MCP server started and ready")
+
+                    cypher_server = None
+                    if self.with_cypher_mcp:
+                        cypher_server = await stack.enter_async_context(
+                            MCPServerStdio(name="neo4j-cypher", params=self._cypher_mcp_params(), client_session_timeout_seconds=600)
+                        )
+                        await self._wait_for_server_ready(cypher_server, timeout=60.0)
+                        logger.info("Cypher MCP server started and ready")
+
+                    response = await self._send_question_to_openai_async(None, question, gds_server, cypher_server)
+
                 result = self.create_result_record(question, response)
                 result["dataset"] = self.dataset
                 result["model"] = self.model
                 result["provider"] = self.provider
+                result["with_cypher_mcp"] = self.with_cypher_mcp
                 results.append(result)
-                
+
                 if response:
                     num_tools = len(response.get('tool_calls', []))
                     num_turns = response.get('num_turns', 0)
                     logger.info(f"Question {i}: ✓ ({num_tools} tools, {num_turns} turns)")
                 else:
                     logger.info(f"Question {i}: ✗ (no response)")
-                    
+
             except Exception as e:
                 logger.error(f"Question {i} failed: {e}")
-                # Create failed result record
                 result = self.create_result_record(question, None)
                 result["dataset"] = self.dataset
                 result["model"] = self.model
                 result["provider"] = self.provider
+                result["with_cypher_mcp"] = self.with_cypher_mcp
                 results.append(result)
                 logger.info(f"Question {i}: ✗ (exception: {str(e)[:50]})")
-                
-            finally:
-                # Always clean up MCP server after each question
-                try:
-                    await self.stop_mcp_server()
-                    logger.debug(f"Cleaned up MCP server for question {i}")
-                except Exception as cleanup_error:
-                    logger.warning(f"Error cleaning up MCP server for question {i}: {cleanup_error}")
-                
-                # Small delay between questions
-                await asyncio.sleep(2)
-        
+
         self.results = results
         return results
 
@@ -482,6 +487,7 @@ class GDSBenchmark:
                 result["dataset"] = self.dataset
                 result["model"] = self.model
                 result["provider"] = self.provider
+                result["with_cypher_mcp"] = self.with_cypher_mcp
                 results.append(result)
                 
                 if response:
@@ -528,6 +534,8 @@ class GDSBenchmark:
                 "model": self.model,
                 "provider": self.provider,
                 "questions_file": str(self.questions_file),
+                "with_cypher_mcp": self.with_cypher_mcp,
+                "skill_file": str(self.skill_file),
                 "total_questions": total_questions,
                 "successful_responses": successful_responses,
                 "response_rate": successful_responses / total_questions if total_questions > 0 else 0,
@@ -552,6 +560,9 @@ class GDSBenchmark:
         print("\n" + "="*60)
         print("GDS AGENT BENCHMARK SUMMARY")
         print("="*60)
+        print(f"Dataset: {self.dataset}")
+        print(f"Model: {self.model}")
+        print(f"Cypher MCP: {'on' if self.with_cypher_mcp else 'off'}")
         print(f"Total Questions: {total}")
         print("\nDetailed Results:")
         
@@ -582,7 +593,8 @@ def main():
         description="GDS Agent Benchmarking Tool",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""Examples: 
-        python benchmark_gds_agent.py ln --model gpt-4o             # Run LN questions with OpenAI GPT-4o"""
+        python benchmark_gds_agent.py ln --model gpt-4o                  # Run LN questions with OpenAI GPT-4o
+        python benchmark_gds_agent.py ln --model gpt-4o --with-cypher-mcp  # Also enable read-only Cypher MCP"""
     )
     
     parser.add_argument(
@@ -596,25 +608,46 @@ def main():
         default="sonnet-4-20250514",
         help="Model to use (default: sonnet-4-20250514). Examples: sonnet-4-20250514, gpt-4o"
     )
+
+    parser.add_argument(
+        "--with-cypher-mcp",
+        action="store_true",
+        help="Also start the read-only neo4j-cypher MCP server alongside gds-agent"
+    )
+
+    parser.add_argument(
+        "--gds-agent-package",
+        default=DEFAULT_GDS_AGENT_PACKAGE,
+        help="Package passed to uvx --from (default: gds-agent). May also be a path to a local checkout or wheel."
+    )
+
+    parser.add_argument(
+        "--skill-file",
+        type=Path,
+        default=DEFAULT_SKILL_FILE,
+        help="Path to the neo4j-graph-data-scientist SKILL.md file"
+    )
     
     args = parser.parse_args()
-    
+    load_dotenv()
+
     print("GDS Agent Benchmarking Tool")
     print("="*40)
     print(f"Dataset: {args.dataset}")
     print(f"Model: {args.model}")
+    print(f"Cypher MCP: {'on' if args.with_cypher_mcp else 'off'}")
     
     try:
-        benchmark = GDSBenchmark(dataset=args.dataset, model=args.model)
+        benchmark = GDSBenchmark(
+            dataset=args.dataset,
+            model=args.model,
+            with_cypher_mcp=args.with_cypher_mcp,
+            gds_agent_package=args.gds_agent_package,
+            skill_file=args.skill_file,
+        )
         print(f"Provider: {benchmark.provider.upper()}")
     except ValueError as e:
         print(f"❌ {e}")
-        sys.exit(1)
-    
-    # Check if wheel file exists
-    if not Path("gds_agent-0.5.1-py3-none-any.whl").exists():
-        print("❌ GDS agent wheel file not found")
-        print("Please ensure 'gds_agent-0.5.1-py3-none-any.whl' is in the current directory")
         sys.exit(1)
     
     # Check if questions file exists
@@ -622,6 +655,8 @@ def main():
         print(f"❌ Questions file not found: {benchmark.questions_file}")
         sys.exit(1)
     
+    print(f"GDS agent: {args.gds_agent_package}")
+    print(f"Skill file: {benchmark.skill_file}")
     print(f"Questions file: {benchmark.questions_file}")
     print(f"Results file: {benchmark.results_file}")
     print("\nStarting benchmark...")
