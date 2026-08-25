@@ -11,9 +11,9 @@ import os
 import csv
 import asyncio
 from contextlib import AsyncExitStack
-from dotenv import load_dotenv
 from agents import Agent, Runner
 from agents.mcp import MCPServerStdio
+from dotenv import load_dotenv
 import time
 
 
@@ -27,14 +27,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Same package/version as gds-agent's recommended pairing (mcp.json / README).
-DEFAULT_GDS_AGENT_PACKAGE = "gds-agent"
+DEFAULT_GDS_AGENT_PACKAGE = "gds-agent==1.0.1"
 DEFAULT_SKILL_FILE = (
     Path(__file__).parent
     / "skills"
     / "neo4j-graph-data-scientist"
     / "SKILL.md"
 )
+
 CYPHER_MCP_PACKAGE = "mcp-neo4j-cypher@0.6.0"
 CYPHER_TOOL_NAMES = {
     "read_neo4j_cypher",
@@ -64,6 +64,9 @@ class GDSBenchmark:
         self.model = model
         self.provider = self._detect_provider(model)
         self.questions_file = Path(dataset_files[dataset])
+        self.gds_agent_package = gds_agent_package
+        self.skill_file = Path(skill_file)
+        self.skill_instructions = self._load_skill()
         
         if results_file is None:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -71,22 +74,8 @@ class GDSBenchmark:
         else:
             self.results_file = Path(results_file)
             
-        self.with_cypher_mcp = with_cypher_mcp
-        self.gds_agent_package = gds_agent_package
-        self.skill_file = Path(skill_file)
-        self.skill_instructions = self._load_skill()
         self.results = []
-
-    def _detect_provider(self, model: str) -> str:
-        """Detect the provider based on model name."""
-        
-        if any(model.startswith(prefix) for prefix in ['sonnet', 'haiku', 'opus']):
-            return 'claude'
-        
-        if any(model.startswith(prefix) for prefix in ['gpt']):
-            return 'openai'
-        
-        raise ValueError(f"Unknown model: {model}")
+        self.with_cypher_mcp = with_cypher_mcp
 
     def _load_skill(self) -> str:
         """Load the GDS agent skill used as instructions by every model."""
@@ -95,14 +84,30 @@ class GDSBenchmark:
         return self.skill_file.read_text(encoding="utf-8")
 
     def _mcp_environment(self) -> Dict[str, str]:
-        """Build the MCP environment from environment variables."""
+        """Build the MCP environment for plugin or Aura session mode."""
         required = ["NEO4J_URI", "NEO4J_USERNAME", "NEO4J_PASSWORD"]
         missing = [name for name in required if not os.environ.get(name)]
         if missing:
             raise ValueError(
                 f"Missing required environment variables: {', '.join(missing)}"
             )
-        optional = ["NEO4J_DATABASE"]
+
+        aura_credentials = ["AURA_API_CLIENT_ID", "AURA_API_CLIENT_SECRET"]
+        configured_aura_credentials = [
+            name for name in aura_credentials if os.environ.get(name)
+        ]
+        if configured_aura_credentials and len(configured_aura_credentials) != 2:
+            raise ValueError(
+                "AURA_API_CLIENT_ID and AURA_API_CLIENT_SECRET must be set together"
+            )
+
+        optional = [
+            "NEO4J_DATABASE",
+            *aura_credentials,
+            "AURA_API_PROJECT_ID",
+            "SESSION_MEMORY_GB",
+            "SESSION_TTL_HOURS",
+        ]
         names = required + optional
         return {name: os.environ[name] for name in names if os.environ.get(name)}
 
@@ -125,6 +130,16 @@ class GDSBenchmark:
             },
         }
 
+    def _detect_provider(self, model: str) -> str:
+        """Detect the provider based on model name."""
+        
+        if any(model.startswith(prefix) for prefix in ['sonnet', 'haiku', 'opus']):
+            return 'claude'
+        
+        if any(model.startswith(prefix) for prefix in ['gpt']):
+            return 'openai'
+        
+        raise ValueError(f"Unknown model: {model}")
 
     async def _wait_for_server_ready(self, server, timeout: float = 60.0):
         """Wait for MCP server to be ready by testing actual functionality."""
@@ -207,8 +222,8 @@ class GDSBenchmark:
             config["mcpServers"]["neo4j-cypher"] = self._cypher_mcp_params()
         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
             json.dump(config, f, indent=2)
-            logger.debug(f"Created MCP config: {config}")
-            return Path(f.name)
+        logger.debug(f"Created MCP config at {f.name}")
+        return Path(f.name)
 
 
     def send_question_to_claude_subprocess(self, config_file: Path, question: str) -> Optional[dict]:
@@ -220,22 +235,16 @@ class GDSBenchmark:
             cmd = [
                 "claude", f"--model", f"claude-{self.model}", "-p", "--verbose", "--output-format", "stream-json",
                 "--mcp-config", str(config_file), 
+                "--strict-mcp-config",
                 "--append-system-prompt", self.skill_instructions,
                 "--dangerously-skip-permissions",
                 "--allowedTools", "mcp__*"  # Allow all MCP tools
             ]
             
-            logger.debug(f"Running command: {' '.join(cmd)}")
+            logger.debug(f"Running Claude model: claude-{self.model}")
             logger.debug(f"Input: {formatted_prompt}")
             logger.debug(f"Config file exists: {config_file.exists()}")
             logger.debug(f"Config file path: {config_file}")
-            
-            try:
-                with open(config_file, 'r') as f:
-                    config_contents = f.read()
-                    logger.debug(f"Config file contents: {config_contents}")
-            except Exception as e:
-                logger.error(f"Could not read config file: {e}")
             
             logger.info("Starting subprocess call...")
             result = subprocess.run(cmd, input=f"{formatted_prompt}\n", 
@@ -459,6 +468,7 @@ class GDSBenchmark:
 
             except Exception as e:
                 logger.error(f"Question {i} failed: {e}")
+                # Create failed result record
                 result = self.create_result_record(question, None)
                 result["dataset"] = self.dataset
                 result["model"] = self.model
@@ -533,9 +543,10 @@ class GDSBenchmark:
                 "dataset": self.dataset,
                 "model": self.model,
                 "provider": self.provider,
+                "gds_agent_package": self.gds_agent_package,
+                "skill_file": str(self.skill_file),
                 "questions_file": str(self.questions_file),
                 "with_cypher_mcp": self.with_cypher_mcp,
-                "skill_file": str(self.skill_file),
                 "total_questions": total_questions,
                 "successful_responses": successful_responses,
                 "response_rate": successful_responses / total_questions if total_questions > 0 else 0,
@@ -618,7 +629,8 @@ def main():
     parser.add_argument(
         "--gds-agent-package",
         default=DEFAULT_GDS_AGENT_PACKAGE,
-        help="Package passed to uvx --from (default: gds-agent). May also be a path to a local checkout or wheel."
+        help="Package passed to uvx (default: gds-agent==1.0.1). "
+            "May also be a path to a local checkout or wheel."
     )
 
     parser.add_argument(
@@ -630,7 +642,7 @@ def main():
     
     args = parser.parse_args()
     load_dotenv()
-
+    
     print("GDS Agent Benchmarking Tool")
     print("="*40)
     print(f"Dataset: {args.dataset}")
@@ -655,9 +667,9 @@ def main():
         print(f"❌ Questions file not found: {benchmark.questions_file}")
         sys.exit(1)
     
-    print(f"GDS agent: {args.gds_agent_package}")
-    print(f"Skill file: {benchmark.skill_file}")
     print(f"Questions file: {benchmark.questions_file}")
+    print(f"GDS agent package: {benchmark.gds_agent_package}")
+    print(f"Skill file: {benchmark.skill_file}")
     print(f"Results file: {benchmark.results_file}")
     print("\nStarting benchmark...")
     
