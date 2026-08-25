@@ -5,11 +5,30 @@
 The MCP server of GDS agent is at: https://github.com/neo4j-contrib/gds-agent
 
 Preparations:
-1. Download a `gds_agent-0.5.1-py3-none-any.whl` wheel file which contains implementation of the MCP server.
-2. Start a Neo4j database with the either LN or GoT dataset loaded.
-3. Set your NEO4J configuration, e.g `NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD` in `benchmark_gds_agent.py`
+1. Install the Python requirements and make sure `uvx` is available. The benchmark uses `gds-agent==1.0.1` from PyPI by default.
+2. Start a Neo4j database with either the LN or GoT dataset loaded.
+3. Put the database configuration in `.env` (or export it in the shell):
+   ```dotenv
+   NEO4J_URI=neo4j://localhost:7687
+   NEO4J_USERNAME=neo4j
+   NEO4J_PASSWORD=your-password
+   # NEO4J_DATABASE=neo4j
+   ```
 
-Running benchamrks:
+For an AuraDB that uses Aura Graph Analytics sessions, also configure:
+```dotenv
+AURA_API_CLIENT_ID=your-client-id
+AURA_API_CLIENT_SECRET=your-client-secret
+# AURA_API_PROJECT_ID=your-project-id
+# SESSION_MEMORY_GB=8
+# SESSION_TTL_HOURS=24
+```
+
+`gds-agent` detects plugin mode or Aura session mode from the connected database. In session mode, the skill instructs the model to create and clean up sessions. The benchmark intentionally configures only the GDS MCP server for now, without the companion Neo4j Cypher MCP server.
+
+Running benchmarks:
 1. Run `python benchmark_gds_agent.py $dataset --model $model` to produce answers for the set of questions.
 2. Run `python evaluate_benchmark.py $dataset --model $model` to use the produced answers and evaluate them.
 3. Run `python analyze_benchmark_stats.py $dataset --model $model` to calculate any further summary statistics and plots.
+
+Use `--gds-agent-package /path/to/gds_agent.whl` to benchmark a local wheel, or `--skill-file /path/to/SKILL.md` to use another version of the skill.
