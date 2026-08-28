@@ -36,3 +36,19 @@ Running benchmarks:
 3. Run `python analyze_benchmark_stats.py $dataset --model $model` to calculate any further summary statistics and plots.
 
 Use `--gds-agent-package /path/to/gds_agent.whl` to benchmark a local wheel, or `--skill-file /path/to/SKILL.md` to use another version of the skill.
+
+Citations example (GPT-5): custom dataset, so `--questions-file` is required. `--with-cypher-mcp` also starts the read-only Cypher MCP.
+
+```bash
+python benchmark_gds_agent.py --dataset citations \
+  --questions-file questions/gds-questions-citations.json \
+  --with-cypher-mcp --model gpt-5 \
+  --gds-agent-package /path/to/gds_agent.whl \
+  --skill-file /path/to/SKILL.md
+```
+
+```bash
+python evaluate_benchmark.py citations \
+  --questions-file questions/gds-questions-citations.json \
+  --model gpt-5 --question-trace-report
+```

@@ -11,7 +11,7 @@ import os
 import csv
 import asyncio
 from contextlib import AsyncExitStack
-from agents import Agent, Runner
+from agents import Agent, MaxTurnsExceeded, Runner
 from agents.mcp import MCPServerStdio
 from dotenv import load_dotenv
 import time
@@ -26,6 +26,9 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
+
+for _noisy_logger in ("httpcore", "httpx", "openai", "agents"):
+    logging.getLogger(_noisy_logger).setLevel(logging.WARNING)
 
 DEFAULT_GDS_AGENT_PACKAGE = "gds-agent==1.0.1"
 DEFAULT_SKILL_FILE = (
@@ -49,21 +52,27 @@ class GDSBenchmark:
                  model: str = "sonnet-4-20250514",
                  results_file: str = None,
                  with_cypher_mcp: bool = False,
+                 questions_file: Path = None,
                  gds_agent_package: str = DEFAULT_GDS_AGENT_PACKAGE,
                  skill_file: Path = DEFAULT_SKILL_FILE):
         # Map dataset names to question files
         dataset_files = {
-            "ln": "gds-algo-questions-ln.csv",
-            "got": "gds-algo-questions-got.csv"
+            "ln": "questions/gds-algo-questions-ln.csv",
+            "got": "questions/gds-algo-questions-got.csv"
         }
-        
-        if dataset not in dataset_files:
-            raise ValueError(f"Unknown dataset: {dataset}. Available: {list(dataset_files.keys())}")
-        
+
         self.dataset = dataset
+        if dataset in dataset_files:
+            self.questions_file = Path(questions_file) if questions_file is not None else Path(dataset_files[dataset])
+        else:
+            if questions_file is None:
+                raise ValueError(
+                    f"Unknown dataset '{dataset}': --questions-file is required for custom datasets."
+                )
+            self.questions_file = Path(questions_file)
+
         self.model = model
         self.provider = self._detect_provider(model)
-        self.questions_file = Path(dataset_files[dataset])
         self.gds_agent_package = gds_agent_package
         self.skill_file = Path(skill_file)
         self.skill_instructions = self._load_skill()
@@ -167,44 +176,62 @@ class GDSBenchmark:
         elapsed = asyncio.get_event_loop().time() - start_time
         raise asyncio.TimeoutError(f"MCP server not ready after {elapsed:.1f} seconds")
 
+    async def _drop_all_projections(self, gds_server: MCPServerStdio) -> None:
+        """Drop every in-memory GDS graph so the next question starts clean."""
+        try:
+            listed = await gds_server.call_tool("list_graphs", {})
+            text = "".join(getattr(block, "text", "") for block in (listed.content or []))
+            for graph in json.loads(text or "{}").get("graphs", []):
+                name = graph.get("graphName")
+                if name:
+                    await gds_server.call_tool("drop_graph", {"graphName": name})
+                    logger.info(f"Dropped projection {name}")
+        except Exception as e:
+            logger.warning(f"Failed to drop GDS projections: {e}")
+
     def load_questions_from_file(self, questions_file: Path) -> List[str]:
-        """Load questions from a single CSV file with 4-lines-per-question format."""
+        """Load questions from a file. Supports JSON (array of objects with a 'Question' field)
+        and CSV (4-lines-per-question format)."""
         logger.info(f"Loading questions from {questions_file}")
         questions = []
-        
+
         if not questions_file.exists():
             logger.error(f"Questions file not found: {questions_file}")
             return []
-        
-        try:
-            with open(questions_file, 'r', encoding='utf-8') as file:
-                lines = [line.strip() for line in file.readlines() if line.strip()]
-                
-                if not lines:
-                    logger.error(f"Questions file is empty: {questions_file}")
-                    return []
 
-                # Process lines in groups of 4: question, tools, parameters, answer
-                i = 1
-                while i < len(lines):
-                    if i + 3 < len(lines):  # Ensure we have all 4 lines
-                        question = lines[i].strip()
-                        if question:
-                            questions.append(question)
-                        i += 4
-                    else:
-                        # Handle incomplete block at end - check if it's a question line
-                        if not lines[i].startswith('[') and not lines[i].startswith('{'):
-                            # This might be a question (not tools or params)
+        try:
+            if questions_file.suffix == ".json":
+                with open(questions_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                questions = [entry["Question"] for entry in data if entry.get("Question")]
+            else:
+                with open(questions_file, 'r', encoding='utf-8') as file:
+                    lines = [line.strip() for line in file.readlines() if line.strip()]
+
+                    if not lines:
+                        logger.error(f"Questions file is empty: {questions_file}")
+                        return []
+
+                    # Process lines in groups of 4: question, tools, parameters, answer
+                    i = 1
+                    while i < len(lines):
+                        if i + 3 < len(lines):  # Ensure we have all 4 lines
                             question = lines[i].strip()
                             if question:
                                 questions.append(question)
-                        break
-                        
+                            i += 4
+                        else:
+                            # Handle incomplete block at end - check if it's a question line
+                            if not lines[i].startswith('[') and not lines[i].startswith('{'):
+                                question = lines[i].strip()
+                                if question:
+                                    questions.append(question)
+                            break
+
         except Exception as e:
             logger.error(f"Error loading questions from {questions_file}: {e}")
             return []
-            
+
         logger.info(f"Loaded {len(questions)} questions from {questions_file}")
         return questions
 
@@ -338,7 +365,7 @@ class GDSBenchmark:
             
         return parsed_data
 
-    async def _send_question_to_openai_async(self, config_file: Path, question: str, gds_server: MCPServerStdio, cypher_server: Optional[MCPServerStdio] = None) -> Optional[dict]:
+    async def _send_question_to_openai_async(self, question: str, gds_server: MCPServerStdio, cypher_server: Optional[MCPServerStdio] = None) -> Optional[dict]:
         try:
             logger.debug(f"Starting OpenAI async request for: {question[:50]}")
 
@@ -361,46 +388,77 @@ class GDSBenchmark:
             
             logger.debug("Running agent with question...")
             result = await asyncio.wait_for(
-                Runner.run(agent, formatted_prompt), 
+                Runner.run(agent, formatted_prompt, max_turns=20), 
                 timeout=300
             )
             logger.debug(f"Result: {result}")
-            response_data = {
-                "tool_calls": [],
-                "tool_results": [],
-                "final_result": [],
-                "num_turns": 0,
-                "duration_ms": 0,
-                "raw_stream": ""
-            }
-            raw_responses = result.raw_responses
-            for raw_response in raw_responses:
-                outputs = raw_response.output
-                for output in outputs:
-                    if output.type == "function_call":
-                        try:
-                            parsed_args = json.loads(output.arguments) if isinstance(output.arguments, str) else output.arguments
-                        except (json.JSONDecodeError, TypeError):
-                            parsed_args = output.arguments
-                        
-                        prefix = "mcp__neo4j-cypher__" if output.name in CYPHER_TOOL_NAMES else "mcp__gds-agent__"
-                        response_data["tool_calls"].append({
-                            "name": prefix + output.name,
-                            "parameters": parsed_args,
-                        })
-                    elif output.type == "message":
-                        response_data["final_result"] = output.content[0].text
-
-            logger.debug(f"OpenAI request completed successfully")
-            return response_data
+            return self._openai_run_to_response_data(result)
                 
         except asyncio.TimeoutError:
             logger.error("OpenAI request timed out after 300 seconds")
             return None
+        except MaxTurnsExceeded as e:
+            logger.error(f"Error in OpenAI async request: {e}")
+            if e.run_data is None:
+                return None
+            response_data = self._openai_run_to_response_data(e.run_data)
+            response_data["max_turns_exceeded"] = True
+            return response_data
         except Exception as e:
             logger.error(f"The exception type is: {type(e)}")
             logger.error(f"Error in OpenAI async request: {e}")
             return None
+
+    def _openai_run_to_response_data(self, result) -> dict:
+        response_data = {
+            "tool_calls": [],
+            "tool_results": [],
+            "final_result": "",
+            "num_turns": 0,
+            "duration_ms": 0,
+            "raw_stream": ""
+        }
+        for raw_response in getattr(result, "raw_responses", []) or []:
+            outputs = raw_response.output
+            for output in outputs:
+                if output.type == "function_call":
+                    try:
+                        parsed_args = json.loads(output.arguments) if isinstance(output.arguments, str) else output.arguments
+                    except (json.JSONDecodeError, TypeError):
+                        parsed_args = output.arguments
+
+                    prefix = "mcp__neo4j-cypher__" if output.name in CYPHER_TOOL_NAMES else "mcp__gds-agent__"
+                    response_data["tool_calls"].append({
+                        "name": prefix + output.name,
+                        "parameters": parsed_args,
+                        "id": getattr(output, "call_id", "") or getattr(output, "id", ""),
+                    })
+                elif output.type == "message":
+                    response_data["final_result"] = output.content[0].text
+
+        for item in getattr(result, "new_items", []):
+            if getattr(item, "type", None) != "tool_call_output_item":
+                continue
+            raw = item.raw_item
+            if isinstance(raw, dict):
+                call_id = raw.get("call_id", "")
+            else:
+                call_id = getattr(raw, "call_id", "")
+            output_value = item.output
+            if output_value is None and isinstance(raw, dict):
+                output_value = raw.get("output", "")
+            elif output_value is None:
+                output_value = getattr(raw, "output", "")
+            if not isinstance(output_value, str):
+                try:
+                    output_value = json.dumps(output_value)
+                except (TypeError, ValueError):
+                    output_value = str(output_value)
+            response_data["tool_results"].append({
+                "tool_use_id": call_id,
+                "result": output_value or "",
+            })
+        return response_data
 
 
     def create_result_record(self, question: str, response: dict) -> Dict[str, Any]:
@@ -408,7 +466,7 @@ class GDSBenchmark:
             "question": question,
             "timestamp": datetime.now().isoformat(),
             "response_data": response,
-            "success": response is not None
+            "success": response is not None and not response.get("max_turns_exceeded", False),
         }
 
 
@@ -423,7 +481,7 @@ class GDSBenchmark:
         if self.provider == 'openai':
             return asyncio.run(self._run_benchmark_openai(questions))
         else:
-            return self._run_benchmark_claude(questions)
+            return asyncio.run(self._run_benchmark_claude(questions))
 
     async def _run_benchmark_openai(self, questions: List[str]) -> List[Dict[str, Any]]:
         """Run benchmark for OpenAI models with fresh MCP server for each question."""
@@ -450,7 +508,10 @@ class GDSBenchmark:
                         await self._wait_for_server_ready(cypher_server, timeout=60.0)
                         logger.info("Cypher MCP server started and ready")
 
-                    response = await self._send_question_to_openai_async(None, question, gds_server, cypher_server)
+                    try:
+                        response = await self._send_question_to_openai_async(question, gds_server, cypher_server)
+                    finally:
+                        await self._drop_all_projections(gds_server)
 
                 result = self.create_result_record(question, response)
                 result["dataset"] = self.dataset
@@ -459,7 +520,10 @@ class GDSBenchmark:
                 result["with_cypher_mcp"] = self.with_cypher_mcp
                 results.append(result)
 
-                if response:
+                if response and response.get("max_turns_exceeded"):
+                    num_tools = len(response.get('tool_calls', []))
+                    logger.info(f"Question {i}: ✗ (max turns exceeded, {num_tools} tools saved)")
+                elif response:
                     num_tools = len(response.get('tool_calls', []))
                     num_turns = response.get('num_turns', 0)
                     logger.info(f"Question {i}: ✓ ({num_tools} tools, {num_turns} turns)")
@@ -480,43 +544,49 @@ class GDSBenchmark:
         self.results = results
         return results
 
-    def _run_benchmark_claude(self, questions: List[str]) -> List[Dict[str, Any]]:
+    async def _run_benchmark_claude(self, questions: List[str]) -> List[Dict[str, Any]]:
         """Run benchmark for Claude models using subprocess approach."""
         config_file = None
-        
         try:
             config_file = self.create_mcp_config()
-            
             results = []
-            
-            for i, question in enumerate(questions, 1):
-                logger.info(f"Processing question {i}/{len(questions)}: {question[:50]}...")
-                
-                response = self.send_question_to_claude_subprocess(config_file, question)
-                result = self.create_result_record(question, response)
-                result["dataset"] = self.dataset
-                result["model"] = self.model
-                result["provider"] = self.provider
-                result["with_cypher_mcp"] = self.with_cypher_mcp
-                results.append(result)
-                
-                if response:
-                    num_tools = len(response.get('tool_calls', []))
-                    num_turns = response.get('num_turns', 0)
-                    logger.info(f"Question {i}: ✓ ({num_tools} tools, {num_turns} turns)")
-                else:
-                    logger.info(f"Question {i}: ✗ (no response)")
-                
-                import time
-                time.sleep(1)
-            
+
+            async with MCPServerStdio(
+                name="gds",
+                params=self._gds_mcp_params(),
+                client_session_timeout_seconds=600,
+            ) as gds_server:
+                await self._wait_for_server_ready(gds_server, timeout=60.0)
+
+                for i, question in enumerate(questions, 1):
+                    logger.info(f"Processing question {i}/{len(questions)}: {question[:50]}...")
+
+                    response = self.send_question_to_claude_subprocess(config_file, question)
+                    result = self.create_result_record(question, response)
+                    result["dataset"] = self.dataset
+                    result["model"] = self.model
+                    result["provider"] = self.provider
+                    result["with_cypher_mcp"] = self.with_cypher_mcp
+                    results.append(result)
+
+                    await self._drop_all_projections(gds_server)
+
+                    if response:
+                        num_tools = len(response.get('tool_calls', []))
+                        num_turns = response.get('num_turns', 0)
+                        logger.info(f"Question {i}: ✓ ({num_tools} tools, {num_turns} turns)")
+                    else:
+                        logger.info(f"Question {i}: ✗ (no response)")
+
+                    time.sleep(1)
+
             self.results = results
             return results
-            
+
         except Exception as e:
             logger.error(f"Subprocess benchmark failed: {e}")
             return []
-            
+
         finally:
             if config_file and config_file.exists():
                 try:
@@ -603,17 +673,26 @@ def main():
     parser = argparse.ArgumentParser(
         description="GDS Agent Benchmarking Tool",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""Examples: 
-        python benchmark_gds_agent.py ln --model gpt-4o                  # Run LN questions with OpenAI GPT-4o
-        python benchmark_gds_agent.py ln --model gpt-4o --with-cypher-mcp  # Also enable read-only Cypher MCP"""
+        epilog="""Examples:
+            python benchmark_gds_agent.py --dataset ln --model gpt-4o
+            python benchmark_gds_agent.py --dataset ln --model gpt-4o --with-cypher-mcp
+            python benchmark_gds_agent.py --dataset ln --questions-file my-questions.csv --model gpt-4o
+            python benchmark_gds_agent.py --dataset citations --questions-file questions/gds-questions-citations.json --model sonnet-4-5 --with-cypher-mcp"""
     )
     
     parser.add_argument(
-        "dataset",
-        choices=["ln", "got"],
-        help="Dataset to run: 'ln' for London network questions, 'got' for Game of Thrones questions"
+        "--dataset",
+        required=True,
+        help="Dataset label: 'ln' or 'got' (uses default questions file), or any custom label (requires --questions-file)."
     )
-    
+
+    parser.add_argument(
+        "--questions-file",
+        type=Path,
+        default=None,
+        help="Path to a custom questions CSV file. If provided, overrides the default file for the dataset."
+    )
+
     parser.add_argument(
         "--model", "-m",
         default="sonnet-4-20250514",
@@ -654,6 +733,7 @@ def main():
             dataset=args.dataset,
             model=args.model,
             with_cypher_mcp=args.with_cypher_mcp,
+            questions_file=args.questions_file,
             gds_agent_package=args.gds_agent_package,
             skill_file=args.skill_file,
         )

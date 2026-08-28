@@ -1,0 +1,113 @@
+[
+    {
+      "id": 1,
+      "Question": "Find the top 5 articles with the highest in-degree / out-degree ratio based on CITED relationships, excluding any article with out-degree 0. Report only the titles as a list of strings and nothing else.",
+      "Expected answer": "[\"A method for obtaining digital signatures and public-key cryptosystems\", \"Pastry: Scalable, Decentralized Object Location, and Routing for Large-Scale Peer-to-Peer Systems\", \"A field study of the software design process for large systems\", \"Polynomial Reconstruction Based Cryptography\", \"How to share a secret\"]"
+    },
+    {
+      "id": 2,
+      "Question": "Find the longest citation chain (path) between any two articles following outgoing CITED edges. Report only the length as a number and nothing else.",
+      "Expected answer": "13"
+    },
+    {
+      "id": 3,
+      "Question": "Build the co-authorship graph where two authors are connected (undirected, unweighted) if they co-authored at least one article. Using the Adamic Adar measure, score the likelihood of future collaboration between Chao Zhang and each of their 2nd-degree co-authors — people who share a 1st-degree co-author with Chao Zhang but have never directly co-authored with them. Report only the top 3 names as a list of strings, breaking ties by name ascending and nothing else.",
+      "Expected answer": "[\"Aldo de Moor\", \"Bing He\", \"Brian Whitworth\"]"
+
+    },
+    {
+      "id": 4,
+      "Question": "Chao Zhang has never co-authored with certain researchers who nonetheless share a co-author with them. Among these indirect connections, find the 3 most likely future collaborators, where a shared co-author counts more if that co-author has fewer total collaborators overall. Report only the top 3 names as a list of strings, breaking ties by name ascending and nothing else.",
+      "Expected answer": "[\"Aldo de Moor\", \"Bing He\", \"Brian Whitworth\"]"
+    },
+    {
+      "id": 5,
+      "Question": "Find the top 5 authors involved in the most closed collaboration triangles, based on a co-authorship graph where an edge exists between two authors if they have co-authored at least one paper. If ties occur at the cutoff, break ties by name ascending. Report only the names as a list of strings and nothing else.",
+      "Expected answer": "[\"Brian A. Coghlan\", \"Michael J. Franklin\", \"Joseph M. Hellerstein\", \"Michael Stonebraker\", \"Gerhard Weikum\"]"
+    },
+    {
+      "id": 6,
+      "Question": "Based on a co-authorship graph where an edge exists between two authors if they have co-authored at least one paper, how many authors are involved in more than 50 closed collaboration triangles? Report only the number and nothing else.",
+      "Expected answer": "1680"
+    },
+    {
+      "id": 7,
+      "Question": "Find the top 5 articles with the highest PageRank score based on citations and report only the titles as a list of strings and nothing else.",
+      "Expected answer": "[\"A method for obtaining digital signatures and public-key cryptosystems\", \"Secure communications over insecure channels\", \"Rough sets\", \"An axiomatic basis for computer programming\", \"Pastry: Scalable, Decentralized Object Location, and Routing for Large-Scale Peer-to-Peer Systems\"]"
+    },
+    {
+      "id": 8,
+      "Question": "Compute the mean shortest path distance following outgoing CITED edges from the article \"A practical guide for using statistical tests to assess randomized algorithms in software engineering\" to all articles reachable from it. Round to 3 decimal points. Report only the number and nothing else.",
+      "Expected answer": "6.565"
+    },
+    {
+      "id": 9,
+      "Question": "Compute the mean shortest path distance via CITED relationships from the article \"A practical guide for using statistical tests to assess randomized algorithms in software engineering\" to all articles reachable from it. Round to 3 decimal points. Report only the number and nothing else.",
+      "Expected answer": "6.565"
+    },
+    {
+      "id": 10,
+      "Question": "Build the co-authorship graph where two authors are connected (undirected, unweighted) if they co-authored at least one article. Compute the local clustering coefficient for Chao Zhang's ego network. Report only the number and nothing else.",
+      "Expected answer": "0.25"
+    },
+    {
+      "id": 11,
+      "Question": "Build the co-authorship graph where two authors are connected (undirected, unweighted) if they co-authored at least one article. Compute the mean local clustering coefficient of Chao Zhang's 1st-degree co-authors. Report only the number round to 3 decimal places and nothing else.",
+      "Expected answer": "0.589"
+    },
+    {
+      "id": 12,
+      "Question": "Run Eigenvector Centrality on the citation graph, using CITED relationships. Find the top 3 papers by eigenvector centrality, excluding only the single #1-ranked paper by PageRank. Report only the titles as a list of strings and nothing else.",
+      "Expected answer": "[\"Software Testing Research: Achievements, Challenges, Dreams\", \"Model-driven Development of Complex Software: A Research Roadmap\", \"The Future of Empirical Methods in Software Engineering Research\"]"
+    },
+    {
+      "id": 13,
+      "Question": "Report the number of weakly connected components in the citation graph and nothing else.",
+      "Expected answer": "34027"
+    },
+    {
+      "id": 14,
+      "Question": "Find the number of weakly connected components of articles in the citation graph that contain just a single article. Report the number and nothing else.",
+      "Expected answer": "32006"
+    },
+    {
+      "id": 15,
+      "Question": "Using degree centrality on the citation network, find the number of articles that have an in-degree score of 0. Report the number and nothing else.",
+      "Expected answer": "40957"
+    },
+    {
+      "id": 16,
+      "Question": "Find the mean local clustering coefficient across all authors in the co-authorship graph, where an edge exists between two authors if they have co-authored at least one paper. Round to 3 decimal points. Report only the number and nothing else.",
+      "Expected answer": "0.688"
+    },
+    {
+      "id": 17,
+      "Question": "Using HITS on the citation network find the number of articles that have an authority score greater than their hub score. Report only the number and nothing else.",
+      "Expected answer": "7898"
+    }, 
+    {
+      "id": 18,
+      "Question": "Build the co-authorship graph (edge = co-authored at least one article). Among authors with more than 5 collaborators, find the mean local clustering coefficient. Report only the number round to 3 decimal places and nothing else.",
+      "Expected answer": "0.615"
+    }, 
+    {
+      "id": 19,
+      "Question": "For each author, sum the PageRank scores (computed on the citation network) of all articles they have written and report the name of the author that has the highest total and nothing else.",
+      "Expected answer": "Adi Shamir"
+    }, 
+    {
+      "id": 20,
+      "Question": "Find the number of distinct authors reachable from Chao Zhang within exactly 3 hops in the co-authorship graph (edge = co-authored at least one article) whose degree centrality, computed over the full co-authorship graph, is 5 or higher. Report only the number and nothing else.",
+      "Expected answer": "14"
+    }, 
+    {
+      "id": 21,
+      "Question": "Find the number of distinct authors who are exactly 5 hops away from Chao Zhang, or exactly 5 hops away from Yihui Jin, in the co-authorship graph (edge = co-authored at least one article), and whose degree centrality — computed over the full co-authorship graph — is 5 or higher. Report only the number and nothing else.",
+      "Expected answer": "949"
+    },
+    {
+      "id": 22,
+      "Question": "For each venue, identify the article with the highest PageRank score (computed using only CITED relationships) among those published there. Across all these per-venue top articles, what is the mean PageRank score? Round to 3 decimal places. Report only the number and nothing else.",
+      "Expected answer": "33.852"
+    }
+]

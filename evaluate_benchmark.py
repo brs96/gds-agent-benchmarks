@@ -3,7 +3,7 @@ import logging
 import re
 import argparse
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 import glob
 from path_questions_evaluation import evaluate_path_algorithm_output
 
@@ -31,19 +31,24 @@ TOOL_EQUIVALENTS = {
 
 
 class BenchmarkEvaluator:
-    def __init__(self, dataset: str = "ln", model: str = "sonnet-4-20250514"):
-        # Map dataset names to question files
+    def __init__(self, dataset: str = "ln", model: str = "sonnet-4-20250514", questions_file: Optional[Path] = None):
+        # Map dataset shorthand names to question files
         dataset_files = {
-            "ln": "gds-algo-questions-ln.csv",
-            "got": "gds-algo-questions-got.csv"
+            "ln": "questions/gds-algo-questions-ln.csv",
+            "got": "questions/gds-algo-questions-got.csv"
         }
-        
-        if dataset not in dataset_files:
-            raise ValueError(f"Unknown dataset: {dataset}. Available: {list(dataset_files.keys())}")
-        
+
         self.dataset = dataset
+        if dataset in dataset_files:
+            self.questions_file = Path(questions_file) if questions_file is not None else Path(dataset_files[dataset])
+        else:
+            if questions_file is None:
+                raise ValueError(
+                    f"Unknown dataset '{dataset}': --questions-file is required for custom datasets."
+                )
+            self.questions_file = Path(questions_file)
+
         self.model = model
-        self.questions_file = Path(dataset_files[dataset])
         
         # Look for results files matching the dataset and model pattern
         pattern = f"results_{model}/{dataset}_results_*.json"
@@ -53,9 +58,14 @@ class BenchmarkEvaluator:
         from datetime import datetime
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.evaluation_file = Path(f"results_{model}/{dataset}_evaluation_{timestamp}.json")
+        self.question_trace_report_file = Path(f"results_{model}/{dataset}_question_trace_report_{timestamp}.json")
         
     def load_expected_results(self) -> Dict[str, Dict[str, Any]]:
-        """Load expected results from CSV file with 4-lines-per-question format."""
+        """Load expected results from a questions file.
+
+        Supports JSON (array of objects with 'Question' and 'Expected answer')
+        and CSV (4-lines-per-question format).
+        """
         expected = {}
         
         if not self.questions_file.exists():
@@ -63,35 +73,56 @@ class BenchmarkEvaluator:
             return expected
             
         try:
-            with open(self.questions_file, 'r', encoding='utf-8') as file:
-                lines = [line.strip() for line in file.readlines() if line.strip()]
-                
-                if not lines:
-                    logger.error("Questions file is empty")
-                    return expected
-                
-                # Process lines in groups of 4: question, tools, parameters, answer
-                i = 1
-                while i + 3 < len(lines):
-                    question = lines[i].strip()
-                    tools_str = lines[i+1].strip()
-                    params_str = lines[i+2].strip()
-                    answer = lines[i+3].strip()
+            if self.questions_file.suffix == ".json":
+                with open(self.questions_file, 'r', encoding='utf-8') as file:
+                    data = json.load(file)
+                question_id = 1
+                for entry in data:
+                    question = (entry.get("Question") or "").strip()
+                    if not question:
+                        continue
+                    answer = entry.get("Expected answer", "")
+                    qid = entry.get("id", question_id)
+                    expected[question] = {
+                        'id': qid,
+                        'expected_tools': entry.get("expected_tools", []),
+                        'expected_parameters': entry.get("expected_parameters", {}),
+                        'expected_answer': answer if isinstance(answer, str) else str(answer)
+                    }
+                    question_id += 1
+            else:
+                with open(self.questions_file, 'r', encoding='utf-8') as file:
+                    lines = [line.strip() for line in file.readlines() if line.strip()]
                     
-                    if question:
-                        try:
-                            expected[question] = {
-                                'expected_tools': json.loads(tools_str),
-                                'expected_parameters': json.loads(params_str),
-                                'expected_answer': answer
-                            }
-                        except json.JSONDecodeError as e:
-                            logger.warning(f"Failed to parse JSON for question: {question[:50]}...")
-                            logger.warning(f"Tools string: '{tools_str}'")
-                            logger.warning(f"Params string: '{params_str}'")
-                            logger.warning(f"JSON Error: {e}")
+                    if not lines:
+                        logger.error("Questions file is empty")
+                        return expected
                     
-                    i += 4
+                    # Process lines in groups of 4: question, tools, parameters, answer
+                    i = 1
+                    question_id = 1
+                    while i + 3 < len(lines):
+                        question = lines[i].strip()
+                        tools_str = lines[i+1].strip()
+                        params_str = lines[i+2].strip()
+                        answer = lines[i+3].strip()
+                        
+                        if question:
+                            try:
+                                expected[question] = {
+                                    'id': question_id,
+                                    'expected_tools': json.loads(tools_str),
+                                    'expected_parameters': json.loads(params_str),
+                                    'expected_answer': answer
+                                }
+                                question_id += 1
+                            except json.JSONDecodeError as e:
+                                logger.warning(f"Failed to parse JSON for question: {question[:50]}...")
+                                logger.warning(f"Tools string: '{tools_str}'")
+                                logger.warning(f"Params string: '{params_str}'")
+                                logger.warning(f"JSON Error: {e}")
+                        
+                        i += 4
                     
         except Exception as e:
             logger.error(f"Error loading expected results: {e}")
@@ -153,7 +184,7 @@ class BenchmarkEvaluator:
             'total_tokens': total_input_tokens + total_output_tokens + total_cache_creation_tokens
         }
 
-    def load_actual_results(self) -> Dict[str, List[Dict[str, Any]]]:
+    def load_actual_results(self, include_failed: bool = False) -> Dict[str, List[Dict[str, Any]]]:
         all_results = {}
         
         if not self.results_files:
@@ -174,7 +205,7 @@ class BenchmarkEvaluator:
                 logger.info(f"Processing {results_file}")
                 
                 for result in data.get('raw_results', []):
-                    if result.get('success', False) and result.get('response_data'):
+                    if result.get('response_data') and (include_failed or result.get('success', False)):
                         question = result['question'].strip()
                         response_data = result['response_data']
                         
@@ -557,28 +588,34 @@ class BenchmarkEvaluator:
             'actual_numbers': actual_numbers
         }
         
-    def evaluate_question(self, expected: Dict[str, Any], actual: Dict[str, Any]) -> Dict[str, Any]:        
+    def evaluate_question(self, expected: Dict[str, Any], actual: Dict[str, Any]) -> Dict[str, Any]:
+        expected_tools = expected.get('expected_tools', [])
+        expected_parameters = expected.get('expected_parameters', {})
+
         tool_evaluation = self.evaluate_tool_calls(
-            expected['expected_tools'], 
+            expected_tools,
             actual['tool_calls']
         )
 
         parameter_evaluation = self.evaluate_parameters(
-            expected['expected_parameters'],
+            expected_parameters,
             actual['tool_calls']
         )
 
         answer_evaluation = self.evaluate_answer_similarity(
             expected['expected_answer'],
             actual['final_result'],
-            expected['expected_tools']
+            expected_tools
         )
         
         tool_score = tool_evaluation['f1_score']
         param_score = sum(p.get('score', 0.0) for p in parameter_evaluation.values()) / len(parameter_evaluation) if parameter_evaluation else 0.0
         answer_score = answer_evaluation['answer_match_score']
-        
-        overall_score = (tool_score + param_score + answer_score) / 3
+
+        if expected_tools or expected_parameters:
+            overall_score = (tool_score + param_score + answer_score) / 3
+        else:
+            overall_score = answer_score
         
         return {
             'overall_score': overall_score,
@@ -672,6 +709,77 @@ class BenchmarkEvaluator:
             'aggregated_stats': aggregated_stats,
             'detailed_evaluations': evaluations
         }
+
+    def _join_tool_traces(self, tool_calls: List[Dict[str, Any]], tool_results: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        results_by_id = {
+            result.get("tool_use_id"): result.get("result", "")
+            for result in tool_results
+            if result.get("tool_use_id")
+        }
+        joined = []
+        for index, call in enumerate(tool_calls):
+            call_id = call.get("id") or ""
+            if call_id in results_by_id:
+                result = results_by_id[call_id]
+            elif not call_id and index < len(tool_results):
+                result = tool_results[index].get("result", "")
+            else:
+                result = ""
+            joined.append({
+                "id": call_id,
+                "name": call.get("name", ""),
+                "parameters": call.get("parameters", {}),
+                "result": result,
+            })
+        return joined
+
+    def write_question_trace_report(self, path: Path) -> None:
+        """Write a per-question JSON of expected vs agent answers, scores, and tool traces."""
+        expected_results = self.load_expected_results()
+        actual_results = self.load_actual_results(include_failed=True)
+        report = []
+
+        for question, expected in expected_results.items():
+            runs = actual_results.get(question, [])
+            if not runs:
+                report.append({
+                    "question_id": expected.get("id"),
+                    "question": question,
+                    "expected_answer": expected.get("expected_answer", ""),
+                    "agent_answer": None,
+                    "overall_score": None,
+                    "answer_score": None,
+                    "answer_matched_count": None,
+                    "answer_total_count": None,
+                    "tool_f1": None,
+                    "source_file": None,
+                    "tools": [],
+                })
+                continue
+            for run in runs:
+                evaluation = self.evaluate_question(expected, run)
+                answer_evaluation = evaluation.get("answer_evaluation", {})
+                tool_evaluation = evaluation.get("tool_evaluation", {})
+                report.append({
+                    "question_id": expected.get("id"),
+                    "question": question,
+                    "expected_answer": expected.get("expected_answer", ""),
+                    "agent_answer": run.get("final_result", ""),
+                    "overall_score": evaluation.get("overall_score"),
+                    "answer_score": answer_evaluation.get("answer_match_score"),
+                    "answer_matched_count": answer_evaluation.get("answer_matched_count"),
+                    "answer_total_count": answer_evaluation.get("answer_total_count"),
+                    "tool_f1": tool_evaluation.get("f1_score"),
+                    "source_file": run.get("source_file"),
+                    "tools": self._join_tool_traces(
+                        run.get("tool_calls", []),
+                        run.get("tool_results", []),
+                    ),
+                })
+
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(report, f, indent=2)
         
     def print_evaluation_report(self, evaluation_results: Dict[str, Any]) -> None:
         if not evaluation_results:
@@ -733,19 +841,33 @@ def main():
         epilog="""Examples:
   python evaluate_benchmark.py ln                            # Evaluate LN questions with default model
   python evaluate_benchmark.py got                           # Evaluate GoT questions with default model
-  python evaluate_benchmark.py ln --model haiku-3-20241022   # Evaluate LN questions for Haiku model"""
+  python evaluate_benchmark.py ln --model haiku-3-20241022   # Evaluate LN questions for Haiku model
+  python evaluate_benchmark.py citations --questions-file questions/gds-questions-citations.json --model sonnet-4-5
+  python evaluate_benchmark.py citations --questions-file questions/gds-questions-citations.json --model gpt-5 --question-trace-report"""
     )
     
     parser.add_argument(
         "dataset",
-        choices=["ln", "got"],
-        help="Dataset to evaluate: 'ln' for London network questions, 'got' for Game of Thrones questions"
+        help="Dataset label: 'ln' or 'got' (uses default questions file), or any custom label (requires --questions-file)."
+    )
+
+    parser.add_argument(
+        "--questions-file",
+        type=Path,
+        default=None,
+        help="Path to a custom questions file (CSV or JSON). Required for datasets other than ln/got."
     )
     
     parser.add_argument(
         "--model", "-m",
         default="sonnet-4-20250514",
         help="Model to evaluate (default: sonnet-4-20250514). Examples: sonnet-4-20250514, haiku-3-20241022"
+    )
+
+    parser.add_argument(
+        "--question-trace-report",
+        action="store_true",
+        help="Also write a per-question JSON of expected vs agent answers, scores, and tool traces (id, name, parameters, result)."
     )
     
     args = parser.parse_args()
@@ -756,7 +878,11 @@ def main():
     print(f"Model: {args.model}")
     
     try:
-        evaluator = BenchmarkEvaluator(dataset=args.dataset, model=args.model)
+        evaluator = BenchmarkEvaluator(
+            dataset=args.dataset,
+            model=args.model,
+            questions_file=args.questions_file,
+        )
     except ValueError as e:
         print(f"❌ {e}")
         return 1
@@ -787,6 +913,10 @@ def main():
         with open(evaluator.evaluation_file, 'w') as f:
             json.dump(results, f, indent=2)
         print(f"\n✅ Detailed results saved to: {evaluator.evaluation_file}")
+
+        if args.question_trace_report:
+            evaluator.write_question_trace_report(evaluator.question_trace_report_file)
+            print(f"✅ Question trace report saved to: {evaluator.question_trace_report_file}")
         
     except Exception as e:
         logger.error(f"Evaluation failed: {e}")
