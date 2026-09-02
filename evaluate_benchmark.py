@@ -30,24 +30,16 @@ TOOL_EQUIVALENTS = {
 }
 
 
+DEFAULT_QUESTION_FILES = {
+    "ln": Path("questions/gds-algo-questions-ln.csv"),
+    "got": Path("questions/gds-algo-questions-got.csv"),
+}
+
+
 class BenchmarkEvaluator:
     def __init__(self, dataset: str = "ln", model: str = "sonnet-4-20250514", questions_file: Optional[Path] = None):
-        # Map dataset shorthand names to question files
-        dataset_files = {
-            "ln": "questions/gds-algo-questions-ln.csv",
-            "got": "questions/gds-algo-questions-got.csv"
-        }
-
         self.dataset = dataset
-        if dataset in dataset_files:
-            self.questions_file = Path(questions_file) if questions_file is not None else Path(dataset_files[dataset])
-        else:
-            if questions_file is None:
-                raise ValueError(
-                    f"Unknown dataset '{dataset}': --questions-file is required for custom datasets."
-                )
-            self.questions_file = Path(questions_file)
-
+        self.questions_file = Path(questions_file) if questions_file is not None else DEFAULT_QUESTION_FILES[dataset]
         self.model = model
         
         # Look for results files matching the dataset and model pattern

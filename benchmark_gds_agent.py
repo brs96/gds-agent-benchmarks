@@ -31,12 +31,17 @@ for _noisy_logger in ("httpcore", "httpx", "openai", "agents"):
     logging.getLogger(_noisy_logger).setLevel(logging.WARNING)
 
 DEFAULT_GDS_AGENT_PACKAGE = "gds-agent==1.0.1"
+DEFAULT_MAX_TURNS = 20
 DEFAULT_SKILL_FILE = (
     Path(__file__).parent
     / "skills"
     / "neo4j-graph-data-scientist"
     / "SKILL.md"
 )
+DEFAULT_QUESTION_FILES = {
+    "ln": Path("questions/gds-algo-questions-ln.csv"),
+    "got": Path("questions/gds-algo-questions-got.csv"),
+}
 
 CYPHER_MCP_PACKAGE = "mcp-neo4j-cypher@0.6.0"
 CYPHER_TOOL_NAMES = {
@@ -54,22 +59,10 @@ class GDSBenchmark:
                  with_cypher_mcp: bool = False,
                  questions_file: Path = None,
                  gds_agent_package: str = DEFAULT_GDS_AGENT_PACKAGE,
-                 skill_file: Path = DEFAULT_SKILL_FILE):
-        # Map dataset names to question files
-        dataset_files = {
-            "ln": "questions/gds-algo-questions-ln.csv",
-            "got": "questions/gds-algo-questions-got.csv"
-        }
-
+                 skill_file: Path = DEFAULT_SKILL_FILE,
+                 max_turns: int = DEFAULT_MAX_TURNS):
         self.dataset = dataset
-        if dataset in dataset_files:
-            self.questions_file = Path(questions_file) if questions_file is not None else Path(dataset_files[dataset])
-        else:
-            if questions_file is None:
-                raise ValueError(
-                    f"Unknown dataset '{dataset}': --questions-file is required for custom datasets."
-                )
-            self.questions_file = Path(questions_file)
+        self.questions_file = Path(questions_file) if questions_file is not None else DEFAULT_QUESTION_FILES[dataset]
 
         self.model = model
         self.provider = self._detect_provider(model)
@@ -85,6 +78,7 @@ class GDSBenchmark:
             
         self.results = []
         self.with_cypher_mcp = with_cypher_mcp
+        self.max_turns = max_turns
 
     def _load_skill(self) -> str:
         """Load the GDS agent skill used as instructions by every model."""
@@ -265,6 +259,7 @@ class GDSBenchmark:
                 "--strict-mcp-config",
                 "--append-system-prompt", self.skill_instructions,
                 "--dangerously-skip-permissions",
+                "--max-turns", str(self.max_turns),
                 "--allowedTools", "mcp__*"  # Allow all MCP tools
             ]
             
@@ -388,7 +383,7 @@ class GDSBenchmark:
             
             logger.debug("Running agent with question...")
             result = await asyncio.wait_for(
-                Runner.run(agent, formatted_prompt, max_turns=20), 
+                Runner.run(agent, formatted_prompt, max_turns=self.max_turns), 
                 timeout=300
             )
             logger.debug(f"Result: {result}")
@@ -718,6 +713,13 @@ def main():
         default=DEFAULT_SKILL_FILE,
         help="Path to the neo4j-graph-data-scientist SKILL.md file"
     )
+
+    parser.add_argument(
+        "--max-turns",
+        type=int,
+        default=DEFAULT_MAX_TURNS,
+        help=f"Maximum agent turns per question (default: {DEFAULT_MAX_TURNS})"
+    )
     
     args = parser.parse_args()
     load_dotenv()
@@ -736,6 +738,7 @@ def main():
             questions_file=args.questions_file,
             gds_agent_package=args.gds_agent_package,
             skill_file=args.skill_file,
+            max_turns=args.max_turns,
         )
         print(f"Provider: {benchmark.provider.upper()}")
     except ValueError as e:
@@ -750,6 +753,7 @@ def main():
     print(f"Questions file: {benchmark.questions_file}")
     print(f"GDS agent package: {benchmark.gds_agent_package}")
     print(f"Skill file: {benchmark.skill_file}")
+    print(f"Max turns: {benchmark.max_turns}")
     print(f"Results file: {benchmark.results_file}")
     print("\nStarting benchmark...")
     

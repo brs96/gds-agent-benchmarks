@@ -35,7 +35,7 @@ Running benchmarks:
 2. Run `python evaluate_benchmark.py $dataset --model $model` to use the produced answers and evaluate them.
 3. Run `python analyze_benchmark_stats.py $dataset --model $model` to calculate any further summary statistics and plots.
 
-Use `--gds-agent-package /path/to/gds_agent.whl` to benchmark a local wheel, or `--skill-file /path/to/SKILL.md` to use another version of the skill.
+Use `--gds-agent-package /path/to/gds_agent.whl` to benchmark a local wheel, or `--skill-file /path/to/SKILL.md` to use another version of the skill. Use `--max-turns N` to cap agent turns per question (default: 20).
 
 Citations example (GPT-5): custom dataset, so `--questions-file` is required. `--with-cypher-mcp` also starts the read-only Cypher MCP.
 
