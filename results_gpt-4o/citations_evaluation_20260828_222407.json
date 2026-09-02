@@ -1,0 +1,931 @@
+{
+  "summary": {
+    "dataset": "citations",
+    "model": "gpt-4o",
+    "questions_file": "questions/gds-questions-citations.json",
+    "total_questions": 22,
+    "total_runs": 17,
+    "average_score_across_questions": 0.058823529411764705,
+    "results_files_processed": 1
+  },
+  "aggregated_stats": {
+    "Find the top 5 articles with the highest in-degree / out-degree ratio based on CITED relationships, excluding any article with out-degree 0. Report only the titles as a list of strings and nothing else.": {
+      "overall_score_mean": 0.0,
+      "overall_score_min": 0.0,
+      "overall_score_max": 0.0,
+      "tool_f1_mean": 0.0,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 1
+    },
+    "Find the longest citation chain (path) between any two articles following outgoing CITED edges. Report only the length as a number and nothing else.": {
+      "overall_score_mean": 0.0,
+      "overall_score_min": 0.0,
+      "overall_score_max": 0.0,
+      "tool_f1_mean": 0.0,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 1
+    },
+    "Build the co-authorship graph where two authors are connected (undirected, unweighted) if they co-authored at least one article. Using the Adamic Adar measure, score the likelihood of future collaboration between Chao Zhang and each of their 2nd-degree co-authors \u2014 people who share a 1st-degree co-author with Chao Zhang but have never directly co-authored with them. Report only the top 3 names as a list of strings, breaking ties by name ascending and nothing else.": {
+      "overall_score_mean": 0.0,
+      "overall_score_min": 0.0,
+      "overall_score_max": 0.0,
+      "tool_f1_mean": 0.0,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 1
+    },
+    "Chao Zhang has never co-authored with certain researchers who nonetheless share a co-author with them. Among these indirect connections, find the 3 most likely future collaborators, where a shared co-author counts more if that co-author has fewer total collaborators overall. Report only the top 3 names as a list of strings, breaking ties by name ascending and nothing else.": {
+      "overall_score_mean": 0.0,
+      "overall_score_min": 0.0,
+      "overall_score_max": 0.0,
+      "tool_f1_mean": 0.0,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 1
+    },
+    "Find the top 5 authors involved in the most closed collaboration triangles, based on a co-authorship graph where an edge exists between two authors if they have co-authored at least one paper. If ties occur at the cutoff, break ties by name ascending. Report only the names as a list of strings and nothing else.": {
+      "overall_score_mean": 0.0,
+      "overall_score_min": 0.0,
+      "overall_score_max": 0.0,
+      "tool_f1_mean": 0.0,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 1
+    },
+    "Based on a co-authorship graph where an edge exists between two authors if they have co-authored at least one paper, how many authors are involved in more than 50 closed collaboration triangles? Report only the number and nothing else.": {
+      "overall_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 0
+    },
+    "Find the top 5 articles with the highest PageRank score based on citations and report only the titles as a list of strings and nothing else.": {
+      "overall_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 0
+    },
+    "Compute the mean shortest path distance following outgoing CITED edges from the article \"A practical guide for using statistical tests to assess randomized algorithms in software engineering\" to all articles reachable from it. Round to 3 decimal points. Report only the number and nothing else.": {
+      "overall_score_mean": 0.0,
+      "overall_score_min": 0.0,
+      "overall_score_max": 0.0,
+      "tool_f1_mean": 0.0,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 1
+    },
+    "Compute the mean shortest path distance via CITED relationships from the article \"A practical guide for using statistical tests to assess randomized algorithms in software engineering\" to all articles reachable from it. Round to 3 decimal points. Report only the number and nothing else.": {
+      "overall_score_mean": 0.0,
+      "overall_score_min": 0.0,
+      "overall_score_max": 0.0,
+      "tool_f1_mean": 0.0,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 1
+    },
+    "Build the co-authorship graph where two authors are connected (undirected, unweighted) if they co-authored at least one article. Compute the local clustering coefficient for Chao Zhang's ego network. Report only the number and nothing else.": {
+      "overall_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 0
+    },
+    "Build the co-authorship graph where two authors are connected (undirected, unweighted) if they co-authored at least one article. Compute the mean local clustering coefficient of Chao Zhang's 1st-degree co-authors. Report only the number round to 3 decimal places and nothing else.": {
+      "overall_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 0
+    },
+    "Run Eigenvector Centrality on the citation graph, using CITED relationships. Find the top 3 papers by eigenvector centrality, excluding only the single #1-ranked paper by PageRank. Report only the titles as a list of strings and nothing else.": {
+      "overall_score_mean": 0.0,
+      "overall_score_min": 0.0,
+      "overall_score_max": 0.0,
+      "tool_f1_mean": 0.0,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 1
+    },
+    "Report the number of weakly connected components in the citation graph and nothing else.": {
+      "overall_score_mean": 0.0,
+      "overall_score_min": 0.0,
+      "overall_score_max": 0.0,
+      "tool_f1_mean": 0.0,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 1
+    },
+    "Find the number of weakly connected components of articles in the citation graph that contain just a single article. Report the number and nothing else.": {
+      "overall_score_mean": 0.0,
+      "overall_score_min": 0.0,
+      "overall_score_max": 0.0,
+      "tool_f1_mean": 0.0,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 1
+    },
+    "Using degree centrality on the citation network, find the number of articles that have an in-degree score of 0. Report the number and nothing else.": {
+      "overall_score_mean": 0.0,
+      "overall_score_min": 0.0,
+      "overall_score_max": 0.0,
+      "tool_f1_mean": 0.0,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 1
+    },
+    "Find the mean local clustering coefficient across all authors in the co-authorship graph, where an edge exists between two authors if they have co-authored at least one paper. Round to 3 decimal points. Report only the number and nothing else.": {
+      "overall_score_mean": 0.0,
+      "overall_score_min": 0.0,
+      "overall_score_max": 0.0,
+      "tool_f1_mean": 0.0,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 1
+    },
+    "Using HITS on the citation network find the number of articles that have an authority score greater than their hub score. Report only the number and nothing else.": {
+      "overall_score_mean": 0.0,
+      "overall_score_min": 0.0,
+      "overall_score_max": 0.0,
+      "tool_f1_mean": 0.0,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 1
+    },
+    "Build the co-authorship graph (edge = co-authored at least one article). Among authors with more than 5 collaborators, find the mean local clustering coefficient. Report only the number round to 3 decimal places and nothing else.": {
+      "overall_score_mean": 0.0,
+      "overall_score_min": 0.0,
+      "overall_score_max": 0.0,
+      "tool_f1_mean": 0.0,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 1
+    },
+    "For each author, sum the PageRank scores (computed on the citation network) of all articles they have written and report the name of the author that has the highest total and nothing else.": {
+      "overall_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 0
+    },
+    "Find the number of distinct authors reachable from Chao Zhang within exactly 3 hops in the co-authorship graph (edge = co-authored at least one article) whose degree centrality, computed over the full co-authorship graph, is 5 or higher. Report only the number and nothing else.": {
+      "overall_score_mean": 1.0,
+      "overall_score_min": 1.0,
+      "overall_score_max": 1.0,
+      "tool_f1_mean": 0.0,
+      "answer_score_mean": 1.0,
+      "success_rate": 1.0,
+      "num_runs": 1
+    },
+    "Find the number of distinct authors who are exactly 5 hops away from Chao Zhang, or exactly 5 hops away from Yihui Jin, in the co-authorship graph (edge = co-authored at least one article), and whose degree centrality \u2014 computed over the full co-authorship graph \u2014 is 5 or higher. Report only the number and nothing else.": {
+      "overall_score_mean": 0.0,
+      "overall_score_min": 0.0,
+      "overall_score_max": 0.0,
+      "tool_f1_mean": 0.0,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 1
+    },
+    "For each venue, identify the article with the highest PageRank score (computed using only CITED relationships) among those published there. Across all these per-venue top articles, what is the mean PageRank score? Round to 3 decimal places. Report only the number and nothing else.": {
+      "overall_score_mean": 0.0,
+      "overall_score_min": 0.0,
+      "overall_score_max": 0.0,
+      "tool_f1_mean": 0.0,
+      "answer_score_mean": 0.0,
+      "success_rate": 0.0,
+      "num_runs": 1
+    }
+  },
+  "detailed_evaluations": {
+    "Find the top 5 articles with the highest in-degree / out-degree ratio based on CITED relationships, excluding any article with out-degree 0. Report only the titles as a list of strings and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.0,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 1.0,
+            "f1_score": 0.0,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__neo4j-cypher__read_neo4j_cypher",
+              "mcp__neo4j-cypher__read_neo4j_cypher",
+              "mcp__neo4j-cypher__read_neo4j_cypher"
+            ],
+            "workflow_tools": [],
+            "exact_match": false
+          },
+          "parameter_evaluation": {},
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 5
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/citations_results_20260828_215446.json"
+        }
+      ],
+      "num_runs": 1
+    },
+    "Find the longest citation chain (path) between any two articles following outgoing CITED edges. Report only the length as a number and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.0,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 1.0,
+            "f1_score": 0.0,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__gds-agent__get_node_properties_keys",
+              "mcp__gds-agent__get_relationship_types",
+              "mcp__gds-agent__longest_path"
+            ],
+            "workflow_tools": [
+              "mcp__gds-agent__project_graph_cypher"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {},
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/citations_results_20260828_215446.json"
+        }
+      ],
+      "num_runs": 1
+    },
+    "Build the co-authorship graph where two authors are connected (undirected, unweighted) if they co-authored at least one article. Using the Adamic Adar measure, score the likelihood of future collaboration between Chao Zhang and each of their 2nd-degree co-authors \u2014 people who share a 1st-degree co-author with Chao Zhang but have never directly co-authored with them. Report only the top 3 names as a list of strings, breaking ties by name ascending and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.0,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 1.0,
+            "f1_score": 0.0,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__neo4j-cypher__read_neo4j_cypher",
+              "mcp__neo4j-cypher__read_neo4j_cypher",
+              "mcp__neo4j-cypher__read_neo4j_cypher",
+              "mcp__neo4j-cypher__read_neo4j_cypher",
+              "mcp__neo4j-cypher__read_neo4j_cypher",
+              "mcp__neo4j-cypher__read_neo4j_cypher",
+              "mcp__neo4j-cypher__read_neo4j_cypher"
+            ],
+            "workflow_tools": [
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {},
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 3
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/citations_results_20260828_215446.json"
+        }
+      ],
+      "num_runs": 1
+    },
+    "Chao Zhang has never co-authored with certain researchers who nonetheless share a co-author with them. Among these indirect connections, find the 3 most likely future collaborators, where a shared co-author counts more if that co-author has fewer total collaborators overall. Report only the top 3 names as a list of strings, breaking ties by name ascending and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.0,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 1.0,
+            "f1_score": 0.0,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__neo4j-cypher__read_neo4j_cypher",
+              "mcp__neo4j-cypher__read_neo4j_cypher",
+              "mcp__neo4j-cypher__read_neo4j_cypher",
+              "mcp__neo4j-cypher__read_neo4j_cypher",
+              "mcp__neo4j-cypher__read_neo4j_cypher",
+              "mcp__neo4j-cypher__read_neo4j_cypher",
+              "mcp__neo4j-cypher__read_neo4j_cypher",
+              "mcp__neo4j-cypher__read_neo4j_cypher",
+              "mcp__neo4j-cypher__read_neo4j_cypher"
+            ],
+            "workflow_tools": [],
+            "exact_match": false
+          },
+          "parameter_evaluation": {},
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 3
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/citations_results_20260828_215446.json"
+        }
+      ],
+      "num_runs": 1
+    },
+    "Find the top 5 authors involved in the most closed collaboration triangles, based on a co-authorship graph where an edge exists between two authors if they have co-authored at least one paper. If ties occur at the cutoff, break ties by name ascending. Report only the names as a list of strings and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.0,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 1.0,
+            "f1_score": 0.0,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__neo4j-cypher__get_neo4j_schema"
+            ],
+            "workflow_tools": [
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {},
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 5
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/citations_results_20260828_215446.json"
+        }
+      ],
+      "num_runs": 1
+    },
+    "Based on a co-authorship graph where an edge exists between two authors if they have co-authored at least one paper, how many authors are involved in more than 50 closed collaboration triangles? Report only the number and nothing else.": {
+      "runs": [],
+      "num_runs": 0,
+      "error": "No actual result found"
+    },
+    "Find the top 5 articles with the highest PageRank score based on citations and report only the titles as a list of strings and nothing else.": {
+      "runs": [],
+      "num_runs": 0,
+      "error": "No actual result found"
+    },
+    "Compute the mean shortest path distance following outgoing CITED edges from the article \"A practical guide for using statistical tests to assess randomized algorithms in software engineering\" to all articles reachable from it. Round to 3 decimal points. Report only the number and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.0,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 1.0,
+            "f1_score": 0.0,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__gds-agent__dijkstra_single_source_shortest_path",
+              "mcp__gds-agent__stream_node_properties",
+              "mcp__neo4j-cypher__read_neo4j_cypher",
+              "mcp__gds-agent__dijkstra_single_source_shortest_path"
+            ],
+            "workflow_tools": [
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__drop_graph",
+              "mcp__gds-agent__project_graph_cypher"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {},
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/citations_results_20260828_215446.json"
+        }
+      ],
+      "num_runs": 1
+    },
+    "Compute the mean shortest path distance via CITED relationships from the article \"A practical guide for using statistical tests to assess randomized algorithms in software engineering\" to all articles reachable from it. Round to 3 decimal points. Report only the number and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.0,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 1.0,
+            "f1_score": 0.0,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__gds-agent__dijkstra_single_source_shortest_path",
+              "mcp__gds-agent__dijkstra_single_source_shortest_path",
+              "mcp__gds-agent__delta_stepping_shortest_path",
+              "mcp__gds-agent__all_pairs_shortest_paths",
+              "mcp__gds-agent__dijkstra_single_source_shortest_path"
+            ],
+            "workflow_tools": [
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__list_graphs",
+              "mcp__gds-agent__drop_graph",
+              "mcp__gds-agent__project_graph_cypher"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {},
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/citations_results_20260828_215446.json"
+        }
+      ],
+      "num_runs": 1
+    },
+    "Build the co-authorship graph where two authors are connected (undirected, unweighted) if they co-authored at least one article. Compute the local clustering coefficient for Chao Zhang's ego network. Report only the number and nothing else.": {
+      "runs": [],
+      "num_runs": 0,
+      "error": "No actual result found"
+    },
+    "Build the co-authorship graph where two authors are connected (undirected, unweighted) if they co-authored at least one article. Compute the mean local clustering coefficient of Chao Zhang's 1st-degree co-authors. Report only the number round to 3 decimal places and nothing else.": {
+      "runs": [],
+      "num_runs": 0,
+      "error": "No actual result found"
+    },
+    "Run Eigenvector Centrality on the citation graph, using CITED relationships. Find the top 3 papers by eigenvector centrality, excluding only the single #1-ranked paper by PageRank. Report only the titles as a list of strings and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.0,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 1.0,
+            "f1_score": 0.0,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__gds-agent__pagerank",
+              "mcp__gds-agent__eigenvector_centrality",
+              "mcp__gds-agent__get_node_properties_keys"
+            ],
+            "workflow_tools": [
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__drop_graph",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {},
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 3
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/citations_results_20260828_215446.json"
+        }
+      ],
+      "num_runs": 1
+    },
+    "Report the number of weakly connected components in the citation graph and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.0,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 1.0,
+            "f1_score": 0.0,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__gds-agent__get_node_labels",
+              "mcp__gds-agent__get_relationship_types",
+              "mcp__gds-agent__weakly_connected_components"
+            ],
+            "workflow_tools": [
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {},
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/citations_results_20260828_215446.json"
+        }
+      ],
+      "num_runs": 1
+    },
+    "Find the number of weakly connected components of articles in the citation graph that contain just a single article. Report the number and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.0,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 1.0,
+            "f1_score": 0.0,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__gds-agent__weakly_connected_components",
+              "mcp__gds-agent__stream_node_properties",
+              "mcp__neo4j-cypher__read_neo4j_cypher"
+            ],
+            "workflow_tools": [
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {},
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/citations_results_20260828_215446.json"
+        }
+      ],
+      "num_runs": 1
+    },
+    "Using degree centrality on the citation network, find the number of articles that have an in-degree score of 0. Report the number and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.0,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 1.0,
+            "f1_score": 0.0,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__gds-agent__get_node_labels",
+              "mcp__gds-agent__get_relationship_types",
+              "mcp__gds-agent__degree_centrality"
+            ],
+            "workflow_tools": [
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {},
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/citations_results_20260828_215446.json"
+        }
+      ],
+      "num_runs": 1
+    },
+    "Find the mean local clustering coefficient across all authors in the co-authorship graph, where an edge exists between two authors if they have co-authored at least one paper. Round to 3 decimal points. Report only the number and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.0,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 1.0,
+            "f1_score": 0.0,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__gds-agent__local_clustering_coefficient"
+            ],
+            "workflow_tools": [
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__drop_graph",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {},
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/citations_results_20260828_215446.json"
+        }
+      ],
+      "num_runs": 1
+    },
+    "Using HITS on the citation network find the number of articles that have an authority score greater than their hub score. Report only the number and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.0,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 1.0,
+            "f1_score": 0.0,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__gds-agent__HITS",
+              "mcp__gds-agent__stream_node_properties",
+              "mcp__gds-agent__stream_node_properties"
+            ],
+            "workflow_tools": [
+              "mcp__gds-agent__project_graph_cypher"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {},
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/citations_results_20260828_215446.json"
+        }
+      ],
+      "num_runs": 1
+    },
+    "Build the co-authorship graph (edge = co-authored at least one article). Among authors with more than 5 collaborators, find the mean local clustering coefficient. Report only the number round to 3 decimal places and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.0,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 1.0,
+            "f1_score": 0.0,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__neo4j-cypher__read_neo4j_cypher"
+            ],
+            "workflow_tools": [
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {},
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/citations_results_20260828_215446.json"
+        }
+      ],
+      "num_runs": 1
+    },
+    "For each author, sum the PageRank scores (computed on the citation network) of all articles they have written and report the name of the author that has the highest total and nothing else.": {
+      "runs": [],
+      "num_runs": 0,
+      "error": "No actual result found"
+    },
+    "Find the number of distinct authors reachable from Chao Zhang within exactly 3 hops in the co-authorship graph (edge = co-authored at least one article) whose degree centrality, computed over the full co-authorship graph, is 5 or higher. Report only the number and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 1.0,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 1.0,
+            "f1_score": 0.0,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__gds-agent__degree_centrality",
+              "mcp__gds-agent__degree_centrality",
+              "mcp__gds-agent__breadth_first_search",
+              "mcp__gds-agent__stream_node_properties"
+            ],
+            "workflow_tools": [
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__list_graphs"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {},
+          "answer_evaluation": {
+            "answer_match_score": 1.0,
+            "answer_matched_count": 1,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/citations_results_20260828_215446.json"
+        }
+      ],
+      "num_runs": 1
+    },
+    "Find the number of distinct authors who are exactly 5 hops away from Chao Zhang, or exactly 5 hops away from Yihui Jin, in the co-authorship graph (edge = co-authored at least one article), and whose degree centrality \u2014 computed over the full co-authorship graph \u2014 is 5 or higher. Report only the number and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.0,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 1.0,
+            "f1_score": 0.0,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__gds-agent__get_node_labels",
+              "mcp__gds-agent__get_relationship_types",
+              "mcp__gds-agent__degree_centrality",
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__neo4j-cypher__read_neo4j_cypher",
+              "mcp__neo4j-cypher__read_neo4j_cypher",
+              "mcp__gds-agent__find_shortest_path",
+              "mcp__gds-agent__degree_centrality"
+            ],
+            "workflow_tools": [
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {},
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/citations_results_20260828_215446.json"
+        }
+      ],
+      "num_runs": 1
+    },
+    "For each venue, identify the article with the highest PageRank score (computed using only CITED relationships) among those published there. Across all these per-venue top articles, what is the mean PageRank score? Round to 3 decimal places. Report only the number and nothing else.": {
+      "runs": [
+        {
+          "overall_score": 0.0,
+          "tool_evaluation": {
+            "precision": 0.0,
+            "recall": 1.0,
+            "f1_score": 0.0,
+            "missing_tools": [],
+            "unexpected_tools": [
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__neo4j-cypher__get_neo4j_schema",
+              "mcp__neo4j-cypher__read_neo4j_cypher"
+            ],
+            "workflow_tools": [
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher",
+              "mcp__gds-agent__project_graph_cypher"
+            ],
+            "exact_match": false
+          },
+          "parameter_evaluation": {},
+          "answer_evaluation": {
+            "answer_match_score": 0.0,
+            "answer_matched_count": 0,
+            "answer_total_count": 1
+          },
+          "metadata": {
+            "num_turns": 0,
+            "duration_ms": 0
+          },
+          "token_usage": {},
+          "run_number": 1,
+          "source_file": "results_gpt-4o/citations_results_20260828_215446.json"
+        }
+      ],
+      "num_runs": 1
+    }
+  }
+}
