@@ -7,7 +7,7 @@ The MCP server of GDS agent is at: [https://github.com/neo4j-contrib/gds-agent](
 Preparations:
 
 1. Install the Python requirements and make sure `uvx` is available. The benchmark uses `gds-agent==1.0.1` from PyPI by default.
-2. Start a Neo4j database with either the LN or GoT dataset loaded.
+2. Start a Neo4j database with the LN, GoT, or citations dataset loaded. Citations uses the [citations-50.dump](https://github.com/neo4j-graph-examples/citations/blob/main/data/citations-50.dump).
 3. Put the database configuration in `.env` (or export it in the shell):
   ```dotenv
    NEO4J_URI=neo4j://localhost:7687
@@ -31,11 +31,11 @@ AURA_API_CLIENT_SECRET=your-client-secret
 Running benchmarks:
 
 1. Run `python benchmark_gds_agent.py $dataset --model $model` to produce answers for the set of questions.
-  Add `--with-cypher-mcp` to also start the read-only [`mcp-neo4j-cypher`](https://github.com/neo4j-contrib/mcp-neo4j) server next to gds-agent (same pairing as the gds-agent MCP config). Default is gds-agent only.
+  Add `--with-cypher-mcp` to also start the read-only `[mcp-neo4j-cypher](https://github.com/neo4j-contrib/mcp-neo4j)` server next to gds-agent (same pairing as the gds-agent MCP config). Default is gds-agent only.
 2. Run `python evaluate_benchmark.py $dataset --model $model` to use the produced answers and evaluate them.
 3. Run `python analyze_benchmark_stats.py $dataset --model $model` to calculate any further summary statistics and plots.
 
-Use `--gds-agent-package /path/to/gds_agent.whl` to benchmark a local wheel, or `--skill-file /path/to/SKILL.md` to use another version of the skill. Use `--max-turns N` to cap agent turns per question (default: 20).
+Use `--gds-agent-package /path/to/gds_agent.whl` to benchmark a local wheel, or `--skill-file /path/to/skill.zip` to use another version of the skill. The zip must contain `SKILL.md`; markdown files under `references/` are also dumped into the agent instructions. Use `--max-turns N` to cap agent turns per question (default: 50).
 
 Citations example (GPT-5): custom dataset, so `--questions-file` is required. `--with-cypher-mcp` also starts the read-only Cypher MCP.
 
@@ -44,7 +44,7 @@ python benchmark_gds_agent.py --dataset citations \
   --questions-file questions/gds-questions-citations.json \
   --with-cypher-mcp --model gpt-5 \
   --gds-agent-package /path/to/gds_agent.whl \
-  --skill-file /path/to/SKILL.md
+  --skill-file /path/to/skill.zip
 ```
 
 ```bash
@@ -52,3 +52,4 @@ python evaluate_benchmark.py citations \
   --questions-file questions/gds-questions-citations.json \
   --model gpt-5 --question-trace-report
 ```
+

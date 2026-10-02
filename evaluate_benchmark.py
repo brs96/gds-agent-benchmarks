@@ -201,7 +201,7 @@ class BenchmarkEvaluator:
                         question = result['question'].strip()
                         response_data = result['response_data']
                         
-                        token_usage = self.extract_token_usage_from_raw_stream(
+                        token_usage = response_data.get('token_usage') or self.extract_token_usage_from_raw_stream(
                             response_data.get('raw_stream', '')
                         )
                         

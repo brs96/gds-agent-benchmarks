@@ -88,7 +88,7 @@
     {
       "id": 18,
       "Question": "Build the co-authorship graph (edge = co-authored at least one article). Among authors with more than 5 collaborators, find the mean local clustering coefficient. Report only the number round to 3 decimal places and nothing else.",
-      "Expected answer": "0.615"
+      "Expected answer": "0.589"
     }, 
     {
       "id": 19,

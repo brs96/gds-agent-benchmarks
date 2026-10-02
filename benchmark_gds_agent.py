@@ -10,6 +10,7 @@ import tempfile
 import os
 import csv
 import asyncio
+import zipfile
 from contextlib import AsyncExitStack
 from agents import Agent, MaxTurnsExceeded, Runner
 from agents.mcp import MCPServerStdio
@@ -31,12 +32,11 @@ for _noisy_logger in ("httpcore", "httpx", "openai", "agents"):
     logging.getLogger(_noisy_logger).setLevel(logging.WARNING)
 
 DEFAULT_GDS_AGENT_PACKAGE = "gds-agent==1.0.1"
-DEFAULT_MAX_TURNS = 20
+DEFAULT_MAX_TURNS = 50
 DEFAULT_SKILL_FILE = (
     Path(__file__).parent
     / "skills"
-    / "neo4j-graph-data-scientist"
-    / "SKILL.md"
+    / "neo4j-graph-data-scientist.zip"
 )
 DEFAULT_QUESTION_FILES = {
     "ln": Path("questions/gds-algo-questions-ln.csv"),
@@ -84,7 +84,13 @@ class GDSBenchmark:
         """Load the GDS agent skill used as instructions by every model."""
         if not self.skill_file.exists():
             raise ValueError(f"GDS skill file not found: {self.skill_file}")
-        return self.skill_file.read_text(encoding="utf-8")
+        with zipfile.ZipFile(self.skill_file) as zf:
+            return "\n\n".join(
+                zf.read(name).decode("utf-8")
+                for name in zf.namelist()
+                if Path(name).name.lower() == "skill.md"
+                or (name.endswith(".md") and "/references/" in f"/{name}")
+            )
 
     def _mcp_environment(self) -> Dict[str, str]:
         """Build the MCP environment for plugin or Aura session mode."""
@@ -130,6 +136,7 @@ class GDSBenchmark:
                 **self._mcp_environment(),
                 "NEO4J_READ_ONLY": "true",
                 "NEO4J_RESPONSE_TOKEN_LIMIT": "20000",
+                "NEO4J_SCHEMA_SAMPLE_SIZE": "1000",
             },
         }
 
@@ -302,6 +309,7 @@ class GDSBenchmark:
             "final_result": "",
             "num_turns": 0,
             "duration_ms": 0,
+            "token_usage": {},
             "raw_stream": stream_output
         }
         
@@ -350,6 +358,17 @@ class GDSBenchmark:
                         parsed_data["final_result"] = data.get('result', '')
                         parsed_data["num_turns"] = data.get('num_turns', 0)
                         parsed_data["duration_ms"] = data.get('duration_ms', 0)
+                        usage = data.get('usage') or {}
+                        parsed_data["token_usage"] = {
+                            "total_input_tokens": usage.get('input_tokens', 0),
+                            "total_output_tokens": usage.get('output_tokens', 0),
+                            "total_cost_usd": data.get('total_cost_usd', 0.0),
+                            "total_tokens": (
+                                usage.get('input_tokens', 0)
+                                + usage.get('output_tokens', 0)
+                                + usage.get('cache_creation_input_tokens', 0)
+                            ),
+                        }
                         
                 except json.JSONDecodeError:
                     logger.error(f"Skipped non-JSON line: {line[:100] if line else 'None'}...")
@@ -382,12 +401,15 @@ class GDSBenchmark:
             )
             
             logger.debug("Running agent with question...")
+            started = time.perf_counter()
             result = await asyncio.wait_for(
-                Runner.run(agent, formatted_prompt, max_turns=self.max_turns), 
+                Runner.run(agent, formatted_prompt, max_turns=self.max_turns),
                 timeout=300
             )
             logger.debug(f"Result: {result}")
-            return self._openai_run_to_response_data(result)
+            return self._openai_run_to_response_data(
+                result, int((time.perf_counter() - started) * 1000)
+            )
                 
         except asyncio.TimeoutError:
             logger.error("OpenAI request timed out after 300 seconds")
@@ -404,13 +426,23 @@ class GDSBenchmark:
             logger.error(f"Error in OpenAI async request: {e}")
             return None
 
-    def _openai_run_to_response_data(self, result) -> dict:
+    def _openai_run_to_response_data(self, result, duration_ms: int = 0) -> dict:
+        usage = getattr(getattr(result, "context_wrapper", None), "usage", None)
+        token_usage = {}
+        if usage is not None:
+            token_usage = {
+                "total_input_tokens": getattr(usage, "input_tokens", 0),
+                "total_output_tokens": getattr(usage, "output_tokens", 0),
+                "total_cost_usd": 0.0,
+                "total_tokens": getattr(usage, "total_tokens", 0),
+            }
         response_data = {
             "tool_calls": [],
             "tool_results": [],
             "final_result": "",
-            "num_turns": 0,
-            "duration_ms": 0,
+            "num_turns": len(getattr(result, "raw_responses", []) or []),
+            "duration_ms": duration_ms,
+            "token_usage": token_usage,
             "raw_stream": ""
         }
         for raw_response in getattr(result, "raw_responses", []) or []:
@@ -711,7 +743,7 @@ def main():
         "--skill-file",
         type=Path,
         default=DEFAULT_SKILL_FILE,
-        help="Path to the neo4j-graph-data-scientist SKILL.md file"
+        help="Path to the neo4j-graph-data-scientist skill zip"
     )
 
     parser.add_argument(
