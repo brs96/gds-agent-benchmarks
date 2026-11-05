@@ -17,15 +17,50 @@ WORKFLOW_TOOLS = {
     "mcp__gds-agent__project_graph_cypher",
     "mcp__gds-agent__list_graphs",
     "mcp__gds-agent__drop_graph",
+    "mcp__gds-agent__get_graph_info",
+    "mcp__gds-agent__stream_node_properties",
+    "mcp__gds-agent__stream_relationship_properties",
+    "mcp__gds-agent__stream_relationships",
     "mcp__gds-agent__list_sessions",
     "mcp__gds-agent__create_session",
     "mcp__gds-agent__delete_session",
+    "mcp__gds-agent__list_models",
+    "mcp__gds-agent__drop_model",
+    "mcp__gds-agent__get_neo4j_schema",
+    "mcp__gds-agent__read_neo4j_cypher",
+    "mcp__gds-agent__get_node_labels",
+    "mcp__gds-agent__get_relationship_types",
+    "mcp__gds-agent__get_node_properties_keys",
+    "mcp__gds-agent__get_relationship_properties_keys",
 }
 
 TOOL_EQUIVALENTS = {
     "mcp__gds-agent__count_nodes": {
         "mcp__gds-agent__count_nodes",
         "mcp__gds-agent__get_graph_info",
+        "mcp__gds-agent__get_neo4j_schema",
+        "mcp__gds-agent__read_neo4j_cypher",
+        "mcp__gds-agent__list_graphs",
+    },
+    "mcp__gds-agent__get_node_labels": {
+        "mcp__gds-agent__get_node_labels",
+        "mcp__gds-agent__get_neo4j_schema",
+        "mcp__gds-agent__read_neo4j_cypher",
+    },
+    "mcp__gds-agent__get_relationship_types": {
+        "mcp__gds-agent__get_relationship_types",
+        "mcp__gds-agent__get_neo4j_schema",
+        "mcp__gds-agent__read_neo4j_cypher",
+    },
+    "mcp__gds-agent__get_node_properties_keys": {
+        "mcp__gds-agent__get_node_properties_keys",
+        "mcp__gds-agent__get_neo4j_schema",
+        "mcp__gds-agent__read_neo4j_cypher",
+    },
+    "mcp__gds-agent__get_relationship_properties_keys": {
+        "mcp__gds-agent__get_relationship_properties_keys",
+        "mcp__gds-agent__get_neo4j_schema",
+        "mcp__gds-agent__read_neo4j_cypher",
     },
 }
 
@@ -266,7 +301,7 @@ class BenchmarkEvaluator:
             recall = unique_correct_tools / len(set(expected_tools))
             
             total_actual_calls = len(scored_actual_tool_names)
-            precision = unique_correct_tools / total_actual_calls if total_actual_calls > 0 else 1.0
+            precision = min(1.0, unique_correct_tools / total_actual_calls) if total_actual_calls > 0 else 1.0
         
         f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
         
@@ -291,6 +326,21 @@ class BenchmarkEvaluator:
             # For non-lists, use regular comparison
             return actual_value == expected_value or str(actual_value) == str(expected_value)
         
+    def _find_projection_cypher(self, actual_tools: List[Dict[str, Any]], graph_name: Optional[str]) -> Optional[str]:
+        """Find the cypherQuery used in project_graph_cypher for the given graphName."""
+        projection_calls = [
+            tool for tool in actual_tools
+            if "project_graph_cypher" in tool.get("name", "")
+        ]
+        if not projection_calls:
+            return None
+        if graph_name:
+            for call in reversed(projection_calls):
+                params = call.get("parameters", {})
+                if params.get("graphName") == graph_name:
+                    return params.get("cypherQuery", "")
+        return projection_calls[-1].get("parameters", {}).get("cypherQuery", "")
+
     def evaluate_parameters(self, expected_params: Dict[str, Any], actual_tools: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Evaluate if the correct parameters were used."""
         parameter_scores = {}
@@ -308,29 +358,32 @@ class BenchmarkEvaluator:
                 }
                 continue
                 
-            actual_params = matching_tools[0].get('parameters', {})
-            ignored_parameters = []
-            parameters_to_score = expected_tool_params
-            if "graphName" in actual_params:
-                ignored_parameters = [
-                    key
-                    for key in ("nodeLabels", "relTypes")
-                    if key in expected_tool_params
-                ]
-                parameters_to_score = {
-                    key: value
-                    for key, value in expected_tool_params.items()
-                    if key not in ignored_parameters
-                }
+            actual_params = matching_tools[-1].get('parameters', {})
+            projection_cypher = (
+                self._find_projection_cypher(actual_tools, actual_params.get("graphName"))
+                if "graphName" in actual_params
+                else None
+            )
             
             matches = []
             mismatches = []
             
-            for param_key, expected_value in parameters_to_score.items():
+            for param_key, expected_value in expected_tool_params.items():
                 actual_value = actual_params.get(param_key)
 
+                # When using explicit graph projection, check nodeLabels / relTypes in project_graph_cypher
+                if param_key in ("nodeLabels", "relTypes") and "graphName" in actual_params:
+                    expected_items = expected_value if isinstance(expected_value, list) else [expected_value]
+                    if projection_cypher and all(str(item) in projection_cypher for item in expected_items):
+                        matches.append(param_key)
+                    else:
+                        mismatches.append({
+                            'param': param_key,
+                            'expected': expected_value,
+                            'actual': projection_cypher
+                        })
                 # Handle range constraints like "<=5"
-                if isinstance(expected_value, str) and expected_value.startswith('<='):
+                elif isinstance(expected_value, str) and expected_value.startswith('<='):
                     try:
                         max_value = int(expected_value[2:])
                         if actual_value is not None and int(actual_value) <= max_value:
@@ -360,8 +413,7 @@ class BenchmarkEvaluator:
                 'match': len(mismatches) == 0,
                 'matches': matches,
                 'mismatches': mismatches,
-                'ignored_parameters': ignored_parameters,
-                'score': len(matches) / len(parameters_to_score) if parameters_to_score else 1.0
+                'score': len(matches) / len(expected_tool_params) if expected_tool_params else 1.0
             }
             
         return parameter_scores
@@ -430,7 +482,7 @@ class BenchmarkEvaluator:
             items = set()
             
             # Pattern 1: "path: cost" format (e.g., "path1: 5.0, path2: 3.2")
-            path_cost_pattern = r'([^:,]+):\s*([0-9.]+)'
+            path_cost_pattern = r'([^:,]+):\s*(\d+(?:\.\d+)?)'
             path_cost_matches = re.findall(path_cost_pattern, text)
             for path, cost in path_cost_matches:
                 # Normalize path (remove extra spaces, convert to lowercase)
@@ -438,13 +490,13 @@ class BenchmarkEvaluator:
                 items.add((normalized_path, float(cost)))
             
             # Pattern 2: "(node, parent, weight)" format
-            tuple_pattern = r'\(\s*([^,]+)\s*,\s*([^,]+)\s*,\s*([0-9.]+)\s*\)'
+            tuple_pattern = r'\(\s*([^,]+)\s*,\s*([^,]+)\s*,\s*(\d+(?:\.\d+)?)\s*\)'
             tuple_matches = re.findall(tuple_pattern, text)
             for node, parent, weight in tuple_matches:
                 items.add((normalize_text(node), normalize_text(parent), float(weight)))
             
             # Pattern 3: "station:score" format (centrality results)
-            station_score_pattern = r'([A-Za-z\s\(\)]+):\s*([0-9.]+)'
+            station_score_pattern = r'([A-Za-z\s\(\)]+):\s*(\d+(?:\.\d+)?)'
             station_score_matches = re.findall(station_score_pattern, text)
             for station, score in station_score_matches:
                 normalized_station = normalize_text(station)
