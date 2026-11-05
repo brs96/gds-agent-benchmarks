@@ -31,32 +31,26 @@ logger = logging.getLogger(__name__)
 for _noisy_logger in ("httpcore", "httpx", "openai", "agents"):
     logging.getLogger(_noisy_logger).setLevel(logging.WARNING)
 
-DEFAULT_GDS_AGENT_PACKAGE = "gds-agent==1.0.1"
+DEFAULT_GDS_AGENT_PACKAGE = str(
+    Path(__file__).parent / "gds_agent-1.1.0-py3-none-any.whl"
+)
 DEFAULT_MAX_TURNS = 50
 DEFAULT_SKILL_FILE = (
     Path(__file__).parent
     / "skills"
-    / "neo4j-graph-data-scientist.zip"
+    / "neo4j-graph-data-scientist"
+    / "SKILL.md"
 )
 DEFAULT_QUESTION_FILES = {
     "ln": Path("questions/gds-algo-questions-ln.csv"),
     "got": Path("questions/gds-algo-questions-got.csv"),
 }
 
-CYPHER_MCP_PACKAGE = "mcp-neo4j-cypher@0.6.0"
-CYPHER_TOOL_NAMES = {
-    "read_neo4j_cypher",
-    "write_neo4j_cypher",
-    "get_neo4j_schema",
-}
-
-
 class GDSBenchmark:
     def __init__(self, 
                  dataset: str = "ln",
                  model: str = "sonnet-4-20250514",
                  results_file: str = None,
-                 with_cypher_mcp: bool = False,
                  questions_file: Path = None,
                  gds_agent_package: str = DEFAULT_GDS_AGENT_PACKAGE,
                  skill_file: Path = DEFAULT_SKILL_FILE,
@@ -77,20 +71,26 @@ class GDSBenchmark:
             self.results_file = Path(results_file)
             
         self.results = []
-        self.with_cypher_mcp = with_cypher_mcp
         self.max_turns = max_turns
 
     def _load_skill(self) -> str:
         """Load the GDS agent skill used as instructions by every model."""
         if not self.skill_file.exists():
             raise ValueError(f"GDS skill file not found: {self.skill_file}")
-        with zipfile.ZipFile(self.skill_file) as zf:
-            return "\n\n".join(
-                zf.read(name).decode("utf-8")
-                for name in zf.namelist()
-                if Path(name).name.lower() == "skill.md"
-                or (name.endswith(".md") and "/references/" in f"/{name}")
-            )
+        if self.skill_file.suffix == ".zip":
+            with zipfile.ZipFile(self.skill_file) as zf:
+                return "\n\n".join(
+                    zf.read(name).decode("utf-8")
+                    for name in zf.namelist()
+                    if Path(name).name.lower() == "skill.md"
+                    or (name.endswith(".md") and "/references/" in f"/{name}")
+                )
+        skill_text = self.skill_file.read_text(encoding="utf-8")
+        troubleshooting_file = self.skill_file.parent / "references" / "troubleshooting.md"
+        if troubleshooting_file.exists():
+            troubleshooting_text = troubleshooting_file.read_text(encoding="utf-8")
+            skill_text = f"{skill_text}\n\n{troubleshooting_text}"
+        return skill_text
 
     def _mcp_environment(self) -> Dict[str, str]:
         """Build the MCP environment for plugin or Aura session mode."""
@@ -116,6 +116,10 @@ class GDSBenchmark:
             "AURA_API_PROJECT_ID",
             "SESSION_MEMORY_GB",
             "SESSION_TTL_HOURS",
+            "SESSION_TIMEOUT_SECONDS",
+            "GDS_AGENT_MAX_RESULT_ROWS",
+            "GDS_AGENT_MAX_RESULT_CHARS",
+            "GDS_AGENT_MAX_CELL_CHARS",
         ]
         names = required + optional
         return {name: os.environ[name] for name in names if os.environ.get(name)}
@@ -125,19 +129,6 @@ class GDSBenchmark:
             "command": "uvx",
             "args": ["--from", self.gds_agent_package, "gds-agent"],
             "env": self._mcp_environment(),
-        }
-
-    def _cypher_mcp_params(self) -> dict:
-        """Stdio params for the read-only neo4j-cypher MCP server."""
-        return {
-            "command": "uvx",
-            "args": [CYPHER_MCP_PACKAGE, "--transport", "stdio"],
-            "env": {
-                **self._mcp_environment(),
-                "NEO4J_READ_ONLY": "true",
-                "NEO4J_RESPONSE_TOKEN_LIMIT": "20000",
-                "NEO4J_SCHEMA_SAMPLE_SIZE": "1000",
-            },
         }
 
     def _detect_provider(self, model: str) -> str:
@@ -246,8 +237,6 @@ class GDSBenchmark:
                 "gds-agent": self._gds_mcp_params(),
             }
         }
-        if self.with_cypher_mcp:
-            config["mcpServers"]["neo4j-cypher"] = self._cypher_mcp_params()
         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
             json.dump(config, f, indent=2)
         logger.debug(f"Created MCP config at {f.name}")
@@ -379,15 +368,11 @@ class GDSBenchmark:
             
         return parsed_data
 
-    async def _send_question_to_openai_async(self, question: str, gds_server: MCPServerStdio, cypher_server: Optional[MCPServerStdio] = None) -> Optional[dict]:
+    async def _send_question_to_openai_async(self, question: str, gds_server: MCPServerStdio) -> Optional[dict]:
         try:
             logger.debug(f"Starting OpenAI async request for: {question[:50]}")
 
             formatted_prompt = f"You MUST use the available MCP tools to query the actual Neo4j database to answer this question. Do not rely on output from previous questions. Do not provide a hypothetical answer. Question: {question}"
-
-            mcp_servers = [gds_server]
-            if cypher_server is not None:
-                mcp_servers.append(cypher_server)
             
             agent = Agent(
                 name="GPT-NEO4J-GDS",
@@ -396,7 +381,7 @@ class GDSBenchmark:
                     "MCP tools to answer questions about Neo4j graph databases.\n\n"
                     f"{self.skill_instructions}"
                 ),
-                mcp_servers=mcp_servers,
+                mcp_servers=[gds_server],
                 model=self.model,
             )
             
@@ -427,6 +412,7 @@ class GDSBenchmark:
             return None
 
     def _openai_run_to_response_data(self, result, duration_ms: int = 0) -> dict:
+        raw_responses = getattr(result, "raw_responses", []) or []
         usage = getattr(getattr(result, "context_wrapper", None), "usage", None)
         token_usage = {}
         if usage is not None:
@@ -440,12 +426,12 @@ class GDSBenchmark:
             "tool_calls": [],
             "tool_results": [],
             "final_result": "",
-            "num_turns": len(getattr(result, "raw_responses", []) or []),
+            "num_turns": len(raw_responses),
             "duration_ms": duration_ms,
             "token_usage": token_usage,
             "raw_stream": ""
         }
-        for raw_response in getattr(result, "raw_responses", []) or []:
+        for raw_response in raw_responses:
             outputs = raw_response.output
             for output in outputs:
                 if output.type == "function_call":
@@ -454,9 +440,8 @@ class GDSBenchmark:
                     except (json.JSONDecodeError, TypeError):
                         parsed_args = output.arguments
 
-                    prefix = "mcp__neo4j-cypher__" if output.name in CYPHER_TOOL_NAMES else "mcp__gds-agent__"
                     response_data["tool_calls"].append({
-                        "name": prefix + output.name,
+                        "name": "mcp__gds-agent__" + output.name,
                         "parameters": parsed_args,
                         "id": getattr(output, "call_id", "") or getattr(output, "id", ""),
                     })
@@ -527,16 +512,8 @@ class GDSBenchmark:
                     await self._wait_for_server_ready(gds_server, timeout=60.0)
                     logger.info("GDS MCP server started and ready")
 
-                    cypher_server = None
-                    if self.with_cypher_mcp:
-                        cypher_server = await stack.enter_async_context(
-                            MCPServerStdio(name="neo4j-cypher", params=self._cypher_mcp_params(), client_session_timeout_seconds=600)
-                        )
-                        await self._wait_for_server_ready(cypher_server, timeout=60.0)
-                        logger.info("Cypher MCP server started and ready")
-
                     try:
-                        response = await self._send_question_to_openai_async(question, gds_server, cypher_server)
+                        response = await self._send_question_to_openai_async(question, gds_server)
                     finally:
                         await self._drop_all_projections(gds_server)
 
@@ -544,7 +521,6 @@ class GDSBenchmark:
                 result["dataset"] = self.dataset
                 result["model"] = self.model
                 result["provider"] = self.provider
-                result["with_cypher_mcp"] = self.with_cypher_mcp
                 results.append(result)
 
                 if response and response.get("max_turns_exceeded"):
@@ -564,7 +540,6 @@ class GDSBenchmark:
                 result["dataset"] = self.dataset
                 result["model"] = self.model
                 result["provider"] = self.provider
-                result["with_cypher_mcp"] = self.with_cypher_mcp
                 results.append(result)
                 logger.info(f"Question {i}: ✗ (exception: {str(e)[:50]})")
 
@@ -593,7 +568,6 @@ class GDSBenchmark:
                     result["dataset"] = self.dataset
                     result["model"] = self.model
                     result["provider"] = self.provider
-                    result["with_cypher_mcp"] = self.with_cypher_mcp
                     results.append(result)
 
                     await self._drop_all_projections(gds_server)
@@ -643,7 +617,6 @@ class GDSBenchmark:
                 "gds_agent_package": self.gds_agent_package,
                 "skill_file": str(self.skill_file),
                 "questions_file": str(self.questions_file),
-                "with_cypher_mcp": self.with_cypher_mcp,
                 "total_questions": total_questions,
                 "successful_responses": successful_responses,
                 "response_rate": successful_responses / total_questions if total_questions > 0 else 0,
@@ -670,7 +643,6 @@ class GDSBenchmark:
         print("="*60)
         print(f"Dataset: {self.dataset}")
         print(f"Model: {self.model}")
-        print(f"Cypher MCP: {'on' if self.with_cypher_mcp else 'off'}")
         print(f"Total Questions: {total}")
         print("\nDetailed Results:")
         
@@ -702,9 +674,8 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""Examples:
             python benchmark_gds_agent.py --dataset ln --model gpt-4o
-            python benchmark_gds_agent.py --dataset ln --model gpt-4o --with-cypher-mcp
             python benchmark_gds_agent.py --dataset ln --questions-file my-questions.csv --model gpt-4o
-            python benchmark_gds_agent.py --dataset citations --questions-file questions/gds-questions-citations.json --model sonnet-4-5 --with-cypher-mcp"""
+            python benchmark_gds_agent.py --dataset citations --questions-file questions/gds-questions-citations.json --model sonnet-4-5"""
     )
     
     parser.add_argument(
@@ -727,16 +698,10 @@ def main():
     )
 
     parser.add_argument(
-        "--with-cypher-mcp",
-        action="store_true",
-        help="Also start the read-only neo4j-cypher MCP server alongside gds-agent"
-    )
-
-    parser.add_argument(
         "--gds-agent-package",
         default=DEFAULT_GDS_AGENT_PACKAGE,
-        help="Package passed to uvx (default: gds-agent==1.0.1). "
-            "May also be a path to a local checkout or wheel."
+        help="Package passed to uvx (default: local gds_agent wheel). "
+            "May also be a PyPI specifier or path to a local checkout or wheel."
     )
 
     parser.add_argument(
@@ -760,13 +725,11 @@ def main():
     print("="*40)
     print(f"Dataset: {args.dataset}")
     print(f"Model: {args.model}")
-    print(f"Cypher MCP: {'on' if args.with_cypher_mcp else 'off'}")
     
     try:
         benchmark = GDSBenchmark(
             dataset=args.dataset,
             model=args.model,
-            with_cypher_mcp=args.with_cypher_mcp,
             questions_file=args.questions_file,
             gds_agent_package=args.gds_agent_package,
             skill_file=args.skill_file,

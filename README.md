@@ -30,19 +30,18 @@ AURA_API_CLIENT_SECRET=your-client-secret
 
 Running benchmarks:
 
-1. Run `python benchmark_gds_agent.py $dataset --model $model` to produce answers for the set of questions.
-  Add `--with-cypher-mcp` to also start the read-only `[mcp-neo4j-cypher](https://github.com/neo4j-contrib/mcp-neo4j)` server next to gds-agent (same pairing as the gds-agent MCP config). Default is gds-agent only.
+1. Run `python benchmark_gds_agent.py --dataset $dataset --model $model` to produce answers for the set of questions.
 2. Run `python evaluate_benchmark.py $dataset --model $model` to use the produced answers and evaluate them.
 3. Run `python analyze_benchmark_stats.py $dataset --model $model` to calculate any further summary statistics and plots.
 
-Use `--gds-agent-package /path/to/gds_agent.whl` to benchmark a local wheel, or `--skill-file /path/to/skill.zip` to use another version of the skill. The zip must contain `SKILL.md`; markdown files under `references/` are also dumped into the agent instructions. Use `--max-turns N` to cap agent turns per question (default: 50).
+Use `--gds-agent-package /path/to/gds_agent.whl` to benchmark a specific wheel, or `--skill-file /path/to/SKILL.md` (or `/path/to/skill.zip`) to use another version of the skill. Use `--max-turns N` to cap agent turns per question (default: 50).
 
-Citations example (GPT-5): custom dataset, so `--questions-file` is required. `--with-cypher-mcp` also starts the read-only Cypher MCP.
+Citations example (GPT-5): custom dataset, so `--questions-file` is required.
 
 ```bash
 python benchmark_gds_agent.py --dataset citations \
   --questions-file questions/gds-questions-citations.json \
-  --with-cypher-mcp --model gpt-5 \
+  --model gpt-5 \
   --gds-agent-package /path/to/gds_agent.whl \
   --skill-file /path/to/skill.zip
 ```
