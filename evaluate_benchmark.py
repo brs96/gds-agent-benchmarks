@@ -76,6 +76,7 @@ class BenchmarkEvaluator:
         self.dataset = dataset
         self.questions_file = Path(questions_file) if questions_file is not None else DEFAULT_QUESTION_FILES[dataset]
         self.model = model
+        self.effort: Optional[str] = None
         
         # Look for results files matching the dataset and model pattern
         pattern = f"results_{model}/{dataset}_results_*.json"
@@ -230,8 +231,13 @@ class BenchmarkEvaluator:
                     data = json.load(file)
                     
                 logger.info(f"Processing {results_file}")
+                file_effort = data.get('benchmark_info', {}).get('effort')
+                if file_effort and not self.effort:
+                    self.effort = file_effort
                 
                 for result in data.get('raw_results', []):
+                    if not self.effort and result.get('effort'):
+                        self.effort = result.get('effort')
                     if result.get('response_data') and (include_failed or result.get('success', False)):
                         question = result['question'].strip()
                         response_data = result['response_data']
@@ -326,6 +332,9 @@ class BenchmarkEvaluator:
             # For non-lists, use regular comparison
             return actual_value == expected_value or str(actual_value) == str(expected_value)
         
+    def _to_snake_case(self, name: str) -> str:
+        return re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower()
+
     def _find_projection_cypher(self, actual_tools: List[Dict[str, Any]], graph_name: Optional[str]) -> Optional[str]:
         """Find the cypherQuery used in project_graph_cypher for the given graphName."""
         projection_calls = [
@@ -337,9 +346,11 @@ class BenchmarkEvaluator:
         if graph_name:
             for call in reversed(projection_calls):
                 params = call.get("parameters", {})
-                if params.get("graphName") == graph_name:
-                    return params.get("cypherQuery", "")
-        return projection_calls[-1].get("parameters", {}).get("cypherQuery", "")
+                call_graph_name = params.get("graph_name") or params.get("graphName")
+                if call_graph_name == graph_name:
+                    return params.get("cypher_query") or params.get("cypherQuery", "")
+        last_params = projection_calls[-1].get("parameters", {})
+        return last_params.get("cypher_query") or last_params.get("cypherQuery", "")
 
     def evaluate_parameters(self, expected_params: Dict[str, Any], actual_tools: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Evaluate if the correct parameters were used."""
@@ -359,9 +370,11 @@ class BenchmarkEvaluator:
                 continue
                 
             actual_params = matching_tools[-1].get('parameters', {})
+            has_graph_name = "graph_name" in actual_params or "graphName" in actual_params
+            graph_name = actual_params.get("graph_name") or actual_params.get("graphName")
             projection_cypher = (
-                self._find_projection_cypher(actual_tools, actual_params.get("graphName"))
-                if "graphName" in actual_params
+                self._find_projection_cypher(actual_tools, graph_name)
+                if has_graph_name
                 else None
             )
             
@@ -369,10 +382,15 @@ class BenchmarkEvaluator:
             mismatches = []
             
             for param_key, expected_value in expected_tool_params.items():
-                actual_value = actual_params.get(param_key)
+                snake_key = self._to_snake_case(param_key)
+                actual_value = (
+                    actual_params.get(param_key)
+                    if param_key in actual_params
+                    else actual_params.get(snake_key)
+                )
 
                 # When using explicit graph projection, check nodeLabels / relTypes in project_graph_cypher
-                if param_key in ("nodeLabels", "relTypes") and "graphName" in actual_params:
+                if param_key in ("nodeLabels", "relTypes") and has_graph_name:
                     expected_items = expected_value if isinstance(expected_value, list) else [expected_value]
                     if projection_cypher and all(str(item) in projection_cypher for item in expected_items):
                         matches.append(param_key)
@@ -741,6 +759,7 @@ class BenchmarkEvaluator:
         summary = {
             'dataset': self.dataset,
             'model': self.model,
+            'effort': self.effort,
             'questions_file': str(self.questions_file),
             'total_questions': len(expected_results),
             'total_runs': total_runs,
@@ -840,7 +859,10 @@ class BenchmarkEvaluator:
         
         print(f"\n📊 SUMMARY:")
         print(f"Dataset: {summary.get('dataset', 'unknown')}")
-        print(f"Model: {summary.get('model', 'unknown')}")
+        model_str = summary.get('model', 'unknown')
+        if summary.get('effort'):
+            model_str = f"{model_str} ({summary['effort']})"
+        print(f"Model: {model_str}")
         print(f"Questions File: {summary.get('questions_file', 'unknown')}")
         print(f"Total Questions: {summary.get('total_questions', 0)}")
         print(f"Total Runs Processed: {summary.get('total_runs', 0)}")

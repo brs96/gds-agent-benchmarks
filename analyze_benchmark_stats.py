@@ -163,18 +163,23 @@ def calculate_summary_stats(results):
 
 def create_visualizations(results, question_results, stats, evaluations, run_variation_data, dataset=None, model=None):
     """Create comprehensive visualizations"""
-    
+    effort = next(
+        (data.get('summary', {}).get('effort') for data in evaluations.values() if data.get('summary', {}).get('effort')),
+        None,
+    )
+    model_label = f"{model} ({effort})" if model and effort else model
+
     # Create dataset and model-specific output directory
     if dataset and model:
         output_dir = Path(f"results_{model}/analysis_{dataset}")
         output_dir.mkdir(parents=True, exist_ok=True)
         file_prefix = f"{dataset}_{model}_"
-        title_suffix = f" - {dataset.upper()} Dataset ({model})"
+        title_suffix = f" - {dataset.upper()} Dataset ({model_label})"
     elif model:
         output_dir = Path(f"results_{model}/analysis")
         output_dir.mkdir(parents=True, exist_ok=True)
         file_prefix = f"{model}_"
-        title_suffix = f" - {model} Model"
+        title_suffix = f" - {model_label} Model"
     elif dataset:
         output_dir = Path(f"analysis_{dataset}")
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -337,7 +342,9 @@ def print_detailed_stats(stats, evaluations):
     
     print(f"\nDataset Breakdown:")
     for name, data in evaluations.items():
-        print(f"  {name}: {data['summary']['total_questions']} questions, "
+        effort = data.get('summary', {}).get('effort')
+        display_name = f"{name} ({effort})" if effort else name
+        print(f"  {display_name}: {data['summary']['total_questions']} questions, "
               f"{data['summary']['total_runs']} runs, "
               f"avg score: {data['summary']['average_score_across_questions']:.3f}")
     

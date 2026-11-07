@@ -6,7 +6,7 @@ The MCP server of GDS agent is at: [https://github.com/neo4j-contrib/gds-agent](
 
 Preparations:
 
-1. Install the Python requirements and make sure `uvx` is available. The benchmark uses `gds-agent==1.0.1` from PyPI by default.
+1. Install the Python requirements and make sure `uvx` is available. By default, the benchmark uses the local `gds_agent-1.1.0-py3-none-any.whl` wheel and `skills/neo4j-graph-data-scientist/SKILL.md` (including `references/troubleshooting.md`).
 2. Start a Neo4j database with the LN, GoT, or citations dataset loaded. Citations uses the [citations-50.dump](https://github.com/neo4j-graph-examples/citations/blob/main/data/citations-50.dump).
 3. Put the database configuration in `.env` (or export it in the shell):
   ```dotenv
@@ -24,6 +24,10 @@ AURA_API_CLIENT_SECRET=your-client-secret
 # AURA_API_PROJECT_ID=your-project-id
 # SESSION_MEMORY_GB=8
 # SESSION_TTL_HOURS=24
+# SESSION_TIMEOUT_SECONDS=300
+# GDS_AGENT_MAX_RESULT_ROWS=500
+# GDS_AGENT_MAX_RESULT_CHARS=100000
+# GDS_AGENT_MAX_CELL_CHARS=200
 ```
 
 `gds-agent` detects plugin mode or Aura session mode from the connected database. In session mode, the skill instructs the model to create and clean up sessions.
@@ -34,7 +38,7 @@ Running benchmarks:
 2. Run `python evaluate_benchmark.py $dataset --model $model` to use the produced answers and evaluate them.
 3. Run `python analyze_benchmark_stats.py $dataset --model $model` to calculate any further summary statistics and plots.
 
-Use `--gds-agent-package /path/to/gds_agent.whl` to benchmark a specific wheel, or `--skill-file /path/to/SKILL.md` (or `/path/to/skill.zip`) to use another version of the skill. Use `--max-turns N` to cap agent turns per question (default: 50).
+Use `--max-turns N` to cap agent turns per question (default: 50), and `--effort {minimal,low,medium,high,xhigh,max}` to override the model's default reasoning effort (the active effort level is logged in the results, evaluations, and plot titles).
 
 Citations example (GPT-5): custom dataset, so `--questions-file` is required.
 
