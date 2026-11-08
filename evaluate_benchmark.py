@@ -28,40 +28,6 @@ WORKFLOW_TOOLS = {
     "mcp__gds-agent__drop_model",
     "mcp__gds-agent__get_neo4j_schema",
     "mcp__gds-agent__read_neo4j_cypher",
-    "mcp__gds-agent__get_node_labels",
-    "mcp__gds-agent__get_relationship_types",
-    "mcp__gds-agent__get_node_properties_keys",
-    "mcp__gds-agent__get_relationship_properties_keys",
-}
-
-TOOL_EQUIVALENTS = {
-    "mcp__gds-agent__count_nodes": {
-        "mcp__gds-agent__count_nodes",
-        "mcp__gds-agent__get_graph_info",
-        "mcp__gds-agent__get_neo4j_schema",
-        "mcp__gds-agent__read_neo4j_cypher",
-        "mcp__gds-agent__list_graphs",
-    },
-    "mcp__gds-agent__get_node_labels": {
-        "mcp__gds-agent__get_node_labels",
-        "mcp__gds-agent__get_neo4j_schema",
-        "mcp__gds-agent__read_neo4j_cypher",
-    },
-    "mcp__gds-agent__get_relationship_types": {
-        "mcp__gds-agent__get_relationship_types",
-        "mcp__gds-agent__get_neo4j_schema",
-        "mcp__gds-agent__read_neo4j_cypher",
-    },
-    "mcp__gds-agent__get_node_properties_keys": {
-        "mcp__gds-agent__get_node_properties_keys",
-        "mcp__gds-agent__get_neo4j_schema",
-        "mcp__gds-agent__read_neo4j_cypher",
-    },
-    "mcp__gds-agent__get_relationship_properties_keys": {
-        "mcp__gds-agent__get_relationship_properties_keys",
-        "mcp__gds-agent__get_neo4j_schema",
-        "mcp__gds-agent__read_neo4j_cypher",
-    },
 }
 
 
@@ -269,45 +235,34 @@ class BenchmarkEvaluator:
         
     def evaluate_tool_calls(self, expected_tools: List[str], actual_tools: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Evaluate if the correct tools were called."""
-        def matches(expected_name: str, actual_name: str) -> bool:
-            return actual_name in TOOL_EQUIVALENTS.get(
-                expected_name, {expected_name}
-            )
-
         actual_tool_names = [tool['name'] for tool in actual_tools]
         scored_actual_tool_names = [
             name
             for name in actual_tool_names
-            if name not in WORKFLOW_TOOLS
-            or any(matches(expected, name) for expected in expected_tools)
+            if name not in WORKFLOW_TOOLS or name in expected_tools
         ]
 
         missing_tools = [
             expected
             for expected in expected_tools
-            if not any(
-                matches(expected, actual) for actual in scored_actual_tool_names
-            )
+            if expected not in scored_actual_tool_names
         ]
         unexpected_tools = [
             actual
             for actual in scored_actual_tool_names
-            if not any(matches(expected, actual) for expected in expected_tools)
+            if actual not in expected_tools
         ]
         
         if len(expected_tools) == 0:
             precision = 1.0 if len(scored_actual_tool_names) == 0 else 0.0
             recall = 1.0
         else:
-            unique_correct_tools = sum(
-                any(matches(expected, actual) for actual in scored_actual_tool_names)
-                for expected in set(expected_tools)
-            )
+            unique_correct_tools = len(set(expected_tools).intersection(set(scored_actual_tool_names)))
             
             recall = unique_correct_tools / len(set(expected_tools))
             
             total_actual_calls = len(scored_actual_tool_names)
-            precision = min(1.0, unique_correct_tools / total_actual_calls) if total_actual_calls > 0 else 1.0
+            precision = unique_correct_tools / total_actual_calls if total_actual_calls > 0 else 1.0
         
         f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
         
@@ -335,23 +290,6 @@ class BenchmarkEvaluator:
     def _to_snake_case(self, name: str) -> str:
         return re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower()
 
-    def _find_projection_cypher(self, actual_tools: List[Dict[str, Any]], graph_name: Optional[str]) -> Optional[str]:
-        """Find the cypherQuery used in project_graph_cypher for the given graphName."""
-        projection_calls = [
-            tool for tool in actual_tools
-            if "project_graph_cypher" in tool.get("name", "")
-        ]
-        if not projection_calls:
-            return None
-        if graph_name:
-            for call in reversed(projection_calls):
-                params = call.get("parameters", {})
-                call_graph_name = params.get("graph_name") or params.get("graphName")
-                if call_graph_name == graph_name:
-                    return params.get("cypher_query") or params.get("cypherQuery", "")
-        last_params = projection_calls[-1].get("parameters", {})
-        return last_params.get("cypher_query") or last_params.get("cypherQuery", "")
-
     def evaluate_parameters(self, expected_params: Dict[str, Any], actual_tools: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Evaluate if the correct parameters were used."""
         parameter_scores = {}
@@ -370,13 +308,6 @@ class BenchmarkEvaluator:
                 continue
                 
             actual_params = matching_tools[-1].get('parameters', {})
-            has_graph_name = "graph_name" in actual_params or "graphName" in actual_params
-            graph_name = actual_params.get("graph_name") or actual_params.get("graphName")
-            projection_cypher = (
-                self._find_projection_cypher(actual_tools, graph_name)
-                if has_graph_name
-                else None
-            )
             
             matches = []
             mismatches = []
@@ -389,19 +320,8 @@ class BenchmarkEvaluator:
                     else actual_params.get(snake_key)
                 )
 
-                # When using explicit graph projection, check nodeLabels / relTypes in project_graph_cypher
-                if param_key in ("nodeLabels", "relTypes") and has_graph_name:
-                    expected_items = expected_value if isinstance(expected_value, list) else [expected_value]
-                    if projection_cypher and all(str(item) in projection_cypher for item in expected_items):
-                        matches.append(param_key)
-                    else:
-                        mismatches.append({
-                            'param': param_key,
-                            'expected': expected_value,
-                            'actual': projection_cypher
-                        })
                 # Handle range constraints like "<=5"
-                elif isinstance(expected_value, str) and expected_value.startswith('<='):
+                if isinstance(expected_value, str) and expected_value.startswith('<='):
                     try:
                         max_value = int(expected_value[2:])
                         if actual_value is not None and int(actual_value) <= max_value:
