@@ -115,6 +115,7 @@ class GDSBenchmark:
 
         optional = [
             "NEO4J_DATABASE",
+            "NEO4J_READ_TIMEOUT",
             *aura_credentials,
             "AURA_API_PROJECT_ID",
             "SESSION_MEMORY_GB",
