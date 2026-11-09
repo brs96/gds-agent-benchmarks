@@ -213,7 +213,7 @@ class GDSBenchmark:
             if questions_file.suffix == ".json":
                 with open(questions_file, 'r', encoding='utf-8') as f:
                     data = json.load(f)
-                questions = [entry["Question"] for entry in data if entry.get("Question")]
+                questions = [entry["question"] for entry in data if entry.get("question")]
             else:
                 with open(questions_file, 'r', encoding='utf-8') as file:
                     lines = [line.strip() for line in file.readlines() if line.strip()]
@@ -286,7 +286,7 @@ class GDSBenchmark:
             
             logger.info("Starting subprocess call...")
             result = subprocess.run(cmd, input=f"{formatted_prompt}\n", 
-                                  capture_output=True, text=True, timeout=300)
+                                  capture_output=True, text=True, timeout=1500)
             logger.info("Subprocess call completed")
             
             if result.stderr:
@@ -304,7 +304,7 @@ class GDSBenchmark:
                 return None
             
         except subprocess.TimeoutExpired:
-            logger.warning(f"Question timed out after 300s: {question[:50]}")
+            logger.warning(f"Question timed out after 1500s: {question[:50]}")
             logger.debug("This might indicate MCP server connection issues or very complex queries")
             return None
         except Exception as e:
@@ -371,11 +371,14 @@ class GDSBenchmark:
                         parsed_data["token_usage"] = {
                             "total_input_tokens": usage.get('input_tokens', 0),
                             "total_output_tokens": usage.get('output_tokens', 0),
+                            "cache_creation_input_tokens": usage.get('cache_creation_input_tokens', 0),
+                            "cache_read_input_tokens": usage.get('cache_read_input_tokens', 0),
                             "total_cost_usd": data.get('total_cost_usd', 0.0),
                             "total_tokens": (
                                 usage.get('input_tokens', 0)
                                 + usage.get('output_tokens', 0)
                                 + usage.get('cache_creation_input_tokens', 0)
+                                + usage.get('cache_read_input_tokens', 0)
                             ),
                         }
                         
@@ -416,7 +419,7 @@ class GDSBenchmark:
             started = time.perf_counter()
             result = await asyncio.wait_for(
                 Runner.run(agent, formatted_prompt, max_turns=self.max_turns),
-                timeout=300
+                timeout=1500
             )
             logger.debug(f"Result: {result}")
             return self._openai_run_to_response_data(
@@ -443,9 +446,12 @@ class GDSBenchmark:
         usage = getattr(getattr(result, "context_wrapper", None), "usage", None)
         token_usage = {}
         if usage is not None:
+            input_tokens_details = getattr(usage, "input_tokens_details", None)
+            cached_tokens = getattr(input_tokens_details, "cached_tokens", 0) or 0
             token_usage = {
                 "total_input_tokens": getattr(usage, "input_tokens", 0),
                 "total_output_tokens": getattr(usage, "output_tokens", 0),
+                "cache_read_input_tokens": cached_tokens,
                 "total_cost_usd": 0.0,
                 "total_tokens": getattr(usage, "total_tokens", 0),
             }
@@ -534,7 +540,7 @@ class GDSBenchmark:
             try:
                 async with AsyncExitStack() as stack:
                     gds_server = await stack.enter_async_context(
-                        MCPServerStdio(name="gds", params=self._gds_mcp_params(), client_session_timeout_seconds=600)
+                        MCPServerStdio(name="gds", params=self._gds_mcp_params(), client_session_timeout_seconds=1500)
                     )
                     await self._wait_for_server_ready(gds_server, timeout=60.0)
                     logger.info("GDS MCP server started and ready")
@@ -585,7 +591,7 @@ class GDSBenchmark:
             async with MCPServerStdio(
                 name="gds",
                 params=self._gds_mcp_params(),
-                client_session_timeout_seconds=600,
+                client_session_timeout_seconds=1500,
             ) as gds_server:
                 await self._wait_for_server_ready(gds_server, timeout=60.0)
 
