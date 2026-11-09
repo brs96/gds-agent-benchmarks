@@ -12,8 +12,9 @@ import csv
 import asyncio
 import zipfile
 from contextlib import AsyncExitStack
-from agents import Agent, MaxTurnsExceeded, Runner
+from agents import Agent, MaxTurnsExceeded, ModelSettings, Runner
 from agents.mcp import MCPServerStdio
+from openai.types.shared import Reasoning
 from dotenv import load_dotenv
 import time
 
@@ -54,12 +55,14 @@ class GDSBenchmark:
                  questions_file: Path = None,
                  gds_agent_package: str = DEFAULT_GDS_AGENT_PACKAGE,
                  skill_file: Path = DEFAULT_SKILL_FILE,
-                 max_turns: int = DEFAULT_MAX_TURNS):
+                 max_turns: int = DEFAULT_MAX_TURNS,
+                 effort: Optional[str] = None):
         self.dataset = dataset
         self.questions_file = Path(questions_file) if questions_file is not None else DEFAULT_QUESTION_FILES[dataset]
 
         self.model = model
         self.provider = self._detect_provider(model)
+        self.effort = effort if effort is not None else self._default_effort(model)
         self.gds_agent_package = gds_agent_package
         self.skill_file = Path(skill_file)
         self.skill_instructions = self._load_skill()
@@ -112,6 +115,7 @@ class GDSBenchmark:
 
         optional = [
             "NEO4J_DATABASE",
+            "NEO4J_READ_TIMEOUT",
             *aura_credentials,
             "AURA_API_PROJECT_ID",
             "SESSION_MEMORY_GB",
@@ -134,13 +138,27 @@ class GDSBenchmark:
     def _detect_provider(self, model: str) -> str:
         """Detect the provider based on model name."""
         
-        if any(model.startswith(prefix) for prefix in ['sonnet', 'haiku', 'opus']):
+        if any(model.startswith(prefix) for prefix in ['sonnet', 'haiku', 'opus', 'fable']):
             return 'claude'
         
-        if any(model.startswith(prefix) for prefix in ['gpt']):
+        if any(model.startswith(prefix) for prefix in ['gpt', 'o1', 'o3', 'o4']):
             return 'openai'
         
         raise ValueError(f"Unknown model: {model}")
+
+    def _default_effort(self, model: str) -> Optional[str]:
+        """Return the documented default reasoning effort for the given model."""
+        if any(model.startswith(prefix) for prefix in ['gpt-5', 'gpt-6', 'o1', 'o3', 'o4']):
+            return 'medium'
+        if any(model.startswith(prefix) for prefix in ['fable-5', 'sonnet-5']):
+            return 'high'
+        if any(model.startswith(prefix) for prefix in ['opus-5', 'haiku-5', 'opus-4-6', 'opus-4-7', 'opus-4-8', 'sonnet-4-6']):
+            return 'medium'
+        return None
+
+    @property
+    def model_label(self) -> str:
+        return f"{self.model} ({self.effort})" if self.effort else self.model
 
     async def _wait_for_server_ready(self, server, timeout: float = 60.0):
         """Wait for MCP server to be ready by testing actual functionality."""
@@ -174,9 +192,9 @@ class GDSBenchmark:
             listed = await gds_server.call_tool("list_graphs", {})
             text = "".join(getattr(block, "text", "") for block in (listed.content or []))
             for graph in json.loads(text or "{}").get("graphs", []):
-                name = graph.get("graphName")
+                name = graph.get("graphName") or graph.get("graph_name")
                 if name:
-                    await gds_server.call_tool("drop_graph", {"graphName": name})
+                    await gds_server.call_tool("drop_graph", {"graph_name": name})
                     logger.info(f"Dropped projection {name}")
         except Exception as e:
             logger.warning(f"Failed to drop GDS projections: {e}")
@@ -258,6 +276,8 @@ class GDSBenchmark:
                 "--max-turns", str(self.max_turns),
                 "--allowedTools", "mcp__*"  # Allow all MCP tools
             ]
+            if self.effort:
+                cmd.extend(["--effort", self.effort])
             
             logger.debug(f"Running Claude model: claude-{self.model}")
             logger.debug(f"Input: {formatted_prompt}")
@@ -374,6 +394,12 @@ class GDSBenchmark:
 
             formatted_prompt = f"You MUST use the available MCP tools to query the actual Neo4j database to answer this question. Do not rely on output from previous questions. Do not provide a hypothetical answer. Question: {question}"
             
+            agent_kwargs = {}
+            if self.effort:
+                agent_kwargs["model_settings"] = ModelSettings(
+                    reasoning=Reasoning(effort=self.effort)
+                )
+
             agent = Agent(
                 name="GPT-NEO4J-GDS",
                 instructions=(
@@ -383,6 +409,7 @@ class GDSBenchmark:
                 ),
                 mcp_servers=[gds_server],
                 model=self.model,
+                **agent_kwargs,
             )
             
             logger.debug("Running agent with question...")
@@ -520,6 +547,7 @@ class GDSBenchmark:
                 result = self.create_result_record(question, response)
                 result["dataset"] = self.dataset
                 result["model"] = self.model
+                result["effort"] = self.effort
                 result["provider"] = self.provider
                 results.append(result)
 
@@ -539,6 +567,7 @@ class GDSBenchmark:
                 result = self.create_result_record(question, None)
                 result["dataset"] = self.dataset
                 result["model"] = self.model
+                result["effort"] = self.effort
                 result["provider"] = self.provider
                 results.append(result)
                 logger.info(f"Question {i}: ✗ (exception: {str(e)[:50]})")
@@ -567,6 +596,7 @@ class GDSBenchmark:
                     result = self.create_result_record(question, response)
                     result["dataset"] = self.dataset
                     result["model"] = self.model
+                    result["effort"] = self.effort
                     result["provider"] = self.provider
                     results.append(result)
 
@@ -613,6 +643,7 @@ class GDSBenchmark:
                 "timestamp": datetime.now().isoformat(),
                 "dataset": self.dataset,
                 "model": self.model,
+                "effort": self.effort,
                 "provider": self.provider,
                 "gds_agent_package": self.gds_agent_package,
                 "skill_file": str(self.skill_file),
@@ -642,7 +673,7 @@ class GDSBenchmark:
         print("GDS AGENT BENCHMARK SUMMARY")
         print("="*60)
         print(f"Dataset: {self.dataset}")
-        print(f"Model: {self.model}")
+        print(f"Model: {self.model_label}")
         print(f"Total Questions: {total}")
         print("\nDetailed Results:")
         
@@ -717,6 +748,13 @@ def main():
         default=DEFAULT_MAX_TURNS,
         help=f"Maximum agent turns per question (default: {DEFAULT_MAX_TURNS})"
     )
+
+    parser.add_argument(
+        "--effort",
+        choices=["minimal", "low", "medium", "high", "xhigh", "max"],
+        default=None,
+        help="Reasoning effort level (default: model's default effort)"
+    )
     
     args = parser.parse_args()
     load_dotenv()
@@ -724,7 +762,6 @@ def main():
     print("GDS Agent Benchmarking Tool")
     print("="*40)
     print(f"Dataset: {args.dataset}")
-    print(f"Model: {args.model}")
     
     try:
         benchmark = GDSBenchmark(
@@ -734,7 +771,9 @@ def main():
             gds_agent_package=args.gds_agent_package,
             skill_file=args.skill_file,
             max_turns=args.max_turns,
+            effort=args.effort,
         )
+        print(f"Model: {benchmark.model_label}")
         print(f"Provider: {benchmark.provider.upper()}")
     except ValueError as e:
         print(f"❌ {e}")

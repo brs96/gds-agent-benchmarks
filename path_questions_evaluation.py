@@ -37,6 +37,8 @@ def extract_algorithm_type(expected_tools: str) -> Optional[str]:
         
         # Filter out non-algorithm tools
         non_algorithm_tools = {
+            'mcp__gds-agent__get_neo4j_schema',
+            'mcp__gds-agent__project_graph_cypher',
             'mcp__gds-agent__get_node_properties',
             'mcp__gds-agent__get_relationship_properties',
             'mcp__gds-agent__get_node_properties_keys',
