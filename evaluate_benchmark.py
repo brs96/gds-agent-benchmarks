@@ -72,10 +72,10 @@ class BenchmarkEvaluator:
                     data = json.load(file)
                 question_id = 1
                 for entry in data:
-                    question = (entry.get("Question") or "").strip()
+                    question = (entry.get("question") or "").strip()
                     if not question:
                         continue
-                    answer = entry.get("Expected answer", "")
+                    answer = entry.get("expected_answer", "")
                     qid = entry.get("id", question_id)
                     expected[question] = {
                         'id': qid,
