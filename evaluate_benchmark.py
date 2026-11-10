@@ -402,8 +402,10 @@ class BenchmarkEvaluator:
         actual_normalized = normalize_text(actual_answer)
         
         if expected_normalized in ['yes', 'no']:
-            # Simple Yes/No comparison
-            if expected_normalized == actual_normalized:
+            # Simple Yes/No comparison (handle trailing punctuation or explanation on following lines)
+            first_word_match = re.match(r'^\s*(yes|no)\b', actual_normalized)
+            actual_yes_no = first_word_match.group(1) if first_word_match else actual_normalized.rstrip('.!')
+            if expected_normalized == actual_yes_no:
                 return {
                     'answer_match_score': 1.0,
                     'answer_matched_count': 1,
@@ -452,10 +454,10 @@ class BenchmarkEvaluator:
                 except (json.JSONDecodeError, TypeError):
                     pass
             
-            # Pattern 5: Simple comma-separated paths/items (if no other patterns found)
+            # Pattern 5: Simple comma- or newline-separated paths/items (if no other patterns found)
             if not items:
-                # Split by common separators and clean up
-                simple_items = re.split(r'[,;|]', text)
+                # Split by common separators (including newlines) and clean up
+                simple_items = re.split(r'[,;|\n]', text)
                 for item in simple_items:
                     cleaned_item = normalize_text(item)
                     if cleaned_item:
@@ -483,8 +485,12 @@ class BenchmarkEvaluator:
             # Calculate how many expected items are found in actual
             matched_count = len(expected_items.intersection(actual_items))
             
-            # For k-shortest paths: if actual is a subset of expected, that's acceptable
-            if len(actual_items) > 0 and actual_items.issubset(expected_items):
+            # For k-shortest paths (tuple items): if actual is a subset of expected, that's acceptable
+            if (
+                len(actual_items) > 0
+                and all(isinstance(x, tuple) for x in expected_items)
+                and actual_items.issubset(expected_items)
+            ):
                 # All actual items are valid (subset of expected)
                 answer_match_score = 1.0
                 total_expected_count = len(actual_items)
