@@ -6,7 +6,7 @@ The MCP server of GDS agent is at: [https://github.com/neo4j-contrib/gds-agent](
 
 Preparations:
 
-1. Install the Python requirements and make sure `uvx` is available. By default, the benchmark uses the local `gds_agent-1.1.0-py3-none-any.whl` wheel and `skills/neo4j-graph-data-scientist/SKILL.md` (including `references/troubleshooting.md`).
+1. Install the Python requirements and make sure `uvx` is available. By default, the benchmark uses `gds-agent==1.2.0` from PyPI and `skills/neo4j-graph-data-scientist/SKILL.md` (including `references/troubleshooting.md`).
 2. Start a Neo4j database with the LN, GoT, or citations dataset loaded. Citations uses the [citations-50.dump](https://github.com/neo4j-graph-examples/citations/blob/main/data/citations-50.dump).
 3. Put the database configuration in `.env` (or export it in the shell):
   ```dotenv

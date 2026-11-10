@@ -32,9 +32,7 @@ logger = logging.getLogger(__name__)
 for _noisy_logger in ("httpcore", "httpx", "openai", "agents"):
     logging.getLogger(_noisy_logger).setLevel(logging.WARNING)
 
-DEFAULT_GDS_AGENT_PACKAGE = str(
-    Path(__file__).parent / "gds_agent-1.1.0-py3-none-any.whl"
-)
+DEFAULT_GDS_AGENT_PACKAGE = "gds-agent==1.2.0"
 DEFAULT_MAX_TURNS = 50
 DEFAULT_SKILL_FILE = (
     Path(__file__).parent
@@ -737,7 +735,7 @@ def main():
     parser.add_argument(
         "--gds-agent-package",
         default=DEFAULT_GDS_AGENT_PACKAGE,
-        help="Package passed to uvx (default: local gds_agent wheel). "
+        help="Package passed to uvx (default: gds-agent==1.2.0). "
             "May also be a PyPI specifier or path to a local checkout or wheel."
     )
 

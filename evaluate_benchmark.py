@@ -402,8 +402,10 @@ class BenchmarkEvaluator:
         actual_normalized = normalize_text(actual_answer)
         
         if expected_normalized in ['yes', 'no']:
-            # Simple Yes/No comparison
-            if expected_normalized == actual_normalized:
+            # Simple Yes/No comparison (handle trailing punctuation or explanation on following lines)
+            first_word_match = re.match(r'^\s*(yes|no)\b', actual_normalized)
+            actual_yes_no = first_word_match.group(1) if first_word_match else actual_normalized.rstrip('.!')
+            if expected_normalized == actual_yes_no:
                 return {
                     'answer_match_score': 1.0,
                     'answer_matched_count': 1,
@@ -425,20 +427,20 @@ class BenchmarkEvaluator:
             for path, cost in path_cost_matches:
                 # Normalize path (remove extra spaces, convert to lowercase)
                 normalized_path = re.sub(r'\s+', ' ', path.strip().lower())
-                items.add((normalized_path, float(cost)))
+                items.add((normalized_path, round(float(cost), 3)))
             
             # Pattern 2: "(node, parent, weight)" format
             tuple_pattern = r'\(\s*([^,]+)\s*,\s*([^,]+)\s*,\s*(\d+(?:\.\d+)?)\s*\)'
             tuple_matches = re.findall(tuple_pattern, text)
             for node, parent, weight in tuple_matches:
-                items.add((normalize_text(node), normalize_text(parent), float(weight)))
+                items.add((normalize_text(node), normalize_text(parent), round(float(weight), 3)))
             
             # Pattern 3: "station:score" format (centrality results)
             station_score_pattern = r'([A-Za-z\s\(\)]+):\s*(\d+(?:\.\d+)?)'
             station_score_matches = re.findall(station_score_pattern, text)
             for station, score in station_score_matches:
                 normalized_station = normalize_text(station)
-                items.add((normalized_station, float(score)))
+                items.add((normalized_station, round(float(score), 3)))
             
             # Pattern 4: JSON list format like ["A", "B", "C"]
             if not items:
@@ -452,10 +454,10 @@ class BenchmarkEvaluator:
                 except (json.JSONDecodeError, TypeError):
                     pass
             
-            # Pattern 5: Simple comma-separated paths/items (if no other patterns found)
+            # Pattern 5: Simple comma- or newline-separated paths/items (if no other patterns found)
             if not items:
-                # Split by common separators and clean up
-                simple_items = re.split(r'[,;|]', text)
+                # Split by common separators (including newlines) and clean up
+                simple_items = re.split(r'[,;|\n]', text)
                 for item in simple_items:
                     cleaned_item = normalize_text(item)
                     if cleaned_item:
@@ -466,7 +468,7 @@ class BenchmarkEvaluator:
                 number_pattern = r'\b(\d+(?:\.\d+)?)\b'
                 numbers = re.findall(number_pattern, text)
                 for num in numbers:
-                    items.add(float(num))
+                    items.add(round(float(num), 3))
             
             return items
         
@@ -483,8 +485,12 @@ class BenchmarkEvaluator:
             # Calculate how many expected items are found in actual
             matched_count = len(expected_items.intersection(actual_items))
             
-            # For k-shortest paths: if actual is a subset of expected, that's acceptable
-            if len(actual_items) > 0 and actual_items.issubset(expected_items):
+            # For k-shortest paths (tuple items): if actual is a subset of expected, that's acceptable
+            if (
+                len(actual_items) > 0
+                and all(isinstance(x, tuple) for x in expected_items)
+                and actual_items.issubset(expected_items)
+            ):
                 # All actual items are valid (subset of expected)
                 answer_match_score = 1.0
                 total_expected_count = len(actual_items)
