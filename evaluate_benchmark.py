@@ -425,20 +425,20 @@ class BenchmarkEvaluator:
             for path, cost in path_cost_matches:
                 # Normalize path (remove extra spaces, convert to lowercase)
                 normalized_path = re.sub(r'\s+', ' ', path.strip().lower())
-                items.add((normalized_path, float(cost)))
+                items.add((normalized_path, round(float(cost), 3)))
             
             # Pattern 2: "(node, parent, weight)" format
             tuple_pattern = r'\(\s*([^,]+)\s*,\s*([^,]+)\s*,\s*(\d+(?:\.\d+)?)\s*\)'
             tuple_matches = re.findall(tuple_pattern, text)
             for node, parent, weight in tuple_matches:
-                items.add((normalize_text(node), normalize_text(parent), float(weight)))
+                items.add((normalize_text(node), normalize_text(parent), round(float(weight), 3)))
             
             # Pattern 3: "station:score" format (centrality results)
             station_score_pattern = r'([A-Za-z\s\(\)]+):\s*(\d+(?:\.\d+)?)'
             station_score_matches = re.findall(station_score_pattern, text)
             for station, score in station_score_matches:
                 normalized_station = normalize_text(station)
-                items.add((normalized_station, float(score)))
+                items.add((normalized_station, round(float(score), 3)))
             
             # Pattern 4: JSON list format like ["A", "B", "C"]
             if not items:
@@ -466,7 +466,7 @@ class BenchmarkEvaluator:
                 number_pattern = r'\b(\d+(?:\.\d+)?)\b'
                 numbers = re.findall(number_pattern, text)
                 for num in numbers:
-                    items.add(float(num))
+                    items.add(round(float(num), 3))
             
             return items
         
