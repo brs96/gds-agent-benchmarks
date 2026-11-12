@@ -7,12 +7,12 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-from agents import Agent, MaxTurnsExceeded, ModelSettings, Runner, function_tool
+from agents import Agent, MaxTurnsExceeded, ModelSettings, Runner, RunHooks, function_tool
 from dotenv import load_dotenv
 from openai.types.shared.reasoning import Reasoning
 
 from neo4j import GraphDatabase
-from benchmark_gds_agent import DEFAULT_MAX_TURNS, GDSBenchmark, logger  # logs to benchmark_results.log
+from benchmark_gds_agent import DEFAULT_MAX_TURNS, GDSBenchmark, TokenTracker, logger  # logs to benchmark_results.log
 
 
 def terminate_running_queries() -> None:
@@ -91,12 +91,16 @@ def ask_openai(model, question, max_turns, reasoning_effort=None):
     settings = ModelSettings(reasoning=Reasoning(effort=reasoning_effort)) if reasoning_effort else ModelSettings()
     agent = Agent(name="python-baseline", instructions=INSTRUCTIONS, tools=[run_python], model=model, model_settings=settings)
     started = time.perf_counter()
+    tracker = TokenTracker()
     try:
-        result = asyncio.run(asyncio.wait_for(Runner.run(agent, PROMPT.format(question), max_turns=max_turns), timeout=1500))
+        result = asyncio.run(asyncio.wait_for(
+            Runner.run(agent, PROMPT.format(question), max_turns=max_turns, hooks=tracker),
+            timeout=1500,
+        ))
         data = GDSBenchmark._openai_run_to_response_data(None, result, int((time.perf_counter() - started) * 1000))
     except asyncio.TimeoutError:
         logger.warning("[baseline]   question timed out after 1500s")
-        return None
+        return tracker.timeout_response(int((time.perf_counter() - started) * 1000))
     except MaxTurnsExceeded as e:
         data = GDSBenchmark._openai_run_to_response_data(None, e.run_data, int((time.perf_counter() - started) * 1000))
         data["max_turns_exceeded"] = True
@@ -180,7 +184,8 @@ def main():
                 tokens = data["token_usage"].get("total_tokens", 0)
                 logger.info(f"[baseline]   {'✓' if success else '✗'} done in {took:.1f} min: {len(data['tool_calls'])} python calls, "
                             f"{data['tool_errors']} errors, used_gds={data['used_gds']}, {data['num_turns']} turns, {tokens} tokens"
-                            f"{', max turns exceeded' if data.get('max_turns_exceeded') else ''}")
+                            f"{', max turns exceeded' if data.get('max_turns_exceeded') else ''}"
+                            f"{', timed out' if data.get('timed_out') else ''}")
             else:
                 logger.info(f"[baseline]   ✗ no response after {took:.1f} min")
 

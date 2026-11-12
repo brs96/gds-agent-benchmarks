@@ -12,7 +12,7 @@ import csv
 import asyncio
 import zipfile
 from contextlib import AsyncExitStack
-from agents import Agent, MaxTurnsExceeded, ModelSettings, Runner
+from agents import Agent, MaxTurnsExceeded, ModelSettings, Runner, RunHooks
 from agents.mcp import MCPServerStdio
 from openai.types.shared import Reasoning
 from dotenv import load_dotenv
@@ -33,6 +33,33 @@ for _noisy_logger in ("httpcore", "httpx", "openai", "agents"):
     logging.getLogger(_noisy_logger).setLevel(logging.WARNING)
 
 DEFAULT_GDS_AGENT_PACKAGE = "gds-agent==1.2.0"
+
+class TokenTracker(RunHooks):
+    """Accumulates token usage on every LLM turn so it's available even after a timeout."""
+    def __init__(self):
+        self.usage = None
+
+    async def on_llm_end(self, context, agent, response):
+        self.usage = context.usage
+
+    def timeout_response(self, duration_ms: int) -> Optional[dict]:
+        if self.usage is None:
+            return None
+        return {
+            "tool_calls": [], "tool_results": [], "final_result": "",
+            "num_turns": self.usage.requests,
+            "duration_ms": duration_ms,
+            "token_usage": {
+                "total_input_tokens": self.usage.input_tokens,
+                "total_output_tokens": self.usage.output_tokens,
+                "cache_read_input_tokens": getattr(self.usage.input_tokens_details, "cached_tokens", 0) or 0,
+                "total_cost_usd": 0.0,
+                "total_tokens": self.usage.total_tokens,
+            },
+            "raw_stream": "",
+            "timed_out": True,
+        }
+
 DEFAULT_MAX_TURNS = 50
 DEFAULT_SKILL_FILE = (
     Path(__file__).parent
@@ -390,6 +417,8 @@ class GDSBenchmark:
         return parsed_data
 
     async def _send_question_to_openai_async(self, question: str, gds_server: MCPServerStdio) -> Optional[dict]:
+        tracker = TokenTracker()
+        started = time.perf_counter()
         try:
             logger.debug(f"Starting OpenAI async request for: {question[:50]}")
 
@@ -416,7 +445,7 @@ class GDSBenchmark:
             logger.debug("Running agent with question...")
             started = time.perf_counter()
             result = await asyncio.wait_for(
-                Runner.run(agent, formatted_prompt, max_turns=self.max_turns),
+                Runner.run(agent, formatted_prompt, max_turns=self.max_turns, hooks=tracker),
                 timeout=1500
             )
             logger.debug(f"Result: {result}")
@@ -425,8 +454,8 @@ class GDSBenchmark:
             )
                 
         except asyncio.TimeoutError:
-            logger.error("OpenAI request timed out after 300 seconds")
-            return None
+            logger.error("OpenAI request timed out after 1500 seconds")
+            return tracker.timeout_response(int((time.perf_counter() - started) * 1000))
         except MaxTurnsExceeded as e:
             logger.error(f"Error in OpenAI async request: {e}")
             if e.run_data is None:
@@ -509,7 +538,9 @@ class GDSBenchmark:
             "question": question,
             "timestamp": datetime.now().isoformat(),
             "response_data": response,
-            "success": response is not None and not response.get("max_turns_exceeded", False),
+            "success": response is not None
+                       and not response.get("max_turns_exceeded", False)
+                       and not response.get("timed_out", False),
         }
 
 
@@ -558,6 +589,8 @@ class GDSBenchmark:
                 if response and response.get("max_turns_exceeded"):
                     num_tools = len(response.get('tool_calls', []))
                     logger.info(f"Question {i}: ✗ (max turns exceeded, {num_tools} tools saved)")
+                elif response and response.get("timed_out"):
+                    logger.info(f"Question {i}: ✗ (timed out, tokens saved)")
                 elif response:
                     num_tools = len(response.get('tool_calls', []))
                     num_turns = response.get('num_turns', 0)
